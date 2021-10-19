@@ -10,8 +10,16 @@ namespace Business.Interfaces.Services
 {
     public interface IJwtTokenService
     {
-        public string GenerateJwtToken(ILoginRequest request);
+        public string GenerateJwtToken(string userName);
 
-        public CookieOptions GenerateCookieOptions(ILoginRequest request);
+        public string GenerateJwtToken(string userName, bool remember);
+
+        public CookieOptions GenerateCookieOptions();
+
+        public CookieOptions GenerateCookieOptions(bool remember);
+
+        public string UserNameFromToken(string tokenString);
+
+        public bool NewCookieIsNecessary(string tokenString);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Application.Dto;
 using Application.Services;
+using Business.Interfaces.Dto;
 using Business.Interfaces.Models;
 using Business.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -25,19 +26,23 @@ namespace Api.Controllers
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class AuthController : ControllerBase
     {
-        private readonly IUserService _userService;
         private readonly IJwtTokenService _jwtTokenService;
+        private readonly IUserService _userService;
+        private readonly IMapperService _mapper;
 
-        public AuthController(IUserService userService, IJwtTokenService jwtTokenService)
+        public AuthController(IJwtTokenService jwtTokenService,
+            IUserService userService,
+            IMapperService mapper)
         {
-            _userService = userService;
             _jwtTokenService = jwtTokenService;
+            _userService = userService;
+            _mapper = mapper;
         }
 
         [HttpPost(nameof(Test))]
         public IActionResult Test()
         {
-            return Ok(DateTime.Now);
+            return Ok(_jwtTokenService.NewCookieIsNecessary(Request.Cookies["token"]));
         }
 
         [AllowAnonymous]
@@ -52,23 +57,65 @@ namespace Api.Controllers
                 return StatusCode(StatusCodes.Status403Forbidden,
                     "Your password does not meet the requirements.");
 
-            return Ok("User created successfully.");
+            return StatusCode(StatusCodes.Status201Created,
+                "User created successfully.");
         }
 
         [AllowAnonymous]
         [HttpPost(nameof(Login))]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        public async Task<ActionResult<IUserResponse>> Login([FromBody] LoginRequest request)
         {
             if (!await _userService.UserNameAndPasswordAreValidAsync(request))
                 return StatusCode(StatusCodes.Status403Forbidden,
                     "Check your details and try again.");
 
-            var jwtToken = _jwtTokenService.GenerateJwtToken(request);
-            var cookieOptions = _jwtTokenService.GenerateCookieOptions(request);
+            var user = await _userService.FindByNameAsync(request.UserName);
+
+            var jwtToken = _jwtTokenService.GenerateJwtToken(request.UserName, request.Remember);
+            var cookieOptions = _jwtTokenService.GenerateCookieOptions(request.Remember);
 
             HttpContext.Response.Cookies.Append("token", jwtToken, cookieOptions);
 
-            return Ok(request.UserName);
+            return Ok(_mapper.ResponseFrom(user));
+        }
+
+        [HttpPost(nameof(NewCookie))]
+        public async Task<ActionResult<IUserResponse>> NewCookie()
+        {
+            if (Request.Cookies["token"] is null)
+                StatusCode(StatusCodes.Status403Forbidden,
+                    "NotLoggedIn");
+
+            var token = Request.Cookies["token"];
+
+            var userName = _jwtTokenService.UserNameFromToken(token);
+
+            var user = await _userService.FindByNameAsync(userName);
+
+            if (_jwtTokenService.NewCookieIsNecessary(token))
+            {
+                var jwtToken = _jwtTokenService.GenerateJwtToken(userName);
+                var cookieOptions = _jwtTokenService.GenerateCookieOptions();
+
+                HttpContext.Response.Cookies.Append("token", jwtToken, cookieOptions);
+            }
+
+            return Ok(_mapper.ResponseFrom(user));
+        }
+
+        [HttpPost(nameof(Logout))]
+        public IActionResult Logout()
+        {
+            HttpContext.Response.Cookies.Append("token", "",
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.MinValue,
+                    SameSite = SameSiteMode.None,
+                    HttpOnly = true,
+                    Secure = true,
+                });
+
+            return Ok();
         }
     }
 }

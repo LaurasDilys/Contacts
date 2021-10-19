@@ -27,7 +27,7 @@ namespace Application.Models
 
             try
             {
-                principal = handler.ValidateToken(protectedText, this._validationParameters, out var validToken);
+                principal = handler.ValidateToken(protectedText, _validationParameters, out var validToken);
 
                 var validJwt = validToken as JwtSecurityToken;
                 if (validJwt == null)

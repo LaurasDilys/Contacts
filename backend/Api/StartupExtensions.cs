@@ -18,8 +18,9 @@ namespace Api
     {
         public static void ConfigureDependencyInjection(this IServiceCollection services)
         {
-            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IMapperService, MapperService>();
         }
 
         public static void ConfigureAuthentication(this IServiceCollection services, string securityKey)

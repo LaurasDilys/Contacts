@@ -44,6 +44,11 @@ namespace Application.Services
             return result.Succeeded;
         }
 
+        public async Task<IUser> FindByNameAsync(string userName)
+        {
+            return await _userManager.FindByNameAsync(userName);
+        }
+
         public async Task<bool> UserNameAndPasswordAreValidAsync(ILoginRequest request)
         {
             var user = await _userManager.FindByNameAsync(request.UserName);
