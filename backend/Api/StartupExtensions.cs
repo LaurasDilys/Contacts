@@ -18,6 +18,7 @@ namespace Api
     {
         public static void ConfigureDependencyInjection(this IServiceCollection services)
         {
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
         }
 
@@ -56,6 +57,18 @@ namespace Api
             services.AddIdentity<User, IdentityRole>()
                     .AddEntityFrameworkStores<DataContext>()
                     .AddDefaultTokenProviders();
+        }
+
+        public static void ConfigurePasswordRequirements(this IServiceCollection services)
+        {
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequiredLength = 6;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+            });
         }
 
         public static void AddDatabaseMigrations(this IApplicationBuilder app)

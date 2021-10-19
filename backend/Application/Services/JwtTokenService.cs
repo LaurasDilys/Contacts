@@ -29,7 +29,7 @@ namespace Application.Services
             List<Claim> claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("username", request.Username)
+                new Claim("username", request.UserName)
             };
 
             if (request.Remember)
