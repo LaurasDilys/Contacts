@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Business.Interfaces.Models;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Data.Models
 {
-    public class User : IdentityUser
+    public class User : IdentityUser, IUser
     {
         [MaxLength(50)]
         public string FirstName { get; set; }
