@@ -10,7 +10,7 @@ namespace Application.Dto
     public class UserResponse : IUserResponse
     {
         public string UserName { get; set; }
-
-        // and contacts
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }

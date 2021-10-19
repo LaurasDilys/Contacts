@@ -16,7 +16,9 @@ namespace Application.Services
         {
             return new UserResponse
             {
-                UserName = user.UserName
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName
             };
         }
     }
