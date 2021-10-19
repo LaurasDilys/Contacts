@@ -17,15 +17,15 @@ function App() {
 
   const onLogin = () => {
     Api.post('login', {
-      username: 'logged in',
-      password: '',
+      userName: 'lauras',
+      password: 'lauras',
       remember: false
     }).then(
       (res) => {
-        setState(res.data);
+        setState(res.data.userName);
       },
       (error) => {
-        setState(error.message);
+        setState(error.response?.data);
       }
     );
   }
@@ -33,7 +33,8 @@ function App() {
   const onTest = () => {
     Api.post('test').then(
       (res) => {
-        setState(res.data);
+        setState(res.data === true ?
+        'true' : 'false');
       },
       (error) => {
         setState(error.message);
@@ -41,10 +42,18 @@ function App() {
     );
   }
 
+  const onLogOut = () => {
+    Api.post('logout').then(
+      (res) => {
+        setState(res.data);
+      });
+  };
+
   return (
     <div className="App">
       <Button onClick={onLogin}>Login</Button>
       <Button onClick={onTest}>Get DateTime (Auth)</Button>
+      <Button onClick={onLogOut}>Logout</Button>
       <h1>{state}</h1>
     </div>
   );
