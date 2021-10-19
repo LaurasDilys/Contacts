@@ -17,17 +17,6 @@ namespace Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            var user = new User
-            {
-                SecurityStamp = Guid.NewGuid().ToString(),
-                Id = Guid.NewGuid().ToString(),
-                UserName = "Lauras",
-                FirstName = "Lauras",
-                LastName = "Dilys"
-            };
-
-            modelBuilder.Entity<User>().HasData(user);
         }
     }
 }
