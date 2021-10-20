@@ -16,5 +16,7 @@ namespace Data.Models
 
         [MaxLength(50)]
         public string LastName { get; set; }
+
+        public ICollection<Contact> Contacts { get; set; }
     }
 }
