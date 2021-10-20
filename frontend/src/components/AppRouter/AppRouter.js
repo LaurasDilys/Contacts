@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import TopNav from './TopNav';
 import RouteSwitch from './RouteSwitch';
@@ -21,14 +21,9 @@ const AppRouter = () => {
 
   return (
     <Router history={history}>
-      <TopNav routes={Routes} />
+      <TopNav routes={availableRoutes} />
       {/* <Notification /> */}
-      {/* <RouteSwitch routes={Routes} loggedIn={loggedIn} /> */}
-      <Switch>
-        {Routes.map(r =>
-        <Route component={r.component} path={r.path} key={r.path}>
-        </Route>)}
-      </Switch>
+      <RouteSwitch routes={availableRoutes} loggedIn={loggedIn} />
     </Router>
   );
 };

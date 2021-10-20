@@ -1,14 +1,14 @@
 import LoginForm from "../LoginForm/LoginForm"
 
 const Routes = [
-  {
-    title: "Home",
-    path: "/home",
-    position: 'left',
-    visibleLoggedIn: true,
-    visibleLoggedOut: true,
-    component: () => {return <h1>Home</h1>}
-  },
+  // {
+  //   title: "Home",
+  //   path: "/home",
+  //   position: 'left',
+  //   visibleLoggedIn: true,
+  //   visibleLoggedOut: true,
+  //   component: () => {return <h1>Home</h1>}
+  // },
   {
     title: "Contacts",
     path: "/contacts",
@@ -31,7 +31,7 @@ const Routes = [
     position: 'right',
     visibleLoggedIn: false,
     visibleLoggedOut: true,
-    component: () => {return <h1>Log In</h1>}
+    component: LoginForm
   },
   {
     title: "Log Out",
