@@ -1,12 +1,12 @@
 import Api from '../../domain/Api';
-import { history } from '../../components/Routes/PageRouter';
-import { loginAction, logoutAction } from './userActions';
+// import { history } from '../../components/AppRouter/AppRouter';
+import { loginAction, logoutAction } from './authenticationActions';
 // import { SetNotificationAction } from '../actions/notificationsActions';
 
 export const register = () => (dispatch) => {
   Api.post('register')
     .then(() => {
-      history.push('/login');
+      // history.push('/login');
       // dispatch(SetNotificationAction({ isOpen: true, message: response.data, type: 'success' }));
     })
     .catch((error) => {
@@ -18,7 +18,7 @@ export const login = () => (dispatch) => {
   Api.post('login')
     .then(res => {
       dispatch(loginAction({ ...res.data }));
-      history.push('/');
+      // history.push('/');
     })
     .catch((error) => {
       // dispatch(SetNotificationAction({ isOpen: true, message: error.response.data, type: 'error' }));
@@ -29,7 +29,7 @@ export const logout = () => (dispatch) => {
   Api.post('logout')
     .then(() => {
       dispatch(logoutAction());
-      history.push('/login');
+      // history.push('/login');
     });
 };
 

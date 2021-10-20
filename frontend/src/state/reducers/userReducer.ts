@@ -1,7 +1,7 @@
 import * as actionTypes from '../actions/actionTypes';
 
 export type UserState = {
-  isLoggedIn: boolean;
+  loggedIn: boolean;
   user: {
     userName: string;
     firstName: string;
@@ -10,7 +10,7 @@ export type UserState = {
 }
 
 const initialState: UserState = {
-  isLoggedIn: false,
+  loggedIn: false,
   user: {
     userName: '',
     firstName: '',
@@ -32,7 +32,7 @@ const userReducer = (state: UserState = initialState, action: UserAction): UserS
     case actionTypes.LOGIN:
       return {
         ...state,
-        isLoggedIn: true,
+        loggedIn: true,
         user: {
           userName: action.payload.userName,
           firstName: action.payload.firstName,
