@@ -1,4 +1,5 @@
 import LoginForm from "../LoginForm/LoginForm"
+import RegisterForm from "../RegisterForm/RegisterForm";
 
 const Routes = [
   // {
@@ -23,7 +24,7 @@ const Routes = [
     position: 'right',
     visibleLoggedIn: false,
     visibleLoggedOut: true,
-    component: () => {return <h1>Register</h1>}
+    component: RegisterForm
   },
   {
     title: "Log In",
