@@ -1,11 +1,12 @@
-import { Button } from "@mui/material";
 import { useEffect, useState } from "react";
+import ContactEdit from "./ContactEdit";
+import ContactView from "./ContactView";
 
 const ContactArea = ({ contact }) => {
-  const [edit, setEdit] = useState('');
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
-    setEdit('');
+    setEditing(false);
   }, [contact])
 
   return (
@@ -13,8 +14,11 @@ const ContactArea = ({ contact }) => {
       {contact === undefined ?
       <h1>No Contact Selected</h1> :
       <div>
-        {edit === '' && <Button onClick={() => setEdit('EDITING')}>Edit</Button>}
-        <h1>{edit} {contact.firstName}</h1>
+        {
+          editing === true ?
+          <ContactEdit contact={contact} setEditing={setEditing} /> :
+          <ContactView contact={contact} setEditing={setEditing} />
+        }
       </div>}
     </div>
   );

@@ -12,6 +12,9 @@ const mockContacts = [
     id: 1,
     firstName: 'Arnas',
     lastName: 'B.',
+    phoneNumber: null,
+    email: null,
+    notes: null,
     selected: false // first contact MUST BE selected
     // if there are no created contacts, then
     // the first and only contact will be "ME"
@@ -20,12 +23,18 @@ const mockContacts = [
     id: 2,
     firstName: 'Benas',
     lastName: 'C.',
+    phoneNumber: null,
+    email: null,
+    notes: null,
     selected: false
   },
   {
     id: 3,
     firstName: 'Denas',
     lastName: 'F.',
+    phoneNumber: null,
+    email: null,
+    notes: null,
     selected: false
   }
 ]
@@ -39,6 +48,16 @@ for (let i = 0; i < 3; i++) {
   more.forEach(c => c.id = ++currentId);
   mockContacts.push(...more);
 }
+
+mockContacts.unshift({
+  id: 0,
+  firstName: 'Lauras',
+  lastName: 'Dilys',
+  phoneNumber: '37061417706',
+  email: 'lauras.dilys@gmail.com',
+  notes: 'This is my contact',
+  selected: false
+})
 //
 //
 //
@@ -103,6 +122,7 @@ const Contacts = () => {
 
   return (
     <div className='flex-row'>
+      
       <div>
         <Input
           sx={searchFieldStyle}
@@ -114,7 +134,6 @@ const Contacts = () => {
               <SearchIcon />
             </InputAdornment>}
         />
-
         <List
           sx={contactsListStyle}
           style={{ height: contactsListHeight, overflowY: 'auto' }}
@@ -130,7 +149,9 @@ const Contacts = () => {
         </List>
       </div>
 
-      <ContactArea contact={contacts.find(c => c.selected)} />
+      <div className='flex-grow-1'>
+        <ContactArea contact={contacts.find(c => c.selected)}/>
+      </div>
 
     </div>
   );
