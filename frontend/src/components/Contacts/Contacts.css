@@ -1,5 +1,6 @@
-.flex-grow-1 {
-  flex-grow: 1;
+:root {
+  --entry-description-gap: 20px;
+  --contact-entry-margin-bottom: 50px;
 }
 
 .contact-area-top button {
@@ -7,4 +8,53 @@
   padding: 5px 20px 3px;
   /* margin-top: 3px;
   padding: 6px 20px; */
+}
+
+.avatar-div-row {
+  /* background-color: cadetblue; */
+  display: flex;
+  min-width: 200px;
+  min-height: 200px;
+}
+
+.avatar-div-col {
+  /* background-color: aqua; */
+  margin: auto 35px auto auto;
+}
+
+.name-div {
+  /* background-color: aquamarine; */
+  margin: auto 0;
+}
+
+.contact-entry-description {
+  /* background-color: aqua; */
+  display: flex;
+  justify-content: flex-end;
+  text-align: end;
+  min-width: 200px;
+}
+
+.contact-entry-description * {
+  /* background-color: bisque; */
+  margin: 0 var(--entry-description-gap) var(--contact-entry-margin-bottom);
+}
+
+.contact-entry {
+  /* background-color: coral; */
+  margin: 0 0 var(--contact-entry-margin-bottom) 0;
+  max-width: 800px;
+}
+
+.contact-entry a {
+  text-decoration: none;
+  color: unset;
+}
+
+.contact-entry a:hover {
+  color: #1e88e5; /* mui blue 600 */
+}
+
+.contact-entry a:active {
+  color: #1565c0; /* mui blue 800 */
 }
