@@ -2,6 +2,7 @@ import './Contacts.css'
 import { Avatar, Button, Divider, TextField } from "@mui/material";
 import PhoneInput from 'react-phone-input-2';
 import { useEffect, useRef, useState } from 'react';
+import Description from './Description';
 
 const stringToColor = string => {
   let hash = 0;
@@ -22,6 +23,10 @@ const stringToColor = string => {
 }
 
 const initialsAvatar = (firstName, lastName) => {
+  let initials = '';
+  firstName?.length > 0 && (initials += firstName[0]);
+  lastName?.length > 0 && (initials += lastName[0]);
+
   return {
     sx: {
       bgcolor: stringToColor(`${firstName} ${lastName}`),
@@ -29,8 +34,7 @@ const initialsAvatar = (firstName, lastName) => {
       height: 80,
       fontSize: 40
     },
-    children:
-    `${firstName.length > 0 && firstName[0]}${lastName.length > 0 && lastName[0]}`,
+    children: initials,
   };
 }
 
@@ -65,13 +69,9 @@ const ContactView = ({ contact, setEditing }) => {
 
       {contact.phoneNumber?.length > 0 &&
       <div className='flex-row'>
-
-        <div className='contact-entry-description'>
-          <span>Phone Number</span>
-        </div>
-
+        <Description>Phone Number</Description>
         <div className='contact-entry'>
-          <a href={`tel: +${contact.phoneNumber}`}>
+          <a href={`tel:+${contact.phoneNumber}`}>
             {formattedNumber}
           </a>
           <PhoneInput
@@ -85,13 +85,9 @@ const ContactView = ({ contact, setEditing }) => {
 
       {contact.email?.length > 0 &&
       <div className='flex-row'>
-
-        <div className='contact-entry-description'>
-          <span>Email</span>
-        </div>
-
+        <Description>Email</Description>
         <div className='contact-entry'>
-          <a href={`mailto: ${contact.email}`}>
+          <a href={`mailto:${contact.email}`}>
             {contact.email}
           </a>
         </div>
@@ -99,19 +95,11 @@ const ContactView = ({ contact, setEditing }) => {
 
       {contact.notes?.length > 0 &&
       <div className='flex-row'>
-
-        <div className='contact-entry-description'>
-          <span>Notes</span>
-        </div>
-
+        <Description>Notes</Description>
         <div className='contact-entry'>
           <span>{contact.notes}</span>
         </div>
       </div>}
-
-      {/* phoneNumber: '37061417706',
-  email: 'lauras.dilys@gmail.com',
-  notes: 'This is my contact', */}
       
     </div>
   );
