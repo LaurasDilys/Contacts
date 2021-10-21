@@ -12,7 +12,7 @@ const mockContacts = [
     id: 1,
     firstName: 'Arnas',
     lastName: 'B.',
-    phoneNumber: null,
+    phoneNumber: '37000000000',
     email: null,
     notes: null,
     selected: false // first contact MUST BE selected
@@ -54,8 +54,12 @@ mockContacts.unshift({
   firstName: 'Lauras',
   lastName: 'Dilys',
   phoneNumber: '37061417706',
+  alternativePhoneNumber: '37061536904',
   email: 'lauras.dilys@gmail.com',
-  notes: 'This is my contact',
+  alternativeEmail: 'spotas@gmail.com',
+  dateOfBirth: 'none',
+  notes: 'This is my contact' +
+  ". Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
   selected: false
 })
 //
@@ -71,6 +75,13 @@ const contactsListStyle = {
   width: 300,
   bgcolor: 'background.paper',
 };
+
+const getFullName = (firstName, lastName) => {
+  let fullName = '';
+  firstName?.length > 0 && (fullName += firstName);
+  lastName?.length > 0 && (fullName += ` ${lastName}`);
+  return fullName;
+}
 
 const Contacts = () => {
   const [contacts, setContacts] = useState(mockContacts);
@@ -142,7 +153,7 @@ const Contacts = () => {
           {filteredContacts.map(c =>
           <div key={c.id}>
             <ListItem selected={c.selected} onClick={() => handleSelect(c.id)}>
-              <ListItemText primary={`${c.firstName} ${c.lastName}`} />
+              <ListItemText primary={getFullName(c.firstName, c.lastName)} />
             </ListItem>
             <Divider />
           </div>)}
