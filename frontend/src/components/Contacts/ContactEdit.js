@@ -6,24 +6,24 @@ import { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import 'react-phone-input-2/lib/material.css';
 
-const Lauras = {
-  id: 0,
-  firstName: 'Lauras',
-  lastName: 'Dilys',
-  phoneNumber: '37061417706',
-  alternativePhoneNumber: '37061536904',
-  email: 'lauras.dilys@gmail.com',
-  alternativeEmail: 'spotas@gmail.com',
-  dateOfBirth: null,
-  notes: 'This is my contact'
-}
+// const Lauras = {
+//   id: 0,
+//   firstName: 'Lauras',
+//   lastName: 'Dilys',
+//   phoneNumber: '37061417706',
+//   alternativePhoneNumber: '37061536904',
+//   email: 'lauras.dilys@gmail.com',
+//   alternativeEmail: 'spotas@gmail.com',
+//   dateOfBirth: null,
+//   notes: 'This is my contact'
+// }
 
 const nullIfEmpty = string => {
   return string === '' || string === undefined ?
   null : string;
 }
 
-const ContactEdit = ({ contact, setEditing }) => {
+const ContactEdit = ({ contact, setEditing, newContact, handleSaveNew, handleCancelNew }) => {
   const [firstName, setFirstName] = useState(contact.firstName);
   const [lastName, setLastName] = useState(contact.lastName);
   const [phoneNumber, setPhoneNumber] = useState(contact.phoneNumber);
@@ -64,14 +64,27 @@ const ContactEdit = ({ contact, setEditing }) => {
 
   const handleSave = () => {
     const contact = generateContact();
+    //
     console.log(contact);
     //
-    // dispatch(patchContact(contact));
+    // newContact ?
     //
-    // dispatch(newContact(contact))
+    // dispatch(newContact(contact)) :
+    //
     // if saving new contact, it needs to be set as selected
+    // this will have to be done as part of CONTACTS ACTIONS
     //
-    setEditing(false);
+    // dispatch(patchContact(contact))
+    //
+    newContact ?
+    handleSaveNew() :
+    setEditing(false)
+  }
+
+  const handleCancel = () => {
+    newContact ?
+    handleCancelNew() :
+    setEditing(false)
   }
 
   return (
@@ -83,13 +96,14 @@ const ContactEdit = ({ contact, setEditing }) => {
         >
           <span className='button-span'>Save</span>
         </Button>
-        <Button onClick={() => setEditing(false)}>Cancel</Button>
+        <Button onClick={handleCancel}>Cancel</Button>
         {/* // */}
-        {/* display: 'none' => if this is a new contact */}
+        {/* NOT IMPLEMENTED */}
+        {!newContact &&
         <Button color='error'>
           <span className='button-span'>Delete</span>
-        </Button>
-        {/* // */}
+        </Button>}
+        {/* NOT IMPLEMENTED */}
         {/* // */}
         <Divider />
       </div>

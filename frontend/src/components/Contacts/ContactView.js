@@ -39,7 +39,7 @@ const initialsAvatar = (firstName, lastName) => {
   };
 }
 
-const ContactView = ({ contact, setEditing }) => {
+const ContactView = ({ contact, setEditing, handleNew }) => {
   const [formattedNumber, setFormattedNumber] = useState();
   const [formattedAltNumber, setFormattedAltNumber] = useState();
   const phoneInputRef = useRef(null);
@@ -56,12 +56,10 @@ const ContactView = ({ contact, setEditing }) => {
   return (
     <div>
       <div className='contact-area-top'>
-        {/* // */}
-        <Button>
-          <AddIcon />
+        <Button onClick={handleNew}>
+          <AddIcon sx={{ marginBottom: '2px' }} />
           <span className='button-span'>New</span>
         </Button>
-        {/* // */}
         <Button onClick={() => setEditing(true)}>
           <span className='button-span'>Edit</span>
         </Button>

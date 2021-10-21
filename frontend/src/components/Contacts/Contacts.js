@@ -57,9 +57,9 @@ mockContacts.unshift({
   alternativePhoneNumber: '37061536904',
   email: 'lauras.dilys@gmail.com',
   alternativeEmail: 'spotas@gmail.com',
-  dateOfBirth: 'none',
-  notes: 'This is my contact' +
-  ". Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+  dateOfBirth: '1988-10-17',
+  notes: 'This is my contact',
+  // ". Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
   selected: false
 })
 //
@@ -83,7 +83,21 @@ const getFullName = (firstName, lastName) => {
   return fullName;
 }
 
+const generateNewContact = () => {
+  return {
+    firstName: null,
+    lastName: null,
+    phoneNumber: null,
+    alternativePhoneNumber: null,
+    email: null,
+    alternativeEmail: null,
+    dateOfBirth: null,
+    notes: null,
+  }
+}
+
 const Contacts = () => {
+  const [creating, setCreating] = useState(false);
   const [contacts, setContacts] = useState(mockContacts);
   const [filteredContacts, setFilteredContacts] = useState(contacts);
   const [search, setSearch] = useState();
@@ -106,6 +120,7 @@ const Contacts = () => {
   }});
 
   const handleSelect = id => {
+    setCreating(false);
     const newState = contacts.map(c => {
       if (c.id === id) c.selected = true;
       else c.selected = false;
@@ -114,8 +129,7 @@ const Contacts = () => {
     setContacts(newState);
   };
 
-  const handleSearch = ({ target }) => {
-    const value = target.value;
+  const searchResult = value => {
     setSearch(value);
     const newState = contacts.filter(c =>
       c.firstName.toLocaleLowerCase().includes(value) ||
@@ -125,11 +139,32 @@ const Contacts = () => {
       if (newState.length > 0) newState[0].selected = true;
     }
     setFilteredContacts(newState);
+  }
+
+  const handleSearch = ({ target }) => {
+    setCreating(false);
+    const value = target.value;
+    searchResult(value);
   };
 
   useEffect(() => {
     search === undefined && (contacts[0].selected = true);
   }, [search])
+
+  const handleNew = () => {
+    searchResult('');
+    contacts.forEach(c => c.selected = false);
+    setCreating(true);
+  }
+
+  const handleSaveNew = () => {
+    setCreating(false);
+  }
+
+  const handleCancelNew = () => {
+    searchResult('');
+    setCreating(false);
+  }
 
   return (
     <div className='flex-row'>
@@ -161,7 +196,12 @@ const Contacts = () => {
       </div>
 
       <div className='flex-grow-1'>
-        <ContactArea contact={contacts.find(c => c.selected)}/>
+        <ContactArea
+          handleNew={handleNew}
+          handleSaveNew={handleSaveNew}
+          handleCancelNew={handleCancelNew}
+          contact={creating ? generateNewContact() : contacts.find(c => c.selected)}
+        />
       </div>
 
     </div>
