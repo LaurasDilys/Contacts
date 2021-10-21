@@ -1,6 +1,6 @@
 :root {
   --description-entry-gap: 21px;
-  --contact-entry-margin-bottom: 50px;
+  --contact-entry-margin-bottom: 35px;
 }
 
 .contact-area-top button {
@@ -8,6 +8,10 @@
   padding: 5px 20px 3px;
   /* margin-top: 3px;
   padding: 6px 20px; */
+}
+
+.button-span {
+  margin: 0 10px;
 }
 
 .avatar-div-row {
