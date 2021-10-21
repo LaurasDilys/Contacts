@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import 'react-phone-input-2/lib/material.css';
 
-const contact = {
+const Lauras = {
   id: 0,
   firstName: 'Lauras',
   lastName: 'Dilys',
@@ -18,7 +18,12 @@ const contact = {
   notes: 'This is my contact'
 }
 
-const ContactEdit = ({  setEditing }) => {
+const nullIfEmpty = string => {
+  return string === '' || string === undefined ?
+  null : string;
+}
+
+const ContactEdit = ({ contact, setEditing }) => {
   const [firstName, setFirstName] = useState(contact.firstName);
   const [lastName, setLastName] = useState(contact.lastName);
   const [phoneNumber, setPhoneNumber] = useState(contact.phoneNumber);
@@ -29,25 +34,63 @@ const ContactEdit = ({  setEditing }) => {
   const [dateAsString, setDateAsString] = useState();
   const [notes, setNotes] = useState(contact.notes);
 
-
-  //
-  // useEffect(() => {
-  //   const DATE_AS_STRING = dateOfBirth?.toLocaleDateString("lt-LT");
-  //   console.log(DATE_AS_STRING === 'Invalid Date'
-  //   || DATE_AS_STRING === undefined) // dateOfBirth = null;
-  // }, [dateOfBirth])
-  //
-
+  const generateContact = () => {
+    return {
+      id: contact.id,
+      firstName: nullIfEmpty(firstName),
+      lastName: nullIfEmpty(lastName),
+      phoneNumber: nullIfEmpty(phoneNumber),
+      alternativePhoneNumber: nullIfEmpty(altPhoneNumber),
+      email: nullIfEmpty(email),
+      alternativeEmail: nullIfEmpty(altEmail),
+      dateOfBirth: dateAsString,
+      notes: nullIfEmpty(notes)
+    };
+  }
+  
+  useEffect(() => {
+    const date = dateOfBirth?.toLocaleDateString("lt-LT");
+    if (date === 'Invalid Date' || date === undefined) {
+      setDateAsString(null);
+    } else {
+      setDateAsString(date);
+    }
+  }, [dateOfBirth])
 
   const noFirstName = () => {
     if (firstName === null || firstName === '') return true;
     return false;
   }
 
+  const handleSave = () => {
+    const contact = generateContact();
+    console.log(contact);
+    //
+    // dispatch(patchContact(contact));
+    //
+    // dispatch(newContact(contact))
+    // if saving new contact, it needs to be set as selected
+    //
+    setEditing(false);
+  }
+
   return (
     <div>
       <div className='contact-area-top'>
+        <Button
+          onClick={handleSave}
+          disabled={noFirstName()}
+        >
+          <span className='button-span'>Save</span>
+        </Button>
         <Button onClick={() => setEditing(false)}>Cancel</Button>
+        {/* // */}
+        {/* display: 'none' => if this is a new contact */}
+        <Button color='error'>
+          <span className='button-span'>Delete</span>
+        </Button>
+        {/* // */}
+        {/* // */}
         <Divider />
       </div>
 
