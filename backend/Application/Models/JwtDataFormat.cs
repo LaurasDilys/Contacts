@@ -1,20 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
-namespace Api
+namespace Application.Models
 {
-    public class CustomJwtDataFormat : ISecureDataFormat<AuthenticationTicket>
+    public class JwtDataFormat : ISecureDataFormat<AuthenticationTicket>
     {
         private readonly string _algorithm;
         private readonly TokenValidationParameters _validationParameters;
 
-        public CustomJwtDataFormat(string algorithm, TokenValidationParameters validationParameters)
+        public JwtDataFormat(string algorithm, TokenValidationParameters validationParameters)
         {
             _algorithm = algorithm;
             _validationParameters = validationParameters;
@@ -30,7 +27,7 @@ namespace Api
 
             try
             {
-                principal = handler.ValidateToken(protectedText, this._validationParameters, out var validToken);
+                principal = handler.ValidateToken(protectedText, _validationParameters, out var validToken);
 
                 var validJwt = validToken as JwtSecurityToken;
                 if (validJwt == null)

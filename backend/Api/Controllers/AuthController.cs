@@ -1,6 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Application.Dto;
+using Application.Services;
+using Business.Interfaces.Dto;
+using Business.Interfaces.Models;
+using Business.Interfaces.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -15,115 +21,108 @@ using System.Threading.Tasks;
 
 namespace Api.Controllers
 {
-    public class LoginRequest
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public bool Remember { get; set; }
-    }
-
     [ApiController]
     [Route("api/")]
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class AuthController : ControllerBase
     {
-        public AuthController(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        private readonly IJwtTokenService _jwtTokenService;
+        private readonly IUserService _userService;
+        private readonly IMapperService _mapper;
 
-        public IConfiguration Configuration { get; }
+        public AuthController(IJwtTokenService jwtTokenService,
+            IUserService userService,
+            IMapperService mapper)
+        {
+            _jwtTokenService = jwtTokenService;
+            _userService = userService;
+            _mapper = mapper;
+        }
 
         [HttpPost(nameof(Test))]
         public IActionResult Test()
         {
-            return Ok(DateTime.Now);
+            return Ok(_jwtTokenService.NewCookieIsNecessary(Request.Cookies["token"]));
         }
 
-        //[HttpPost]
-        //[Route("login")]
-        //[AllowAnonymous]
-        //public async Task<IActionResult> Login([FromBody] LoginRequest model)
-        //{
-        //    var authClaims = new List<Claim>
-        //    {
-        //        new Claim("username", model.Username),
-        //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        //    };
-
-        //    if (model.Remember)
-        //        authClaims.Add(new Claim("rememberMe", "true"));
-
-        //    var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["AppSettings:Secret"]));
-
-        //    var expirationTime = model.Remember ? DateTime.Now.AddDays(30) : DateTime.Now.AddSeconds(5);
-
-        //    var token = new JwtSecurityToken(
-        //        expires: expirationTime,
-        //        claims: authClaims,
-        //        signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-        //    );
-
-        //    var cookieOptions = new CookieOptions
-        //    {
-        //        SameSite = SameSiteMode.None,
-        //        HttpOnly = true,
-        //        Secure = true,
-        //        Expires = expirationTime,
-        //    };
-
-        //    HttpContext.Response.Cookies.Append("token", new JwtSecurityTokenHandler().WriteToken(token), cookieOptions);
-
-        //    return Ok(model.Username);
-        //}
-
-        [HttpPost(nameof(Login))]
         [AllowAnonymous]
-        public IActionResult Login([FromBody] LoginRequest model)
+        [HttpPost(nameof(Register))]
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            GenerateJwtToken(model);
+            if (await _userService.ExistsAsync(request.UserName))
+                return StatusCode(StatusCodes.Status409Conflict,
+                    "This user name is taken.");
 
-            return Ok(model.Username);
+            if (!await _userService.CreateAsync(request))
+                return StatusCode(StatusCodes.Status403Forbidden,
+                    "Your password does not meet the requirements.");
+
+            return StatusCode(StatusCodes.Status201Created,
+                "User created successfully.");
         }
 
-        private void GenerateJwtToken(LoginRequest model)
+        [AllowAnonymous]
+        [HttpPost(nameof(Login))]
+        public async Task<ActionResult<IUserResponse>> Login([FromBody] LoginRequest request)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            //
-            var key = Encoding.UTF8.GetBytes(Configuration["AppSettings:Secret"]);
-            //
-            List<Claim> claims = new List<Claim>
-            {
-                //
-                new Claim("username", model.Username),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                //
-            };
+            if (!await _userService.UserNameAndPasswordAreValidAsync(request))
+                return StatusCode(StatusCodes.Status403Forbidden,
+                    "Check your details and try again.");
 
-            if (model.Remember)
-                claims.Add(new Claim("rememberMe", "true"));
+            var user = await _userService.FindByNameAsync(request.UserName);
 
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                //
-                Expires = model.Remember ? DateTime.Now.AddDays(1) : DateTime.Now.AddSeconds(5),
-                //
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
-            };
+            var jwtToken = _jwtTokenService.GenerateJwtToken(request.UserName, request.Remember);
+            var cookieOptions = _jwtTokenService.GenerateCookieOptions(request.Remember);
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+            HttpContext.Response.Cookies.Append("token", jwtToken, cookieOptions);
 
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                //
-                Expires = model.Remember ? DateTime.Now.AddDays(1) : DateTime.Now.AddSeconds(5)
-            };
+            return Ok(_mapper.ResponseFrom(user));
+        }
 
-            HttpContext.Response.Cookies.Append("token", tokenHandler.WriteToken(token), cookieOptions);
+        [AllowAnonymous]
+        [HttpPost(nameof(LoginStatus))]
+        public async Task<ActionResult<IUserResponse>> LoginStatus()
+        {
+            var token = Request.Cookies["token"];
+
+            if (token is null) return Ok("NotLoggedIn");
+
+            var userName = _jwtTokenService.UserNameFromToken(token);
+
+            var user = await _userService.FindByNameAsync(userName);
+
+            _jwtTokenService.RefreshCookieIfNecessary(token, userName, HttpContext);
+
+            return Ok(_mapper.ResponseFrom(user));
+        }
+
+        [HttpPost(nameof(NewCookie))]
+        public IActionResult NewCookie()
+        {
+            var token = Request.Cookies["token"];
+
+            if (token is null)
+                return StatusCode(StatusCodes.Status403Forbidden,
+                    "NotLoggedIn");
+
+            _jwtTokenService.RefreshCookieIfNecessary(token, HttpContext);
+
+            return Ok();
+        }
+
+        [HttpPost(nameof(Logout))]
+        public IActionResult Logout()
+        {
+            HttpContext.Response.Cookies.Append("token", "",
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.MinValue,
+                    SameSite = SameSiteMode.None,
+                    HttpOnly = true,
+                    Secure = true,
+                });
+
+            return Ok();
         }
     }
 }
