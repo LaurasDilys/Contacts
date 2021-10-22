@@ -18,7 +18,7 @@ const ContactArea = ({ contact, handleNew, handleSaveNew, handleCancelNew }) => 
         {
           contact.id === undefined ?
           <ContactEdit
-            newContact
+            creating
             contact={contact}
             handleSaveNew={handleSaveNew}
             handleCancelNew={handleCancelNew}
