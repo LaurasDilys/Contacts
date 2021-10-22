@@ -28,11 +28,11 @@ namespace Api.Controllers
     {
         private readonly IJwtTokenService _jwtTokenService;
         private readonly IUserService _userService;
-        private readonly IMapperService _mapper;
+        private readonly MapperService _mapper;
 
         public AuthController(IJwtTokenService jwtTokenService,
             IUserService userService,
-            IMapperService mapper)
+            MapperService mapper)
         {
             _jwtTokenService = jwtTokenService;
             _userService = userService;
