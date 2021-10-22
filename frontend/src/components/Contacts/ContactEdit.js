@@ -1,29 +1,19 @@
-import { Button, Divider, TextField, Tooltip } from "@mui/material";
+import { Button, Divider, TextField, Tooltip } from '@mui/material';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
-import { useEffect, useState } from "react";
-import PhoneInput from "react-phone-input-2";
+import { useEffect, useState } from 'react';
+import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/material.css';
-
-// const Lauras = {
-//   id: 0,
-//   firstName: 'Lauras',
-//   lastName: 'Dilys',
-//   phoneNumber: '37061417706',
-//   alternativePhoneNumber: '37061536904',
-//   email: 'lauras.dilys@gmail.com',
-//   alternativeEmail: 'spotas@gmail.com',
-//   dateOfBirth: null,
-//   notes: 'This is my contact'
-// }
+import { useDispatch } from 'react-redux';
+import { editContact, deleteContact, newContact } from '../../state/actions/contactsThunk';
 
 const nullIfEmpty = string => {
   return string === '' || string === undefined ?
   null : string;
 }
 
-const ContactEdit = ({ contact, setEditing, newContact, handleSaveNew, handleCancelNew }) => {
+const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCancelNew }) => {
   const [firstName, setFirstName] = useState(contact.firstName);
   const [lastName, setLastName] = useState(contact.lastName);
   const [phoneNumber, setPhoneNumber] = useState(contact.phoneNumber);
@@ -33,6 +23,7 @@ const ContactEdit = ({ contact, setEditing, newContact, handleSaveNew, handleCan
   const [dateOfBirth, setDateOfBirth] = useState(contact.dateOfBirth === null ? null : new Date(contact.dateOfBirth));
   const [dateAsString, setDateAsString] = useState();
   const [notes, setNotes] = useState(contact.notes);
+  const dispatch = useDispatch();
 
   const generateContact = () => {
     return {
@@ -64,26 +55,24 @@ const ContactEdit = ({ contact, setEditing, newContact, handleSaveNew, handleCan
 
   const handleSave = () => {
     const contact = generateContact();
-    //
-    console.log(contact);
-    //
-    // newContact ?
-    //
-    // dispatch(newContact(contact)) :
-    //
-    // if saving new contact, it needs to be set as selected
-    // this will have to be done as part of CONTACTS ACTIONS
-    //
-    // dispatch(patchContact(contact))
-    //
-    newContact ?
+
+    creating ?
+    dispatch(newContact(contact)) :
+    dispatch(editContact(contact));
+    
+    creating ?
     handleSaveNew() :
     setEditing(false)
   }
 
   const handleCancel = () => {
-    newContact ?
+    creating ?
     handleCancelNew() :
+    setEditing(false)
+  }
+
+  const handleDelete = () => {
+    dispatch(deleteContact(contact.id))
     setEditing(false)
   }
 
@@ -97,14 +86,10 @@ const ContactEdit = ({ contact, setEditing, newContact, handleSaveNew, handleCan
           <span className='button-span'>Save</span>
         </Button>
         <Button onClick={handleCancel}>Cancel</Button>
-        {/* // */}
-        {/* NOT IMPLEMENTED */}
-        {!newContact &&
-        <Button color='error'>
+        {!creating &&
+        <Button color='error' onClick={handleDelete}>
           <span className='button-span'>Delete</span>
         </Button>}
-        {/* NOT IMPLEMENTED */}
-        {/* // */}
         <Divider />
       </div>
 
