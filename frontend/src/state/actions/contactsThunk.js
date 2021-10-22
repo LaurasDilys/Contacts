@@ -1,17 +1,17 @@
 import Api from '../../domain/Api';
-import { deleteContactAction, editContactAction, newContactAction } from './contactsActions';
+import { deleteContactAction, editContactAction, newContactAction as createContactAction } from './contactsActions';
 
 //
 let i = 0;
 //
 
-export const newContact = (contact) => (dispatch) => {
+export const createContact = (contact) => (dispatch) => {
   Api.post('test')
     .then(() => {
       //
       contact.id = ++i;
       //
-      dispatch(newContactAction(contact));
+      dispatch(createContactAction(contact));
     });
 }
 

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/material.css';
 import { useDispatch } from 'react-redux';
-import { editContact, deleteContact, newContact } from '../../state/actions/contactsThunk';
+import { editContact, deleteContact, createContact } from '../../state/actions/contactsThunk';
 
 const nullIfEmpty = string => {
   return string === '' || string === undefined ?
@@ -57,7 +57,7 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
     const contact = generateContact();
 
     creating ?
-    dispatch(newContact(contact)) :
+    dispatch(createContact(contact)) :
     dispatch(editContact(contact));
     
     creating ?
