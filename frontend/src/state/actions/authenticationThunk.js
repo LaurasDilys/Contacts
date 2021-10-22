@@ -12,18 +12,42 @@ export const register = (request) => (dispatch) => {
     .catch((error) => {
       // dispatch(SetNotificationAction({ isOpen: true, message: error.response.data, type: 'error' }));
     });
-};
+}
 
 export const login = (request) => (dispatch) => {
   Api.post('login', request)
     .then(res => {
       dispatch(loginAction({ ...res.data }));
-      history.push('/');
+      history.push('/contacts');
     })
     .catch((error) => {
       // dispatch(SetNotificationAction({ isOpen: true, message: error.response.data, type: 'error' }));
     });
-};
+}
+
+const loginStatus = () => {
+  return Api.post('loginstatus').then(res => res.data);
+}
+
+const newCookie = () => {
+  return Api.post('newcookie')
+    .catch(err => console.log('Login to continue.'));
+}
+
+const setRefreshCookieInterval = () => {
+  setInterval(newCookie, 48000);
+}
+
+export const checkLoginStatus = () => (dispatch) => {
+  loginStatus().then(data => {
+    if (data !== 'NotLoggedIn') {
+      dispatch(loginAction({ ...data }));
+    } else {
+      dispatch(logoutAction());
+    }
+    setRefreshCookieInterval();
+  });
+}
 
 export const logout = () => (dispatch) => {
   Api.post('logout')
@@ -31,22 +55,4 @@ export const logout = () => (dispatch) => {
       dispatch(logoutAction());
       history.push('/login');
     });
-};
-
-export const onStart = () => (dispatch) => {
-  newCookie().then(data => {
-    if (data !== 'NotLoggedIn') {
-      dispatch(loginAction({ ...data }));
-    } else {
-      dispatch(logoutAction());
-    };
-  });
-};
-
-export const newCookie = () => {
-  return Api.post('newcookie').then(res => res.data);
-};
-
-export const refreshCookie = () => {
-  setInterval(newCookie, 48000);
-};
+}

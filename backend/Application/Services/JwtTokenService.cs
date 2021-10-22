@@ -22,7 +22,7 @@ namespace Application.Services
             _options = options.Value;
         }
 
-        public string GenerateJwtToken(string userName) => GenerateJwtToken(userName, false);
+        private string GenerateJwtToken(string userName) => GenerateJwtToken(userName, false);
 
         public string GenerateJwtToken(string userName, bool remember)
         {
@@ -50,7 +50,7 @@ namespace Application.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public CookieOptions GenerateCookieOptions() => GenerateCookieOptions(false);
+        private CookieOptions GenerateCookieOptions() => GenerateCookieOptions(false);
 
         public CookieOptions GenerateCookieOptions(bool remember)
         {
@@ -80,6 +80,24 @@ namespace Application.Services
                 return true;
 
             return false;
+        }
+
+        public void RefreshCookieIfNecessary(string tokenString, HttpContext httpContext)
+        {
+            var userName = UserNameFromToken(tokenString);
+
+            RefreshCookieIfNecessary(tokenString, userName, httpContext);
+        }
+
+        public void RefreshCookieIfNecessary(string tokenString, string userName, HttpContext httpContext)
+        {
+            if (NewCookieIsNecessary(tokenString))
+            {
+                var jwtToken = GenerateJwtToken(userName);
+                var cookieOptions = GenerateCookieOptions();
+
+                httpContext.Response.Cookies.Append("token", jwtToken, cookieOptions);
+            }
         }
     }
 }

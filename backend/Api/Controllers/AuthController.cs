@@ -79,28 +79,35 @@ namespace Api.Controllers
             return Ok(_mapper.ResponseFrom(user));
         }
 
-        [HttpPost(nameof(NewCookie))]
-        public async Task<ActionResult<IUserResponse>> NewCookie()
+        [AllowAnonymous]
+        [HttpPost(nameof(LoginStatus))]
+        public async Task<ActionResult<IUserResponse>> LoginStatus()
         {
-            if (Request.Cookies["token"] is null)
-                StatusCode(StatusCodes.Status403Forbidden,
-                    "NotLoggedIn");
-
             var token = Request.Cookies["token"];
+
+            if (token is null) return Ok("NotLoggedIn");
 
             var userName = _jwtTokenService.UserNameFromToken(token);
 
             var user = await _userService.FindByNameAsync(userName);
 
-            if (_jwtTokenService.NewCookieIsNecessary(token))
-            {
-                var jwtToken = _jwtTokenService.GenerateJwtToken(userName);
-                var cookieOptions = _jwtTokenService.GenerateCookieOptions();
-
-                HttpContext.Response.Cookies.Append("token", jwtToken, cookieOptions);
-            }
+            _jwtTokenService.RefreshCookieIfNecessary(token, userName, HttpContext);
 
             return Ok(_mapper.ResponseFrom(user));
+        }
+
+        [HttpPost(nameof(NewCookie))]
+        public IActionResult NewCookie()
+        {
+            var token = Request.Cookies["token"];
+
+            if (token is null)
+                return StatusCode(StatusCodes.Status403Forbidden,
+                    "NotLoggedIn");
+
+            _jwtTokenService.RefreshCookieIfNecessary(token, HttpContext);
+
+            return Ok();
         }
 
         [HttpPost(nameof(Logout))]

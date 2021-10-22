@@ -1,5 +1,6 @@
 import Contacts from "../Contacts/Contacts";
 import LoginForm from "../LoginForm/LoginForm"
+import Logout from "../Logout/Logout";
 import RegisterForm from "../RegisterForm/RegisterForm";
 
 const Routes = [
@@ -9,7 +10,7 @@ const Routes = [
     position: 'left',
     visibleLoggedIn: true,
     visibleLoggedOut: true,
-    component: Contacts
+    component: () => {return <h1>Home</h1>}
   },
   {
     title: "Contacts",
@@ -41,7 +42,7 @@ const Routes = [
     position: 'right',
     visibleLoggedIn: true,
     visibleLoggedOut: false,
-    component: () => {return <h1>Log Out</h1>}
+    component: Logout
   },
   
 ]
