@@ -4,7 +4,7 @@ import { loginAction, logoutAction } from './authenticationActions';
 import { getContacts } from './contactsThunk';
 // import { SetNotificationAction } from '../actions/notificationsActions';
 
-export const register = (request) => (dispatch) => {
+export const register = (request) => () => {
   Api.post('register', request)
     .then(() => {
       history.push('/login');
@@ -55,6 +55,5 @@ export const logout = () => (dispatch) => {
   Api.post('logout')
     .then(() => {
       dispatch(logoutAction());
-      history.push('/login');
     });
 }
