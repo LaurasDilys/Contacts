@@ -28,23 +28,30 @@ namespace Application.Services
             return await _repository.ExistsAsync(id);
         }
 
-        public async Task<IEnumerable<IContact>> Get(string userId)
+        public async Task<IEnumerable<IContactResponse>> Get(string userId)
         {
-            return await _repository.GetAsync(userId);
+            var contacts = await _repository.GetAsync(userId);
+            var response = new List<IContactResponse>();
+            foreach (var contact in contacts)
+            {
+                response.Add(_mapper.ContactResponseFrom(contact));
+            }
+            return response;
         }
 
-        public async Task<IContact> Create(string userId, ICreateContactRequest request)
+        public async Task<IContactResponse> Create(string userId, ICreateContactRequest request)
         {
-            var contact = _mapper.ContactFrom(userId, request);
-            return await _repository.CreateAsync(contact);
+            var contact = _mapper.NewContactFrom(userId, request);
+            await _repository.CreateAsync(contact);
+            return _mapper.ContactResponseFrom(contact);
         }
 
-        public async Task<IContact> Update(IUpdateContactRequest request)
+        public async Task<IContactResponse> Update(IUpdateContactRequest request)
         {
             var contact = await _repository.GetOneAsync(request.Id);
             _mapper.UpdateContact(contact, request);
             await _repository.SaveChangesAsync();
-            return contact;
+            return _mapper.ContactResponseFrom(contact);
         }
 
         public async Task Delete(string id)

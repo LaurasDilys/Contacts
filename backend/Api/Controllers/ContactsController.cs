@@ -1,4 +1,5 @@
 ﻿using Application.Dto;
+using Business.Interfaces.Dto;
 using Business.Interfaces.Models;
 using Business.Interfaces.Services;
 using Data.Models;
@@ -28,30 +29,30 @@ namespace Api.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet("User/{key}/Contacts", Name = nameof(Get))]
-        public async Task<ActionResult<IEnumerable<IContact>>> Get([FromRoute] string key)
+        [HttpGet("User/{userKey}/Contacts", Name = nameof(Get))]
+        public async Task<ActionResult<IEnumerable<IContactResponse>>> Get([FromRoute] string userKey)
         {
-            if (await _userManager.FindByIdAsync(key) == null)
+            if (await _userManager.FindByIdAsync(userKey) == null)
                 return StatusCode(StatusCodes.Status404NotFound);
 
-            var contacts = await _contactsService.Get(key);
+            var contacts = await _contactsService.Get(userKey);
 
             return Ok(contacts);
         }
 
-        [HttpPost("User/{key}/Contacts/Create", Name = nameof(Create))]
-        public async Task<ActionResult<IContact>> Create([FromRoute] string key, [FromBody] CreateContactRequest request)
+        [HttpPost("User/{userKey}/Contacts/Create", Name = nameof(Create))]
+        public async Task<ActionResult<IContactResponse>> Create([FromRoute] string userKey, [FromBody] CreateContactRequest request)
         {
-            if (await _userManager.FindByIdAsync(key) == null)
+            if (await _userManager.FindByIdAsync(userKey) == null)
                 return StatusCode(StatusCodes.Status404NotFound);
 
-            var newContact = await _contactsService.Create(key, request);
+            var newContact = await _contactsService.Create(userKey, request);
 
             return StatusCode(StatusCodes.Status201Created, newContact);
         }
 
         [HttpPut("Contacts/{key}", Name = nameof(Update))]
-        public async Task<ActionResult<IContact>> Update([FromRoute] string key, [FromBody] UpdateContactRequest request)
+        public async Task<ActionResult<IContactResponse>> Update([FromRoute] string key, [FromBody] UpdateContactRequest request)
         {
             if (!await _contactsService.Exists(key))
                 return StatusCode(StatusCodes.Status404NotFound);

@@ -5,8 +5,9 @@ import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import { useEffect, useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/material.css';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { editContact, deleteContact, createContact } from '../../state/actions/contactsThunk';
+import { userState } from '../../state/selectors';
 
 const nullIfEmpty = string => {
   return string === '' || string === undefined ?
@@ -24,6 +25,7 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
   const [dateAsString, setDateAsString] = useState();
   const [notes, setNotes] = useState(contact.notes);
   const dispatch = useDispatch();
+  const { user } = useSelector(userState);
 
   const generateContact = () => {
     return {
@@ -57,7 +59,7 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
     const contact = generateContact();
 
     creating ?
-    dispatch(createContact(contact)) :
+    dispatch(createContact(user.id, contact)) :
     dispatch(editContact(contact));
     
     creating ?

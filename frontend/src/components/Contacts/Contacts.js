@@ -108,20 +108,17 @@ const sorted = contacts => {
 const Contacts = () => {
   const { contacts: allContacts } = useSelector(contactsState);
   const [creating, setCreating] = useState(false);
-
-  const [contacts, setContacts] = useState(() => {
-    if (allContacts.length > 0) allContacts[0].selected = true;
-    return sorted(allContacts);
-  });
+  const [contacts, setContacts] = useState([]);
   const [filteredContacts, setFilteredContacts] = useState(contacts);
   const [search, setSearch] = useState();
   const [contactsListHeight, setContactsListHeight] = useState();
   const contactsListRef = useRef();
 
-  useEffect(() => { // when contactsState is updated (create / update / delete)
+  useEffect(() => { // when contactsState is updated: initial render / create / update / delete
     const updatedState = sorted(allContacts);
-    if (updatedState.length > 0 && updatedState.length < contacts.length) {
-    // if a contact has been deleted, but there still are contacts left
+    if (updatedState.length > 0 && !updatedState.some(c => c.selected)) {
+      // if there are contacts and none are selected
+      // select first
       updatedState[0].selected = true;
     }
     setContacts(updatedState);
@@ -158,7 +155,7 @@ const Contacts = () => {
     const newState = contacts.filter(c =>
       c.firstName?.toLocaleLowerCase().includes(value) ||
       c.lastName?.toLocaleLowerCase().includes(value));
-    if (!newState.some(c => c.selected === true)) {
+    if (!newState.some(c => c.selected)) {
       contacts.forEach(c => c.selected = false);
       if (newState.length > 0) newState[0].selected = true;
     }

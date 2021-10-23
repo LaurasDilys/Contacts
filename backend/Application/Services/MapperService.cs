@@ -24,10 +24,11 @@ namespace Application.Services
             };
         }
 
-        public Contact ContactFrom(string userId, ICreateContactRequest request)
+        public Contact NewContactFrom(string userId, ICreateContactRequest request)
         {
             return new Contact
             {
+                Id = Guid.NewGuid().ToString(),
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 PhoneNumber = request.PhoneNumber,
@@ -50,6 +51,22 @@ namespace Application.Services
             contact.AlternativeEmail = request.AlternativeEmail;
             contact.DateOfBirth = request.DateOfBirth;
             contact.Notes = request.Notes;
+        }
+
+        public IContactResponse ContactResponseFrom(IContact contact)
+        {
+            return new ContactResponse
+            {
+                Id = contact.Id,
+                FirstName = contact.FirstName,
+                LastName = contact.LastName,
+                PhoneNumber = contact.PhoneNumber,
+                AlternativePhoneNumber = contact.AlternativePhoneNumber,
+                Email = contact.Email,
+                AlternativeEmail = contact.AlternativeEmail,
+                DateOfBirth = contact.DateOfBirth,
+                Notes = contact.Notes
+            };
         }
     }
 }

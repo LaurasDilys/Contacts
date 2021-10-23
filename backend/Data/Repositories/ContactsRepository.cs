@@ -27,7 +27,10 @@ namespace Data.Repositories
 
         public async Task<IEnumerable<IContact>> GetAsync(string userId)
         {
-            var user = await _context.Users.FindAsync(userId);
+            var user = await _context.Users
+                .Include(x => x.Contacts)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
             return user.Contacts;
         }
 
@@ -37,11 +40,10 @@ namespace Data.Repositories
             return contact;
         }
         
-        public async Task<IContact> CreateAsync(Contact contact)
+        public async Task CreateAsync(Contact contact)
         {
             await _context.Contacts.AddAsync(contact);
             await SaveChangesAsync();
-            return contact;
         }
 
         public async Task DeleteAsync(string id)

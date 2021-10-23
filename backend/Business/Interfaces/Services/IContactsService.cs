@@ -11,9 +11,9 @@ namespace Business.Interfaces.Services
     public interface IContactsService
     {
         public Task<bool> Exists(string key);
-        public Task<IEnumerable<IContact>> Get(string userKey);
-        public Task<IContact> Create(string userId, ICreateContactRequest request);
-        public Task<IContact> Update(IUpdateContactRequest request);
+        public Task<IEnumerable<IContactResponse>> Get(string userKey);
+        public Task<IContactResponse> Create(string userId, ICreateContactRequest request);
+        public Task<IContactResponse> Update(IUpdateContactRequest request);
         public Task Delete(string key);
     }
 }

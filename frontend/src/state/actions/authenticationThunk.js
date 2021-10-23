@@ -1,6 +1,7 @@
 import Api from '../../domain/Api';
 import { history } from '../../components/AppRouter/AppRouter';
 import { loginAction, logoutAction } from './authenticationActions';
+import { getContacts } from './contactsThunk';
 // import { SetNotificationAction } from '../actions/notificationsActions';
 
 export const register = (request) => (dispatch) => {
@@ -18,7 +19,7 @@ export const login = (request) => (dispatch) => {
   Api.post('login', request)
     .then(res => {
       dispatch(loginAction({ ...res.data }));
-      history.push('/contacts');
+      dispatch(getContacts(res.data.id));
     })
     .catch((error) => {
       // dispatch(SetNotificationAction({ isOpen: true, message: error.response.data, type: 'error' }));
@@ -42,6 +43,7 @@ export const checkLoginStatus = () => (dispatch) => {
   loginStatus().then(data => {
     if (data !== 'NotLoggedIn') {
       dispatch(loginAction({ ...data }));
+      dispatch(getContacts(data.id));
     } else {
       dispatch(logoutAction());
     }
