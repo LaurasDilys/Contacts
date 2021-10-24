@@ -95,68 +95,88 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
         <Divider />
       </div>
 
-      <div style={{ height: scrollAreaHeight, overflowY: 'auto', paddingRight: 80 }}>
-        <Tooltip title={noFirstName() ? "First name is required" : ""}>
+      <div style={{height: scrollAreaHeight, overflowY: 'auto'}}>
+        <div className='contact-edit-row'>
+          <Tooltip title={noFirstName() ? "First name is required" : ""}>
+            <TextField
+              error={noFirstName()}
+              label='First Name'
+              value={firstName}
+              onChange={e => setFirstName(e.target.value)}
+            />
+          </Tooltip>
           <TextField
-            error={noFirstName()}
-            label='First Name'
-            value={firstName}
-            onChange={e => setFirstName(e.target.value)}
+            label='Last Name'
+            value={lastName}
+            onChange={e => setLastName(e.target.value)}
           />
-        </Tooltip>
+        </div>
 
-        <TextField
-          label='Last Name'
-          value={lastName}
-          onChange={e => setLastName(e.target.value)}
-        />
+        <div className='contact-edit-row'>
+          <div>
+            <PhoneInput
+              inputStyle={{
+                width:'250px'
+              }}
+              specialLabel='Phone Number'
+              country='lt'
+              value={phoneNumber}
+              onChange={setPhoneNumber}
+              masks={{lt: '(...) .....'}}
+            />
+          </div>
+          <div>
+            <PhoneInput
+              inputStyle={{width:'250px'}}
+              specialLabel='Alternative Phone Number'
+              country='lt'
+              value={altPhoneNumber}
+              onChange={setAltPhoneNumber}
+              masks={{lt: '(...) .....'}}
+            />
+          </div>
+        </div>
 
-        <PhoneInput
-          specialLabel='Phone Number'
-          country='lt'
-          value={phoneNumber}
-          onChange={setPhoneNumber}
-          masks={{lt: '(...) .....'}}
-        />
-
-        <PhoneInput
-          specialLabel='Alternative Phone Number'
-          country='lt'
-          value={altPhoneNumber}
-          onChange={setAltPhoneNumber}
-          masks={{lt: '(...) .....'}}
-        />
-
-        <TextField
-          label='Email'
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
-        <br/>
-        <TextField
-          label='Alternative Email'
-          value={altEmail}
-          onChange={e => setAltEmail(e.target.value)}
-        />
-        <br/>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DesktopDatePicker
-            label='Date of Birth'
-            inputFormat='yyyy/MM/dd'
-            mask='____/__/__'
-            value={dateOfBirth}
-            onChange={setDateOfBirth}
-            renderInput={(params) => <TextField {...params} />}
+        <div className='contact-edit-row'>
+          <TextField
+            className='contact-edit-field'
+            label='Email'
+            value={email}
+            onChange={e => setEmail(e.target.value)}
           />
-        </LocalizationProvider>
-        <br/>
-        <TextField
-          label="Notes"
-          multiline
-          rows={4}
-          value={notes}
-          onChange={e => setNotes(e.target.value)}
-        />
+          <TextField
+            className='contact-edit-field'
+            label='Alternative Email'
+            value={altEmail}
+            onChange={e => setAltEmail(e.target.value)}
+          />
+        </div>
+
+        <div className='contact-edit-row'>
+          <div className='date-div date-div'>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DesktopDatePicker
+                label='Date of Birth'
+                inputFormat='yyyy/MM/dd'
+                mask='____/__/__'
+                value={dateOfBirth}
+                onChange={setDateOfBirth}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+          </div>
+        </div>
+        
+        <div className='contact-edit-row notes-div'>
+          <TextField
+            fullWidth
+            label="Notes"
+            multiline
+            rows={6}
+            value={notes}
+            onChange={e => setNotes(e.target.value)}
+          />
+        </div>
       </div>
     </div>
   );
