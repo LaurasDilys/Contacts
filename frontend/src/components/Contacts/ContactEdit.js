@@ -14,7 +14,7 @@ const nullIfEmpty = string => {
   null : string;
 }
 
-const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCancelNew }) => {
+const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCancelNew, scrollAreaHeight }) => {
   const [firstName, setFirstName] = useState(contact.firstName);
   const [lastName, setLastName] = useState(contact.lastName);
   const [phoneNumber, setPhoneNumber] = useState(contact.phoneNumber);
@@ -95,68 +95,69 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
         <Divider />
       </div>
 
-      <Tooltip title={noFirstName() ? "First name is required" : ""}>
+      <div style={{ height: scrollAreaHeight, overflowY: 'auto', paddingRight: 80 }}>
+        <Tooltip title={noFirstName() ? "First name is required" : ""}>
+          <TextField
+            error={noFirstName()}
+            label='First Name'
+            value={firstName}
+            onChange={e => setFirstName(e.target.value)}
+          />
+        </Tooltip>
+
         <TextField
-          error={noFirstName()}
-          label='First Name'
-          value={firstName}
-          onChange={e => setFirstName(e.target.value)}
+          label='Last Name'
+          value={lastName}
+          onChange={e => setLastName(e.target.value)}
         />
-      </Tooltip>
 
-      <TextField
-        label='Last Name'
-        value={lastName}
-        onChange={e => setLastName(e.target.value)}
-      />
-
-      <PhoneInput
-        specialLabel='Phone Number'
-        country='lt'
-        value={phoneNumber}
-        onChange={setPhoneNumber}
-        masks={{lt: '(...) .....'}}
-      />
-
-      <PhoneInput
-        specialLabel='Alternative Phone Number'
-        country='lt'
-        value={altPhoneNumber}
-        onChange={setAltPhoneNumber}
-        masks={{lt: '(...) .....'}}
-      />
-
-      <TextField
-        label='Email'
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      />
-      <br/>
-      <TextField
-        label='Alternative Email'
-        value={altEmail}
-        onChange={e => setAltEmail(e.target.value)}
-      />
-      <br/>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <DesktopDatePicker
-          label='Date Of Birth'
-          inputFormat='yyyy/MM/dd'
-          mask='____/__/__'
-          value={dateOfBirth}
-          onChange={setDateOfBirth}
-          renderInput={(params) => <TextField {...params} />}
+        <PhoneInput
+          specialLabel='Phone Number'
+          country='lt'
+          value={phoneNumber}
+          onChange={setPhoneNumber}
+          masks={{lt: '(...) .....'}}
         />
-      </LocalizationProvider>
-      <br/>
-      <TextField
-        label="Notes"
-        multiline
-        rows={4}
-        value={notes}
-        onChange={e => setNotes(e.target.value)}
-      />
 
+        <PhoneInput
+          specialLabel='Alternative Phone Number'
+          country='lt'
+          value={altPhoneNumber}
+          onChange={setAltPhoneNumber}
+          masks={{lt: '(...) .....'}}
+        />
+
+        <TextField
+          label='Email'
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+        />
+        <br/>
+        <TextField
+          label='Alternative Email'
+          value={altEmail}
+          onChange={e => setAltEmail(e.target.value)}
+        />
+        <br/>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DesktopDatePicker
+            label='Date of Birth'
+            inputFormat='yyyy/MM/dd'
+            mask='____/__/__'
+            value={dateOfBirth}
+            onChange={setDateOfBirth}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+        <br/>
+        <TextField
+          label="Notes"
+          multiline
+          rows={4}
+          value={notes}
+          onChange={e => setNotes(e.target.value)}
+        />
+      </div>
     </div>
   );
 };

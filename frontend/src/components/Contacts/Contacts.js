@@ -111,7 +111,8 @@ const Contacts = () => {
   const [contacts, setContacts] = useState([]);
   const [filteredContacts, setFilteredContacts] = useState(contacts);
   const [search, setSearch] = useState();
-  const [contactsListHeight, setContactsListHeight] = useState();
+  const [scrollAreaHeight, setScrollAreaHeight] = useState();
+  const [scrollBarWidth, setScrollBarWidth] = useState(0);
   const contactsListRef = useRef();
 
   useEffect(() => { // when contactsState is updated: initial render / create / update / delete
@@ -125,16 +126,17 @@ const Contacts = () => {
     setFilteredContacts(updatedState);
   }, [allContacts])
 
-  const setCLH = () => {
-    setContactsListHeight(window.innerHeight
-      - contactsListRef.current.offsetTop - 17);
+  const handleResize = () => {
+    if (scrollBarWidth === 0 && window.innerWidth - document.documentElement.clientWidth > 0) {
+      setScrollBarWidth(window.innerWidth - document.documentElement.clientWidth); // sets scrollBarWidth only once
+    }
+    const xScrollBar = document.body.scrollWidth > window.innerWidth ? scrollBarWidth : 0;
+    setScrollAreaHeight(window.innerHeight - contactsListRef.current.offsetTop
+      - xScrollBar);
   };
 
   useEffect(() => {
-    setCLH();
-    const handleResize = () => {
-      setCLH();
-    }
+    handleResize();
     window.addEventListener('resize', handleResize);
     return _ => {
       window.removeEventListener('resize', handleResize);
@@ -204,7 +206,7 @@ const Contacts = () => {
         />
         <List
           sx={contactsListStyle}
-          style={{ height: contactsListHeight, overflowY: 'auto' }}
+          style={{ height: scrollAreaHeight - scrollBarWidth, overflowY: 'auto' }}
           ref={contactsListRef}
         >
           {filteredContacts.map(c =>
@@ -223,6 +225,8 @@ const Contacts = () => {
           handleSaveNew={handleSaveNew}
           handleCancelNew={handleCancelNew}
           contact={creating ? generateNewContact() : contacts.find(c => c.selected)}
+          scrollAreaHeight={scrollAreaHeight}
+          scrollBarWidth={scrollBarWidth}
         />
       </div>
 
