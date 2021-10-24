@@ -127,7 +127,6 @@ const Contacts = () => {
   const [scrollBarWidth, setScrollBarWidth] = useState(0);
   const contactsListRef = useRef(null);
   const contactAreaDivRef = useRef(null);
-  const contactAreaSize = useSize(contactAreaDivRef);
 
   useEffect(() => { // when contactsState is updated: initial render / create / update / delete
     const updatedState = sorted(allContacts);
@@ -146,7 +145,7 @@ const Contacts = () => {
     }
     const xScrollBar = document.body.scrollWidth > window.innerWidth ? scrollBarWidth : 0;
     setScrollAreaHeight(window.innerHeight - contactsListRef.current.offsetTop
-      - xScrollBar - 1);
+      - xScrollBar - 2);
   };
 
   useEffect(() => {
@@ -154,6 +153,8 @@ const Contacts = () => {
     return _ => {
       window.removeEventListener('resize', handleResize);
   }}, []);
+
+  const contactAreaSize = useSize(contactAreaDivRef);
 
   useEffect(() => {
     handleResize();
@@ -223,7 +224,7 @@ const Contacts = () => {
         />
         <List
           sx={contactsListStyle}
-          style={{ height: scrollAreaHeight - scrollBarWidth + 1, overflowY: 'auto' }}
+          style={{ height: scrollAreaHeight - scrollBarWidth + 2, overflowY: 'auto' }}
           ref={contactsListRef}
         >
           {filteredContacts.map(c =>

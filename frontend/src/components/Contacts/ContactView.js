@@ -251,7 +251,7 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
         />
         <List
           sx={usersListStyle}
-          style={{ height: scrollAreaHeight - scrollBarWidth + 1, overflowY: 'auto' }}
+          style={{ height: scrollAreaHeight - scrollBarWidth + 2, overflowY: 'auto' }}
           // ref={usersListRef}
         >
         {/* filteredUsers */}
