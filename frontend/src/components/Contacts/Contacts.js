@@ -140,7 +140,7 @@ const Contacts = () => {
     window.addEventListener('resize', handleResize);
     return _ => {
       window.removeEventListener('resize', handleResize);
-  }});
+  }}, []);
 
   const handleSelect = id => {
     setCreating(false);
