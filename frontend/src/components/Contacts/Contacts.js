@@ -121,7 +121,7 @@ const Contacts = () => {
   const { contacts: allContacts } = useSelector(contactsState);
   const [creating, setCreating] = useState(false);
   const [contacts, setContacts] = useState([]);
-  const [filteredContacts, setFilteredContacts] = useState(contacts);
+  const [filteredContacts, setFilteredContacts] = useState([]);
   const [search, setSearch] = useState();
   const [scrollAreaHeight, setScrollAreaHeight] = useState();
   const [scrollBarWidth, setScrollBarWidth] = useState(0);
@@ -188,10 +188,10 @@ const Contacts = () => {
     searchResult(value);
   };
 
-  useEffect(() => {
-    (search === undefined && contacts.length > 0) &&
-    (contacts[0].selected = true);
-  }, [search])
+  // useEffect(() => {
+  //   (search === undefined && contacts.length > 0) &&
+  //   (contacts[0].selected = true);
+  // }, [search])
 
   const handleNew = () => {
     searchResult('');
