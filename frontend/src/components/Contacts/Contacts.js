@@ -1,10 +1,11 @@
 import './Contacts.css';
 import { Divider, Input, InputAdornment, List, ListItem, ListItemText, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import ContactArea from './ContactArea';
 import { useSelector } from 'react-redux';
 import { contactsState } from '../../state/selectors';
+import useResizeObserver from '@react-hook/resize-observer'
 
 //
 //
@@ -68,15 +69,16 @@ import { contactsState } from '../../state/selectors';
 //
 //
 
-const searchFieldStyle = {
-  width: 300,
-  marginTop: 1,
-};
+const useSize = (target) => {
+  const [size, setSize] = useState()
 
-const contactsListStyle = {
-  width: 300,
-  bgcolor: 'background.paper',
-};
+  useLayoutEffect(() => {
+    setSize(target.current.getBoundingClientRect())
+  }, [target])
+
+  useResizeObserver(target, (entry) => setSize(entry.contentRect))
+  return size;
+}
 
 const getFullName = (firstName, lastName) => {
   let fullName = '';
@@ -105,7 +107,15 @@ const sorted = contacts => {
   return contacts;
 }
 
-export const xScrollBar = width => {return document.body.scrollWidth > window.innerWidth ? width : 0}
+const searchFieldStyle = {
+  width: 300,
+  marginTop: 1,
+};
+
+const contactsListStyle = {
+  width: 300,
+  bgcolor: 'background.paper',
+};
 
 const Contacts = () => {
   const { contacts: allContacts } = useSelector(contactsState);
@@ -115,7 +125,9 @@ const Contacts = () => {
   const [search, setSearch] = useState();
   const [scrollAreaHeight, setScrollAreaHeight] = useState();
   const [scrollBarWidth, setScrollBarWidth] = useState(0);
-  const contactsListRef = useRef();
+  const contactsListRef = useRef(null);
+  const contactAreaDivRef = useRef(null);
+  const contactAreaSize = useSize(contactAreaDivRef);
 
   useEffect(() => { // when contactsState is updated: initial render / create / update / delete
     const updatedState = sorted(allContacts);
@@ -134,7 +146,7 @@ const Contacts = () => {
     }
     const xScrollBar = document.body.scrollWidth > window.innerWidth ? scrollBarWidth : 0;
     setScrollAreaHeight(window.innerHeight - contactsListRef.current.offsetTop
-      - xScrollBar);
+      - xScrollBar - 1);
   };
 
   useEffect(() => {
@@ -211,7 +223,7 @@ const Contacts = () => {
         />
         <List
           sx={contactsListStyle}
-          style={{ height: scrollAreaHeight - scrollBarWidth, overflowY: 'auto' }}
+          style={{ height: scrollAreaHeight - scrollBarWidth + 1, overflowY: 'auto' }}
           ref={contactsListRef}
         >
           {filteredContacts.map(c =>
@@ -224,7 +236,7 @@ const Contacts = () => {
         </List>
       </div>
 
-      <div className='flex-grow-1'>
+      <div className='flex-grow-1' ref={contactAreaDivRef}>
         <ContactArea
           handleNew={handleNew}
           handleSaveNew={handleSaveNew}
