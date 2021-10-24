@@ -105,6 +105,8 @@ const sorted = contacts => {
   return contacts;
 }
 
+export const xScrollBar = width => {return document.body.scrollWidth > window.innerWidth ? width : 0}
+
 const Contacts = () => {
   const { contacts: allContacts } = useSelector(contactsState);
   const [creating, setCreating] = useState(false);
@@ -136,11 +138,14 @@ const Contacts = () => {
   };
 
   useEffect(() => {
-    handleResize();
     window.addEventListener('resize', handleResize);
     return _ => {
       window.removeEventListener('resize', handleResize);
   }}, []);
+
+  useEffect(() => {
+    handleResize();
+  });
 
   const handleSelect = id => {
     setCreating(false);

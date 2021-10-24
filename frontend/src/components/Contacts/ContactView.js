@@ -126,7 +126,7 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
           <div>
             <Button onClick={() => {
               // if x axis overflows
-              scrollX({ left: -300 });
+              scrollX({ left: -1000 });
               setSharing(false);
             }}>
               {/* change to: handle cancel share */}
@@ -146,7 +146,7 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
             </Button>
             <Button onClick={() => {
               // if x axis overflows
-              scrollX({ left: 300, behavior: 'smooth' });
+              scrollX({ left: 1000, behavior: 'smooth' });
               setSharing(true);
             }}>
               <span className='button-span'>Share</span>
