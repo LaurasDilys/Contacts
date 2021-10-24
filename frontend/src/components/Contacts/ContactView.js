@@ -1,10 +1,10 @@
 import './Contacts.css'
 import { Avatar, Button, Divider, Input, InputAdornment, List, ListItem, ListItemText, TextField } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
-import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import PhoneInput from 'react-phone-input-2';
 import { useEffect, useRef, useState } from 'react';
 import Description from './Description';
+import UsersList from './UsersList';
 
 const stringToColor = string => {
   let hash = 0;
@@ -40,20 +40,17 @@ const initialsAvatar = (firstName, lastName) => {
   };
 }
 
-const searchFieldStyle = {
-  width: 300,
-  marginTop: 1,
-};
-
-const usersListStyle = {
-  width: 300,
-  bgcolor: 'background.paper',
-};
-
 //
 //
 //
 const mockUsers = [
+  {
+    id: 'c',
+    userName: 'TheRealCicinas',
+    firstName: 'Cicinas',
+    lastName: null,
+    selected: false
+  },
   {
     id: 'a',
     userName: '420bleizit',
@@ -69,13 +66,6 @@ const mockUsers = [
     selected: false
   },
   {
-    id: 'c',
-    userName: 'TheRealCicinas',
-    firstName: 'Cicinas',
-    lastName: null,
-    selected: false
-  },
-  {
     id: 'd',
     userName: 'den_den',
     firstName: 'Denas',
@@ -86,9 +76,9 @@ const mockUsers = [
 //
 //
 //
-const noneAreSelected = array => {
-  return array.some(item => item.selected) ? false : true;
-}
+// const noneAreSelected = array => {
+//   return array.some(item => item.selected) ? false : true;
+// }
 //
 //
 //
@@ -97,11 +87,9 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
   const [formattedNumber, setFormattedNumber] = useState();
   const [formattedAltNumber, setFormattedAltNumber] = useState();
   const [sharing, setSharing] = useState(false);
-  //
-  const [users, setUsers] = useState(mockUsers);
-  //
   const phoneInputRef = useRef(null);
   const altPhoneInputRef = useRef(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -132,8 +120,8 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
               {/* change to: handle cancel share */}
               <span className='button-span'>Cancel</span>
             </Button>
-            <Button disabled={noneAreSelected(users)}>
-              <span className='button-span'>Share Contact</span>
+            <Button disabled={selectedUserId === null}>
+              <span className='button-span'>Share Contact {selectedUserId}</span>
             </Button>
           </div> :
           <div>
@@ -239,31 +227,12 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
       
       {sharing &&
       <div className='users-area'>
-        <Input
-          sx={searchFieldStyle}
-          // value={search}
-          // onChange={handleSearch}
-          placeholder='Search Users'
-          startAdornment={
-            <InputAdornment position='start' style={{marginLeft: 12}}>
-              <PersonSearchIcon />
-            </InputAdornment>}
+        <UsersList
+          users={mockUsers}
+          setSelectedUserId={setSelectedUserId}
+          scrollAreaHeight={scrollAreaHeight}
+          scrollBarWidth={scrollBarWidth}
         />
-        <List
-          sx={usersListStyle}
-          style={{ height: scrollAreaHeight - scrollBarWidth + 2, overflowY: 'auto' }}
-          // ref={usersListRef}
-        >
-        {/* filteredUsers */}
-          {users.map(u =>
-          <div key={u.id}>
-            <ListItem selected={u.selected} /*onClick={() => handleSelect(u.id)}*/>
-                                          {/* filteredUsers */}
-              <ListItemText primary={`${u.firstName} ${u.lastName}`} secondary={u.userName} />
-            </ListItem>
-            <Divider />
-          </div>)}
-        </List>
       </div>}
     </div>
   );
