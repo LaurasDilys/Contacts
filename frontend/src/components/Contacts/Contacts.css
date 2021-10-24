@@ -28,6 +28,7 @@
 .name-div {
   /* background-color: aquamarine; */
   margin: auto 0;
+  white-space: nowrap;
 }
 
 .contact-entry-description {
@@ -47,6 +48,7 @@
 .contact-entry {
   /* background-color: coral; */
   margin: 0 0 var(--contact-entry-margin-bottom) 0;
+  min-width: 400px;
   max-width: 800px;
 }
 
@@ -61,4 +63,14 @@
 
 .contact-entry a:active {
   color: #1565c0; /* mui blue 800 */
+}
+
+.contact-area {
+  /* background-color: gold; */
+  flex-grow: 1;
+}
+
+.users-area {
+  /* background-color: aqua; */
+  justify-self: flex-end;
 }
