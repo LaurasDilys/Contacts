@@ -127,6 +127,7 @@ const Contacts = () => {
   const [scrollBarWidth, setScrollBarWidth] = useState(0);
   const contactsListRef = useRef(null);
   const contactAreaDivRef = useRef(null);
+  const contactAreaSize = useSize(contactAreaDivRef);
 
   useEffect(() => { // when contactsState is updated: initial render / create / update / delete
     const updatedState = sorted(allContacts);
@@ -153,8 +154,6 @@ const Contacts = () => {
     return _ => {
       window.removeEventListener('resize', handleResize);
   }}, []);
-
-  const contactAreaSize = useSize(contactAreaDivRef);
 
   useEffect(() => {
     handleResize();
@@ -238,6 +237,19 @@ const Contacts = () => {
       </div>
 
       <div className='flex-grow-1' ref={contactAreaDivRef}>
+
+        {/* received.any()
+              && snackbar: 'You have received a new contact, theat needs to be confirmed.'
+                           'You have received new contacts, theat need to be confirmed.'
+        
+        {received ?
+        //BTN: Remove this contact || Confirm All - Confirm this contact - Reject this contact
+        <ReceivedContact              unconfirmed={unconfirmed} /> :
+        //
+        //
+        //<ContactArea ...props />
+        */}
+
         <ContactArea
           handleNew={handleNew}
           handleSaveNew={handleSaveNew}
