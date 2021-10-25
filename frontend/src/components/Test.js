@@ -1,15 +1,28 @@
-import { Button } from '@mui/material';
-import { onConfirm } from '../components/ConfirmAlert/ConfirmAlert'
+import Chip from '@mui/material/Chip';
+
+const stringToColor = string => {
+  let hash = 0;
+  let i;
+
+  for (i = 0; i < string.length; i++) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  let color = '#';
+
+  for (i = 0; i < 3; i++) {
+    const value = (hash >> (i * 8)) & 0xff;
+    color += `00${value.toString(16)}`.substr(-2);
+  }
+
+  return color;
+}
 
 const Test = () => {
 
-  const handleConfirm = () => {
-    alert('confirmed')
-  }
-
   return (
     <div style={{display: 'flex', justifyContent: 'center', height: '100vh'}}>
-      <Button onClick={() => onConfirm('stop sharing this contact', handleConfirm)}>Confirm dialog</Button>
+      <Chip label='test' sx={{bgcolor: stringToColor('test'), color: 'white'}} onDelete={() => {}} />
     </div>
   );
 }
