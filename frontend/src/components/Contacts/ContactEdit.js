@@ -8,6 +8,7 @@ import 'react-phone-input-2/lib/material.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { editContact, deleteContact, createContact } from '../../state/actions/contactsThunk';
 import { userState } from '../../state/selectors';
+import { onConfirm } from '../ConfirmAlert/ConfirmAlert';
 
 const nullIfEmpty = string => {
   return string === '' || string === undefined ?
@@ -89,7 +90,10 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
         </Button>
         <Button onClick={handleCancel}>Cancel</Button>
         {!creating &&
-        <Button color='error' onClick={handleDelete}>
+        <Button
+          color='error'
+          onClick={() => onConfirm('delete this contact', handleDelete)}
+        >
           <span className='button-span'>Delete</span>
         </Button>}
         <Divider />
