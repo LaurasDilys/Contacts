@@ -9,12 +9,12 @@ const getFullName = (firstName, lastName) => {
   return fullName;
 }
 
-const sorted = contacts => {
-  contacts.sort((a, b) =>
+const sorted = users => {
+  users.sort((a, b) =>
   a.firstName.localeCompare(b.firstName) || // first sorts by firstName
   a.lastName.localeCompare(b.lastName) || // then by lastName
   a.userName.localeCompare(b.lastName)) // then by userName
-  return contacts;
+  return users;
 }
 
 const searchFieldStyle = {
@@ -29,55 +29,50 @@ const usersListStyle = {
 
 const UsersList = ({ users, setSelectedUserId, scrollAreaHeight, scrollBarWidth }) => {
   //
-  const allContacts = users;
+  // const users = usersFromProps;
   //
-  const [contacts, setContacts] = useState([]);
-  const [filteredContacts, setFilteredContacts] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [search, setSearch] = useState();
 
-  useEffect(() => { // when contactsState is updated: initial render / create / update / delete
-    const updatedState = sorted(allContacts);
-    const selected = allContacts.find(c => c.selected);
-    //
-    console.log(selected === undefined ? null : selected.id)
-    //
+  useEffect(() => { // initial render / users change
+    const updatedState = sorted(users);
+    const selected = users.find(c => c.selected);
     setSelectedUserId(selected === undefined ? null : selected.id);
     if (updatedState.length > 0 && selected === undefined) {
-      // if there are contacts and none are selected
+      // if there are users and none are selected
       // select first
       updatedState[0].selected = true;
       setSelectedUserId(updatedState[0].id);
-      //
-      console.log(updatedState[0].id)
     }
-    setContacts(updatedState);
-    setFilteredContacts(updatedState);
-  }, [allContacts])
+    setAllUsers(updatedState);
+    setFilteredUsers(updatedState);
+  }, [users])
 
   const handleSelect = id => {
-    const newState = contacts.map(c => {
+    const newState = allUsers.map(c => {
       if (c.id === id) c.selected = true;
       else c.selected = false;
       return c;
     })
-    setContacts(newState);
+    setAllUsers(newState);
     setSelectedUserId(id);
   };
 
   const searchResult = value => {
     setSearch(value);
-    const newState = contacts.filter(c =>
+    const newState = allUsers.filter(c =>
       c.firstName?.toLocaleLowerCase().includes(value) ||
       c.lastName?.toLocaleLowerCase().includes(value) ||
       c.userName?.toLocaleLowerCase().includes(value));
     if (!newState.some(c => c.selected)) {
-      contacts.forEach(c => c.selected = false);
+      users.forEach(c => c.selected = false);
       if (newState.length > 0) {
         newState[0].selected = true;
         setSelectedUserId(newState[0].id);
       } else setSelectedUserId(null);
     }
-    setFilteredContacts(newState);
+    setFilteredUsers(newState);
   }
 
   const handleSearch = ({ target }) => {
@@ -101,10 +96,9 @@ const UsersList = ({ users, setSelectedUserId, scrollAreaHeight, scrollBarWidth 
         sx={usersListStyle}
         style={{ height: scrollAreaHeight - scrollBarWidth + 2, overflowY: 'auto' }}
       >
-        {filteredContacts.map(u =>
+        {filteredUsers.map(u =>
         <div key={u.id}>
           <ListItem selected={u.selected} onClick={() => handleSelect(u.id)}>
-                                        {/* filteredUsers */}
             <ListItemText primary={getFullName(u.firstName, u.lastName)} secondary={u.userName} />
           </ListItem>
           <Divider />
