@@ -1,14 +1,12 @@
-﻿using Business.Interfaces.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data.Models
+namespace Business.Interfaces.Dto
 {
-    public class Contact : IContact
+    public interface IContactResponse
     {
         public string Id { get; set; }
         public string FirstName { get; set; }
@@ -19,8 +17,5 @@ namespace Data.Models
         public string AlternativeEmail { get; set; }
         public string DateOfBirth { get; set; }
         public string Notes { get; set; }
-
-        public string CreatorId { get; set; }
-        public User Creator { get; set; }
     }
 }

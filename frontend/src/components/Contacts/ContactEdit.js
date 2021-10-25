@@ -5,15 +5,17 @@ import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import { useEffect, useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/material.css';
-import { useDispatch } from 'react-redux';
-import { editContact, deleteContact, newContact } from '../../state/actions/contactsThunk';
+import { useDispatch, useSelector } from 'react-redux';
+import { editContact, deleteContact, createContact } from '../../state/actions/contactsThunk';
+import { userState } from '../../state/selectors';
+import { onConfirm } from '../ConfirmAlert/ConfirmAlert';
 
 const nullIfEmpty = string => {
   return string === '' || string === undefined ?
   null : string;
 }
 
-const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCancelNew }) => {
+const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCancelNew, scrollAreaHeight }) => {
   const [firstName, setFirstName] = useState(contact.firstName);
   const [lastName, setLastName] = useState(contact.lastName);
   const [phoneNumber, setPhoneNumber] = useState(contact.phoneNumber);
@@ -24,6 +26,7 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
   const [dateAsString, setDateAsString] = useState();
   const [notes, setNotes] = useState(contact.notes);
   const dispatch = useDispatch();
+  const { user } = useSelector(userState);
 
   const generateContact = () => {
     return {
@@ -57,7 +60,7 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
     const contact = generateContact();
 
     creating ?
-    dispatch(newContact(contact)) :
+    dispatch(createContact(user.id, contact)) :
     dispatch(editContact(contact));
     
     creating ?
@@ -87,74 +90,98 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
         </Button>
         <Button onClick={handleCancel}>Cancel</Button>
         {!creating &&
-        <Button color='error' onClick={handleDelete}>
+        <Button
+          color='error'
+          onClick={() => onConfirm('delete this contact', handleDelete)}
+        >
           <span className='button-span'>Delete</span>
         </Button>}
         <Divider />
       </div>
 
-      <Tooltip title={noFirstName() ? "First name is required" : ""}>
-        <TextField
-          error={noFirstName()}
-          label='First Name'
-          value={firstName}
-          onChange={e => setFirstName(e.target.value)}
-        />
-      </Tooltip>
+      <div style={{height: scrollAreaHeight, overflowY: 'auto'}}>
+        <div className='contact-edit-row'>
+          <Tooltip title={noFirstName() ? "First name is required" : ""}>
+            <TextField
+              error={noFirstName()}
+              label='First Name'
+              value={firstName}
+              onChange={e => setFirstName(e.target.value)}
+            />
+          </Tooltip>
+          <TextField
+            label='Last Name'
+            value={lastName}
+            onChange={e => setLastName(e.target.value)}
+          />
+        </div>
 
-      <TextField
-        label='Last Name'
-        value={lastName}
-        onChange={e => setLastName(e.target.value)}
-      />
+        <div className='contact-edit-row'>
+          <div>
+            <PhoneInput
+              inputStyle={{
+                width:'250px'
+              }}
+              specialLabel='Phone Number'
+              country='lt'
+              value={phoneNumber}
+              onChange={setPhoneNumber}
+              masks={{lt: '(...) .....'}}
+            />
+          </div>
+          <div>
+            <PhoneInput
+              inputStyle={{width:'250px'}}
+              specialLabel='Alternative Phone Number'
+              country='lt'
+              value={altPhoneNumber}
+              onChange={setAltPhoneNumber}
+              masks={{lt: '(...) .....'}}
+            />
+          </div>
+        </div>
 
-      <PhoneInput
-        specialLabel='Phone Number'
-        country='lt'
-        value={phoneNumber}
-        onChange={setPhoneNumber}
-        masks={{lt: '(...) .....'}}
-      />
+        <div className='contact-edit-row'>
+          <TextField
+            className='contact-edit-field'
+            label='Email'
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+          <TextField
+            className='contact-edit-field'
+            label='Alternative Email'
+            value={altEmail}
+            onChange={e => setAltEmail(e.target.value)}
+          />
+        </div>
 
-      <PhoneInput
-        specialLabel='Alternative Phone Number'
-        country='lt'
-        value={altPhoneNumber}
-        onChange={setAltPhoneNumber}
-        masks={{lt: '(...) .....'}}
-      />
-
-      <TextField
-        label='Email'
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      />
-      <br/>
-      <TextField
-        label='Alternative Email'
-        value={altEmail}
-        onChange={e => setAltEmail(e.target.value)}
-      />
-      <br/>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <DesktopDatePicker
-          label='Date Of Birth'
-          inputFormat='yyyy/MM/dd'
-          mask='____/__/__'
-          value={dateOfBirth}
-          onChange={setDateOfBirth}
-          renderInput={(params) => <TextField {...params} />}
-        />
-      </LocalizationProvider>
-      <br/>
-      <TextField
-        label="Notes"
-        multiline
-        rows={4}
-        value={notes}
-        onChange={e => setNotes(e.target.value)}
-      />
-
+        <div className='contact-edit-row'>
+          <div className='date-div date-div'>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DesktopDatePicker
+                label='Date of Birth'
+                inputFormat='yyyy/MM/dd'
+                mask='____/__/__'
+                value={dateOfBirth}
+                onChange={setDateOfBirth}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+          </div>
+        </div>
+        
+        <div className='contact-edit-row notes-div'>
+          <TextField
+            fullWidth
+            label="Notes"
+            multiline
+            rows={6}
+            value={notes}
+            onChange={e => setNotes(e.target.value)}
+          />
+        </div>
+      </div>
     </div>
   );
 };

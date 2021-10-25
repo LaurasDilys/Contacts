@@ -1,0 +1,20 @@
+.alert-box {
+  background-color: white;
+  max-width: 400px;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.alert-buttons {
+  display: flex;
+}
+
+.alert-buttons button {
+  margin: 15px 20px 30px 0;
+}
+
+/* #1e88e5
+*/
+/* #1565c0
+*/

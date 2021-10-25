@@ -1,6 +1,7 @@
 :root {
   --description-entry-gap: 21px;
   --contact-entry-margin-bottom: 35px;
+  --edit-entry-gap: 30px;
 }
 
 .contact-area-top button {
@@ -28,6 +29,7 @@
 .name-div {
   /* background-color: aquamarine; */
   margin: auto 0;
+  white-space: nowrap;
 }
 
 .contact-entry-description {
@@ -47,6 +49,7 @@
 .contact-entry {
   /* background-color: coral; */
   margin: 0 0 var(--contact-entry-margin-bottom) 0;
+  min-width: 400px;
   max-width: 800px;
 }
 
@@ -61,4 +64,39 @@
 
 .contact-entry a:active {
   color: #1565c0; /* mui blue 800 */
+}
+
+.contact-area {
+  /* background-color: gold; */
+  flex-grow: 1;
+}
+
+.users-area {
+  /* background-color: aqua; */
+  justify-self: flex-end;
+}
+
+.contact-edit-row {
+  /* background-color: aqua; */
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+}
+
+.contact-edit-row > div,
+.contact-edit-row > * {
+  margin: var(--edit-entry-gap) 0 0 var(--edit-entry-gap)
+}
+
+.contact-edit-row input {
+  width: 222px
+}
+
+.date-div input {
+  width: 186px;
+}
+
+.notes-div {
+  width: calc(500px + var(--edit-entry-gap) * 2);
+  margin: 0 var(--edit-entry-gap) var(--edit-entry-gap) 0;
 }

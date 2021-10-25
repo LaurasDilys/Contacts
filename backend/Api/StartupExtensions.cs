@@ -3,6 +3,7 @@ using Application.Services;
 using Business.Interfaces.Services;
 using Data;
 using Data.Models;
+using Data.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -20,7 +21,10 @@ namespace Api
         {
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IMapperService, MapperService>();
+            services.AddScoped<IContactsService, ContactsService>();
+            services.AddTransient<MapperService>();
+
+            services.AddScoped<ContactsRepository>();
         }
 
         public static void ConfigureAuthentication(this IServiceCollection services, string securityKey)

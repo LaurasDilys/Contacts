@@ -1,29 +1,29 @@
 import Api from '../../domain/Api';
-import { deleteContactAction, editContactAction, newContactAction } from './contactsActions';
+import { deleteContactAction, editContactAction, getContactsAction, createContactAction } from './contactsActions';
 
-//
-let i = 0;
-//
+export const getContacts = (id) => (dispatch) => {
+  Api.get(`user/${id}/contacts`)
+    .then(res => {
+      dispatch(getContactsAction(res.data));
+    })
+}
 
-export const newContact = (contact) => (dispatch) => {
-  Api.post('test')
-    .then(() => {
-      //
-      contact.id = ++i;
-      //
-      dispatch(newContactAction(contact));
+export const createContact = (id, request) => (dispatch) => {
+  Api.post(`user/${id}/contacts/create`, request)
+    .then(res => {
+      dispatch(createContactAction({...res.data}));
     });
 }
 
-export const editContact = (contact) => (dispatch) => {
-  Api.post('test')
-    .then(() => {
-      dispatch(editContactAction(contact));
+export const editContact = (request) => (dispatch) => {
+  Api.put(`contacts/${request.id}`, request)
+    .then(res => {
+      dispatch(editContactAction({...res.data}));
     });
 }
 
 export const deleteContact = (id) => (dispatch) => {
-  Api.post('test')
+  Api.delete(`contacts/${id}`)
     .then(() => {
       dispatch(deleteContactAction(id));
     });

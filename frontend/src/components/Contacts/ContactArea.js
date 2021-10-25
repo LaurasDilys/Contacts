@@ -3,7 +3,7 @@ import ContactEdit from "./ContactEdit";
 import ContactView from "./ContactView";
 import NoContactSelected from "./NoContactSelected";
 
-const ContactArea = ({ contact, handleNew, handleSaveNew, handleCancelNew }) => {
+const ContactArea = ({ contact, handleNew, handleSaveNew, handleCancelNew, scrollAreaHeight, scrollBarWidth }) => {
   const [editing, setEditing] = useState(false);
 
   useEffect(() => {
@@ -22,11 +22,22 @@ const ContactArea = ({ contact, handleNew, handleSaveNew, handleCancelNew }) => 
             contact={contact}
             handleSaveNew={handleSaveNew}
             handleCancelNew={handleCancelNew}
+            scrollAreaHeight={scrollAreaHeight}
           /> :
           (
             editing === true ?
-            <ContactEdit contact={contact} setEditing={setEditing} /> :
-            <ContactView contact={contact} setEditing={setEditing} handleNew={handleNew} />
+            <ContactEdit
+              contact={contact}
+              setEditing={setEditing}
+              scrollAreaHeight={scrollAreaHeight}
+            /> :
+            <ContactView
+              contact={contact}
+              setEditing={setEditing}
+              handleNew={handleNew}
+              scrollAreaHeight={scrollAreaHeight}
+              scrollBarWidth={scrollBarWidth}
+            />
           )
         }
       </div>}

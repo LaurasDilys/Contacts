@@ -2,7 +2,7 @@ import * as actionTypes from './actionTypes';
 
 export const loginAction = props => ({
   type: actionTypes.LOGIN,
-  payload: props,
+  payload: props
 });
 
 export const logoutAction = () => ({

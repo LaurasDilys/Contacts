@@ -32,9 +32,7 @@ const InitialFormData = {
   firstName: '',
   lastName: '',
   password: '',
-  confirmPassword: '',
-  role: '',
-  remember: false,
+  confirmPassword: ''
 };
 
 const RegisterForm = () => {
@@ -52,8 +50,7 @@ const RegisterForm = () => {
     isFirstNameValid &&
     isLastNameValid &&
     isPasswordValid &&
-    isConfirmPasswordValid &&
-    formData.role;
+    isConfirmPasswordValid
 
   const dispatch = useDispatch();
 
