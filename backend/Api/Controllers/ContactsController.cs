@@ -65,6 +65,9 @@ namespace Api.Controllers
             return Ok(updatedContact);
         }
 
+        //
+        // MUST first RemoveShared() foreach SharedWith User
+        //
         [HttpDelete("Contacts/{key}", Name = nameof(Delete))]
         public async Task<IActionResult> Delete([FromRoute] string key)
         {
