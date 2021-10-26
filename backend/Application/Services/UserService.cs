@@ -1,12 +1,7 @@
-﻿using Business.Interfaces.Dto;
-using Business.Interfaces.Models;
-using Business.Interfaces.Services;
+﻿using Application.Dto.Authentication;
 using Data.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Services
@@ -28,7 +23,7 @@ namespace Application.Services
             return true;
         }
 
-        public async Task<bool> CreateAsync(IRegisterRequest request)
+        public async Task<bool> CreateAsync(RegisterRequest request)
         {
             var user = new User
             {
@@ -44,12 +39,12 @@ namespace Application.Services
             return result.Succeeded;
         }
 
-        public async Task<IUser> FindByNameAsync(string userName)
+        public async Task<User> FindByNameAsync(string userName)
         {
             return await _userManager.FindByNameAsync(userName);
         }
 
-        public async Task<bool> UserNameAndPasswordAreValidAsync(ILoginRequest request)
+        public async Task<bool> UserNameAndPasswordAreValidAsync(LoginRequest request)
         {
             var user = await _userManager.FindByNameAsync(request.UserName);
             if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))

@@ -1,19 +1,13 @@
-﻿using Application.Dto;
-using Business.Interfaces.Dto;
-using Business.Interfaces.Models;
-using Business.Interfaces.Services;
+﻿using Application.Dto.Contact;
+using Application.Dto.User;
 using Data.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
     public class MapperService
     {
-        public IUserResponse ResponseFrom(IUser user)
+        public UserResponse ResponseFrom(User user)
         {
             return new UserResponse
             {
@@ -24,7 +18,7 @@ namespace Application.Services
             };
         }
 
-        public Contact NewContactFrom(string userId, ICreateContactRequest request)
+        public Contact NewContactFrom(string userId, CreateContactRequest request)
         {
             return new Contact
             {
@@ -41,7 +35,7 @@ namespace Application.Services
             };
         }
 
-        public void UpdateContact(IContact contact, IUpdateContactRequest request)
+        public void UpdateContact(Contact contact, UpdateContactRequest request)
         {
             contact.FirstName = request.FirstName;
             contact.LastName = request.LastName;
@@ -53,7 +47,7 @@ namespace Application.Services
             contact.Notes = request.Notes;
         }
 
-        public IContactResponse ContactResponseFrom(IContact contact)
+        public ContactResponse ContactResponseFrom(Contact contact)
         {
             return new ContactResponse
             {

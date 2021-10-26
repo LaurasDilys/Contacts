@@ -1,17 +1,12 @@
-﻿using Application.Dto;
+﻿using Application.Dto.Contact;
 using Application.Services;
-using Business.Interfaces.Dto;
-using Business.Interfaces.Models;
-using Business.Interfaces.Services;
 using Data.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -31,7 +26,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("User/{userKey}/Contacts", Name = nameof(Get))]
-        public async Task<ActionResult<IEnumerable<IContactResponse>>> Get([FromRoute] string userKey)
+        public async Task<ActionResult<ICollection<ContactResponse>>> Get([FromRoute] string userKey)
         {
             if (await _userManager.FindByIdAsync(userKey) == null)
                 return StatusCode(StatusCodes.Status404NotFound);
@@ -42,7 +37,7 @@ namespace Api.Controllers
         }
 
         [HttpPost("User/{userKey}/Contacts/Create", Name = nameof(Create))]
-        public async Task<ActionResult<IContactResponse>> Create([FromRoute] string userKey, [FromBody] CreateContactRequest request)
+        public async Task<ActionResult<ContactResponse>> Create([FromRoute] string userKey, [FromBody] CreateContactRequest request)
         {
             if (await _userManager.FindByIdAsync(userKey) == null)
                 return StatusCode(StatusCodes.Status404NotFound);
@@ -53,7 +48,7 @@ namespace Api.Controllers
         }
 
         [HttpPut("Contacts/{key}", Name = nameof(Update))]
-        public async Task<ActionResult<IContactResponse>> Update([FromRoute] string key, [FromBody] UpdateContactRequest request)
+        public async Task<ActionResult<ContactResponse>> Update([FromRoute] string key, [FromBody] UpdateContactRequest request)
         {
             if (!await _contactsService.Exists(key))
                 return StatusCode(StatusCodes.Status404NotFound);
