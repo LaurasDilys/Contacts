@@ -13,7 +13,7 @@ using System.Text;
 
 namespace Application.Services
 {
-    public class JwtTokenService : IJwtTokenService
+    public class JwtTokenService
     {
         private readonly JwtTokenOptions _options;
 

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    public class UserService : IUserService
+    public class UserService
     {
         private readonly UserManager<User> _userManager;
 

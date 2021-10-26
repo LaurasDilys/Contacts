@@ -26,12 +26,12 @@ namespace Api.Controllers
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class AuthController : ControllerBase
     {
-        private readonly IJwtTokenService _jwtTokenService;
-        private readonly IUserService _userService;
+        private readonly JwtTokenService _jwtTokenService;
+        private readonly UserService _userService;
         private readonly MapperService _mapper;
 
-        public AuthController(IJwtTokenService jwtTokenService,
-            IUserService userService,
+        public AuthController(JwtTokenService jwtTokenService,
+            UserService userService,
             MapperService mapper)
         {
             _jwtTokenService = jwtTokenService;

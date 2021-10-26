@@ -1,4 +1,5 @@
 ﻿using Application.Dto;
+using Application.Services;
 using Business.Interfaces.Dto;
 using Business.Interfaces.Models;
 using Business.Interfaces.Services;
@@ -20,10 +21,10 @@ namespace Api.Controllers
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class ContactsController : ControllerBase
     {
-        private readonly IContactsService _contactsService;
+        private readonly ContactsService _contactsService;
         private readonly UserManager<User> _userManager;
 
-        public ContactsController(IContactsService contactsService, UserManager<User> userManager)
+        public ContactsController(ContactsService contactsService, UserManager<User> userManager)
         {
             _contactsService = contactsService;
             _userManager = userManager;

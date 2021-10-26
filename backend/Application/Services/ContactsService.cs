@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    public class ContactsService : IContactsService
+    public class ContactsService
     {
         private readonly ContactsRepository _repository;
         private readonly MapperService _mapper;
