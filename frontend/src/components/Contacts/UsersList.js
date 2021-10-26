@@ -81,6 +81,7 @@ const UsersList = ({ users, setSelectedUserId, scrollAreaHeight, scrollBarWidth 
   };
 
   return (
+    users.length > 0 ?
     <>
       <Input
         sx={searchFieldStyle}
@@ -104,6 +105,16 @@ const UsersList = ({ users, setSelectedUserId, scrollAreaHeight, scrollBarWidth 
           <Divider />
         </div>)}
       </List>
+    </> :
+    <>
+      <Divider style={{marginTop: 39}} />
+      <h1 style={{
+        color: '#bdbdbd',
+        margin: '79px 50px',
+        whiteSpace: 'nowrap'
+      }}>
+        No users currently available
+      </h1>
     </>
   );
 }
