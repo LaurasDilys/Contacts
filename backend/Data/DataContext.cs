@@ -31,12 +31,14 @@ namespace Data
             modelBuilder.Entity<ContactUser>()
                         .HasOne<Contact>(cu => cu.Contact)
                         .WithMany(c => c.ContactUsers)
-                        .HasForeignKey(cu => cu.ContactId);
+                        .HasForeignKey(cu => cu.ContactId)
+                        .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<ContactUser>()
                         .HasOne<User>(cu => cu.User)
                         .WithMany(u => u.ContactUsers)
-                        .HasForeignKey(cu => cu.UserId);
+                        .HasForeignKey(cu => cu.UserId)
+                        .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<User>()
                         .HasMany<UnacceptedShare>(u => u.UnacceptedShares)
