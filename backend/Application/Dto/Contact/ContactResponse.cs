@@ -1,11 +1,7 @@
-﻿using Business.Models.User;
-using System;
+﻿using Business.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Business.Models.Contact
+namespace Application.Dto.Contact
 {
     public class ContactResponse : ContactInformation
     {
