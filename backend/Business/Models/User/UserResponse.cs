@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Business.Models.Contact;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.Interfaces.Models
+namespace Business.Models.User
 {
-    public interface IUser
+    public class UserResponse : ContactInformation
     {
         public string Id { get; set; }
         public string UserName { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public bool ShowMyContact { get; set; }
     }
 }

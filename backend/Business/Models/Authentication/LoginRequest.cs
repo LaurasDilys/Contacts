@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.Interfaces.Dto
+namespace Business.Models.Authentication
 {
-    public interface ILoginRequest
+    public class LoginRequest
     {
         public string UserName { get; set; }
         public string Password { get; set; }

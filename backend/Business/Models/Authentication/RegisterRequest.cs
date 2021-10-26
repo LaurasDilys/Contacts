@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.Interfaces.Dto
+namespace Business.Models.Authentication
 {
-    public interface IUserResponse
+    public class RegisterRequest
     {
-        public string Id { get; set; }
-        public string UserName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
     }
 }
