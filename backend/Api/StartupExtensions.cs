@@ -19,9 +19,9 @@ namespace Api
     {
         public static void ConfigureDependencyInjection(this IServiceCollection services)
         {
-            services.AddScoped<IJwtTokenService, JwtTokenService>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IContactsService, ContactsService>();
+            services.AddScoped<JwtTokenService>();
+            services.AddScoped<UserService>();
+            services.AddScoped<ContactsService>();
             services.AddTransient<MapperService>();
 
             services.AddScoped<ContactsRepository>();
