@@ -1,5 +1,6 @@
 import { ListItem, ListItemText } from '@mui/material';
 import { onConfirm } from '../ConfirmAlert/ConfirmAlert';
+import ContactsMenu from '../ContactsProviders/ContactsMenu';
 import { history } from './AppRouter';
 
 const TopNavItem = ({ title, path }) => {
@@ -15,13 +16,17 @@ const TopNavItem = ({ title, path }) => {
   }
 
   return (
-    <ListItem
-      button
-      onClick={handleNavigation}
-      style={{ width: 'fit-content' }}
-    >
-      <ListItemText primary={title} />
-    </ListItem>
+    <>
+      <ListItem
+        button
+        onClick={handleNavigation}
+        style={{ width: 'fit-content' }}
+      >
+        <ListItemText primary={title} />
+      </ListItem>
+      {path == '/contacts' &&
+      <ContactsMenu />}
+    </>
   );
 }
 

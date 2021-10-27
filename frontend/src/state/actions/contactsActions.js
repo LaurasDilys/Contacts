@@ -19,3 +19,8 @@ export const deleteContactAction = id => ({
   type: actionTypes.DELETE_CONTACT,
   payload: id
 });
+
+export const setSelectedContacts = props => ({
+  type: actionTypes.SET_SELECTED_CONTACTS,
+  payload: props
+})

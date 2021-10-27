@@ -4,9 +4,10 @@ export type UserState = {
   loggedIn: boolean;
   user: {
     id: string;
-    userName: string;
     firstName: string;
     lastName: string;
+    userName: string;
+    showMyContact: Boolean
   };
 }
 
@@ -14,9 +15,10 @@ const initialState: UserState = {
   loggedIn: false,
   user: {
     id: '',
-    userName: '',
     firstName: '',
     lastName: '',
+    userName: '',
+    showMyContact: false
   },
 };
 
@@ -24,9 +26,10 @@ type UserAction = {
   type: string;
   payload: {
     id: string;
-    userName: string;
     firstName: string;
     lastName: string;
+    userName: string;
+    showMyContact: Boolean
   };
 };
 
@@ -40,7 +43,8 @@ const userReducer = (state: UserState = initialState, action: UserAction): UserS
           id: action.payload.id,
           userName: action.payload.userName,
           firstName: action.payload.firstName,
-          lastName: action.payload.lastName
+          lastName: action.payload.lastName,
+          showMyContact: action.payload.showMyContact
         }
       };
     case actionTypes.LOGOUT:
