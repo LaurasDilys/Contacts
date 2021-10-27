@@ -1,18 +1,39 @@
 ﻿using Application.Dto.Authentication;
+using Business.Models;
 using Data.Models;
+using Data.Repositories;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    public class UserService
+    public class UsersService
     {
         private readonly UserManager<User> _userManager;
+        private readonly UsersRepository _repository;
+        private readonly MapperService _mapper;
 
-        public UserService(UserManager<User> userManager)
+        public UsersService(UserManager<User> userManager,
+            UsersRepository repository,
+            MapperService mapper)
         {
             _userManager = userManager;
+            _repository = repository;
+            _mapper = mapper;
+        }
+
+        public async Task<ICollection<UserBasic>> GetOtherUsersAsync(string id)
+        {
+            var users = await _repository.GetOtherUsersAsync(id);
+
+            var response = new List<UserBasic>();
+            foreach (var user in users)
+            {
+                response.Add(_mapper.UserBasinInformationFrom(user));
+            }
+            return response;
         }
 
         public async Task<bool> ExistsAsync(string userName)

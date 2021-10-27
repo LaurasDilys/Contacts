@@ -2,14 +2,14 @@ import Api from '../../domain/Api';
 import { deleteContactAction, editContactAction, getContactsAction, createContactAction } from './contactsActions';
 
 export const getContacts = (id) => (dispatch) => {
-  Api.get(`user/${id}/contacts`)
+  Api.get(`users/${id}/contacts`)
     .then(res => {
       dispatch(getContactsAction(res.data));
     })
 }
 
 export const createContact = (id, request) => (dispatch) => {
-  Api.post(`user/${id}/contacts/create`, request)
+  Api.post(`users/${id}/contacts/create`, request)
     .then(res => {
       dispatch(createContactAction({...res.data}));
     });

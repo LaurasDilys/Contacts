@@ -21,7 +21,7 @@ namespace Api
         {
             services.AddScoped<JwtTokenService>();
             services.AddScoped<ContactsService>();
-            services.AddScoped<UserService>();
+            services.AddScoped<UsersService>();
 
             services.AddTransient<MapperService>();
             services.AddTransient<ContactInformationMapper>();

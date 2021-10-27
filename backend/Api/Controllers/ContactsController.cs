@@ -45,7 +45,7 @@ namespace Api.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPatch]
+        [HttpHead]
         public IActionResult Test()
         {
             var user = _context.Users
@@ -63,7 +63,7 @@ namespace Api.Controllers
         //
         //
 
-        [HttpGet("User/{userKey}/Contacts", Name = nameof(Get))]
+        [HttpGet("Users/{userKey}/Contacts", Name = nameof(Get))]
         public async Task<ActionResult<ICollection<ContactResponse>>> Get([FromRoute] string userKey)
         {
             if (await _userManager.FindByIdAsync(userKey) == null)
@@ -74,7 +74,7 @@ namespace Api.Controllers
             return Ok(contacts);
         }
 
-        [HttpPost("User/{userKey}/Contacts/Create", Name = nameof(Create))]
+        [HttpPost("Users/{userKey}/Contacts/Create", Name = nameof(Create))]
         public async Task<ActionResult<ContactResponse>> Create([FromRoute] string userKey, [FromBody] CreateContactRequest request)
         {
             if (await _userManager.FindByIdAsync(userKey) == null)
