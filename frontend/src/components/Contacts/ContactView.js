@@ -5,6 +5,8 @@ import PhoneInput from 'react-phone-input-2';
 import { useEffect, useRef, useState } from 'react';
 import Description from './Description';
 import UsersList from './UsersList';
+import { useSelector } from 'react-redux';
+import { otherUsersState } from '../../state/selectors';
 
 const stringToColor = string => {
   let hash = 0;
@@ -89,6 +91,7 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
   const [sharing, setSharing] = useState(false);
   const phoneInputRef = useRef(null);
   const altPhoneInputRef = useRef(null);
+  const { otherUsers } = useSelector(otherUsersState);
   const [selectedUserId, setSelectedUserId] = useState(null);
 
   useEffect(() => {
@@ -228,7 +231,7 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
       {sharing &&
       <div className='users-area'>
         <UsersList
-          users={mockUsers}
+          users={otherUsers}
           setSelectedUserId={setSelectedUserId}
           scrollAreaHeight={scrollAreaHeight}
           scrollBarWidth={scrollBarWidth}

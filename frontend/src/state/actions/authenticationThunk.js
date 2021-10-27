@@ -2,6 +2,7 @@ import Api from '../../domain/Api';
 import { history } from '../../components/AppRouter/AppRouter';
 import { loginAction, logoutAction } from './authenticationActions';
 import { getContacts } from './contactsThunk';
+import { getOtherUsers } from './otherUsersThunk';
 // import { SetNotificationAction } from '../actions/notificationsActions';
 
 export const register = (request) => () => {
@@ -20,6 +21,7 @@ export const login = (request) => (dispatch) => {
     .then(res => {
       dispatch(loginAction({ ...res.data }));
       dispatch(getContacts(res.data.id));
+      dispatch(getOtherUsers(res.data.id));
     })
     .catch((error) => {
       // dispatch(SetNotificationAction({ isOpen: true, message: error.response.data, type: 'error' }));
@@ -44,6 +46,7 @@ export const checkLoginStatus = () => (dispatch) => {
     if (data !== 'NotLoggedIn') {
       dispatch(loginAction({ ...data }));
       dispatch(getContacts(data.id));
+      dispatch(getOtherUsers(data.id));
     } else {
       dispatch(logoutAction());
     }

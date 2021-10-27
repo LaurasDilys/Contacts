@@ -1,6 +1,7 @@
 ﻿using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Data.Repositories
@@ -14,10 +15,10 @@ namespace Data.Repositories
             _context = context;
         }
 
-        //public async Task<ICollection<User>> GetAllUsersAsync()
-        //{
-        //    return await _context.Users.ToListAsync();
-        //}
+        public async Task<ICollection<User>> GetOtherUsersAsync(string id)
+        {
+            return await _context.Users.Where(u => u.Id != id).ToListAsync();
+        }
 
         public async Task<User> GetUserWithDeepRelationsAsync(string userId)
         {
