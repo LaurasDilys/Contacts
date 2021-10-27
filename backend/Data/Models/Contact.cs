@@ -40,5 +40,7 @@ namespace Data.Models
         public User Creator { get; set; }
 
         public ICollection<ContactUser> ContactUsers { get; set; }
+
+        public ICollection<UnacceptedShare> UnacceptedShares { get; set; }
     }
 }
