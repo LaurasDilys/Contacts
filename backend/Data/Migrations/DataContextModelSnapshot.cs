@@ -345,13 +345,12 @@ namespace Data.Migrations
                     b.HasOne("Data.Models.Contact", "Contact")
                         .WithMany("ContactUsers")
                         .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Data.Models.User", "User")
                         .WithMany("ContactUsers")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Contact");

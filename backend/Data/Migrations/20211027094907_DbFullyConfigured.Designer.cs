@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20211026185309_DbFullyConfigured")]
+    [Migration("20211027094907_DbFullyConfigured")]
     partial class DbFullyConfigured
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -347,13 +347,12 @@ namespace Data.Migrations
                     b.HasOne("Data.Models.Contact", "Contact")
                         .WithMany("ContactUsers")
                         .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Data.Models.User", "User")
                         .WithMany("ContactUsers")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Contact");

@@ -220,12 +220,14 @@ namespace Data.Migrations
                         name: "FK_ContactUsers_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_ContactUsers_Contacts_ContactId",
                         column: x => x.ContactId,
                         principalTable: "Contacts",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
