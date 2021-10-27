@@ -1,12 +1,6 @@
 import * as actionTypes from '../actions/actionTypes';
 import * as contactTypes from '../../domain/contactTypes';
-
-type UserBasicInformation = {
-  id: string,
-  firstName: string,
-  lastName: string,
-  userName: string
-}
+import { UserBasicInformation } from './otherUsersReducer';
 
 type Contact = {
   id: string | null,
