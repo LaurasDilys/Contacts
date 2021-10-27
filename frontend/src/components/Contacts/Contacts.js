@@ -117,8 +117,7 @@ const contactsListStyle = {
   bgcolor: 'background.paper',
 };
 
-const Contacts = () => {
-  const { contacts: allContacts } = useSelector(contactsState);
+const Contacts = ({ providedContacts }) => {
   const [creating, setCreating] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [filteredContacts, setFilteredContacts] = useState([]);
@@ -130,7 +129,7 @@ const Contacts = () => {
   const contactAreaSize = useSize(contactAreaDivRef);
 
   useEffect(() => { // when contactsState is updated: initial render / create / update / delete
-    const updatedState = sorted(allContacts);
+    const updatedState = sorted(providedContacts);
     if (updatedState.length > 0 && !updatedState.some(c => c.selected)) {
       // if there are contacts and none are selected
       // select first
@@ -138,7 +137,7 @@ const Contacts = () => {
     }
     setContacts(updatedState);
     setFilteredContacts(updatedState);
-  }, [allContacts])
+  }, [providedContacts])
 
   const handleResize = () => {
     if (scrollBarWidth === 0 && window.innerWidth - document.documentElement.clientWidth > 0) {
