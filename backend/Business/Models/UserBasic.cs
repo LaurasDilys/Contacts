@@ -1,17 +1,16 @@
-﻿using Business.Interfaces.Dto;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Dto
+namespace Business.Models
 {
-    public class UserResponse : IUserResponse
+    public class UserBasic
     {
         public string Id { get; set; }
-        public string UserName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string UserName { get; set; }
     }
 }

@@ -1,6 +1,4 @@
 ﻿using Application.Models;
-using Business.Interfaces.Dto;
-using Business.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -13,7 +11,7 @@ using System.Text;
 
 namespace Application.Services
 {
-    public class JwtTokenService : IJwtTokenService
+    public class JwtTokenService
     {
         private readonly JwtTokenOptions _options;
 

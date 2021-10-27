@@ -1,22 +1,11 @@
-﻿using Application.Dto;
+﻿using Application.Dto.Authentication;
+using Application.Dto.User;
 using Application.Services;
-using Business.Interfaces.Dto;
-using Business.Interfaces.Models;
-using Business.Interfaces.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -26,12 +15,12 @@ namespace Api.Controllers
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class AuthController : ControllerBase
     {
-        private readonly IJwtTokenService _jwtTokenService;
-        private readonly IUserService _userService;
+        private readonly JwtTokenService _jwtTokenService;
+        private readonly UserService _userService;
         private readonly MapperService _mapper;
 
-        public AuthController(IJwtTokenService jwtTokenService,
-            IUserService userService,
+        public AuthController(JwtTokenService jwtTokenService,
+            UserService userService,
             MapperService mapper)
         {
             _jwtTokenService = jwtTokenService;
@@ -63,7 +52,7 @@ namespace Api.Controllers
 
         [AllowAnonymous]
         [HttpPost(nameof(Login))]
-        public async Task<ActionResult<IUserResponse>> Login([FromBody] LoginRequest request)
+        public async Task<ActionResult<UserResponse>> Login([FromBody] LoginRequest request)
         {
             if (!await _userService.UserNameAndPasswordAreValidAsync(request))
                 return StatusCode(StatusCodes.Status403Forbidden,
@@ -81,7 +70,7 @@ namespace Api.Controllers
 
         [AllowAnonymous]
         [HttpPost(nameof(LoginStatus))]
-        public async Task<ActionResult<IUserResponse>> LoginStatus()
+        public async Task<ActionResult<UserResponse>> LoginStatus()
         {
             var token = Request.Cookies["token"];
 

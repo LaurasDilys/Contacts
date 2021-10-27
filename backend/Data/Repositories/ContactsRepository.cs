@@ -1,10 +1,6 @@
-﻿using Business.Interfaces.Models;
-using Data.Models;
+﻿using Data.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Data.Repositories
@@ -25,7 +21,7 @@ namespace Data.Repositories
             return true;
         }
 
-        public async Task<IEnumerable<IContact>> GetAsync(string userId)
+        public async Task<ICollection<Contact>> GetAsync(string userId)
         {
             var user = await _context.Users
                 .Include(x => x.Contacts)
@@ -34,7 +30,7 @@ namespace Data.Repositories
             return user.Contacts;
         }
 
-        public async Task<IContact> GetOneAsync(string id)
+        public async Task<Contact> GetOneAsync(string id)
         {
             var contact = await _context.Contacts.FirstOrDefaultAsync(c => c.Id == id);
             return contact;
