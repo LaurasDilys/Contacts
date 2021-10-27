@@ -1,5 +1,6 @@
 ﻿using Application.Dto.Contact;
 using Application.Dto.User;
+using Business.Models;
 using Business.Services;
 using Data.Models;
 using System;
@@ -15,14 +16,25 @@ namespace Application.Services
             _mapper = mapper;
         }
 
+        public UserBasic UserBasinInformationFrom(User user)
+        {
+            return new UserBasic
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserName = user.UserName
+            };
+        }
+
         public UserResponse ResponseFrom(User user)
         {
             return new UserResponse
             {
                 Id = user.Id,
-                UserName = user.UserName,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
+                UserName = user.UserName,
                 ShowMyContact = user.ShowMyContact
             };
         }
@@ -50,6 +62,15 @@ namespace Application.Services
             var response = new ContactResponse { Id = contact.Id };
 
             _mapper.ReplaceContactInformationWith(contact, response);
+
+            return response;
+        }
+
+        public ContactResponse ContactResponseFrom(User user)
+        {
+            var response = new ContactResponse { Id = user.Id };
+
+            _mapper.ReplaceContactInformationWith(user, response);
 
             return response;
         }

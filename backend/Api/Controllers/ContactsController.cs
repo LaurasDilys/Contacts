@@ -23,14 +23,45 @@ namespace Api.Controllers
     {
         private readonly ContactsService _contactsService;
         private readonly UserManager<User> _userManager;
+        //
+        //
+        //
         private readonly DataContext _context;
+        //
+        //
+        //
 
         public ContactsController(ContactsService contactsService, UserManager<User> userManager, DataContext context)
         {
             _contactsService = contactsService;
             _userManager = userManager;
+            //
+            //
+            //
             _context = context;
+            //
+            //
+            //
         }
+
+        [AllowAnonymous]
+        [HttpPatch]
+        public IActionResult Test()
+        {
+            var user = _context.Users
+                .Include(u => u.Contacts).ThenInclude(c => c.ContactUsers).ThenInclude(cu => cu.User)
+                .Include(u => u.ContactUsers).ThenInclude(cu => cu.Contact).ThenInclude(c => c.Creator)
+                .Include(u => u.UnacceptedShares).ThenInclude(us => us.Contact).ThenInclude(c => c.Creator)
+                .FirstOrDefault();
+
+            return Ok(user.Contacts.First().ContactUsers);
+        }
+        //
+        //
+        //
+        //
+        //
+        //
 
         [HttpGet("User/{userKey}/Contacts", Name = nameof(Get))]
         public async Task<ActionResult<ICollection<ContactResponse>>> Get([FromRoute] string userKey)

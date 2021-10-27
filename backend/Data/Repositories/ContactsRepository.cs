@@ -21,15 +21,6 @@ namespace Data.Repositories
             return true;
         }
 
-        public async Task<ICollection<Contact>> GetAsync(string userId)
-        {
-            var user = await _context.Users
-                .Include(x => x.Contacts)
-                .FirstOrDefaultAsync(u => u.Id == userId);
-
-            return user.Contacts;
-        }
-
         public async Task<Contact> FindByIdAsync(string id)
         {
             return await _context.Contacts.FirstOrDefaultAsync(c => c.Id == id);
