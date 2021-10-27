@@ -1,5 +1,6 @@
 ﻿using Application.Models;
 using Application.Services;
+using Business.Services;
 using Data;
 using Data.Models;
 using Data.Repositories;
@@ -21,7 +22,9 @@ namespace Api
             services.AddScoped<JwtTokenService>();
             services.AddScoped<UserService>();
             services.AddScoped<ContactsService>();
+
             services.AddTransient<MapperService>();
+            services.AddTransient<ContactInformationMapper>();
 
             services.AddScoped<ContactsRepository>();
         }
