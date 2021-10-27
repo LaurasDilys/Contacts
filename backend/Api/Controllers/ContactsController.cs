@@ -65,9 +65,6 @@ namespace Api.Controllers
             return Ok(updatedContact);
         }
 
-        //
-        // MUST first RemoveShared() foreach SharedWith User
-        //
         [HttpDelete("Contacts/{key}", Name = nameof(Delete))]
         public async Task<IActionResult> Delete([FromRoute] string key)
         {
@@ -78,44 +75,37 @@ namespace Api.Controllers
 
             return Ok();
         }
+        // After =>
+        // {
+        // var unacceptedShares = _context.UnacceptedShares.Where(us => us.ContactId == key);
+        // _context.UnacceptedShares.RemoveRange(unacceptedShares);
+        // _context.SaveChanges();
+        // }
 
-        //
-        //
-        //
+        private readonly string userId = "b4a5fe29-e471-4f81-bf41-65d353d824a8";
+        private readonly string contactId = "545cbdde-4b76-428d-97c1-dc72a443b6bb";
 
         [AllowAnonymous]
         [HttpPatch(nameof(Share))]
         public IActionResult Share()
         {
-            //var laurasShared = new ContactUser
-            //{
-            //    ContactId = "94702cc7-3c19-49d1-b396-60a17f04d9ab",
-            //    UserId = "6b675e09-54a7-4c4a-9296-c1ff08f99c91"
-            //};
+            var firstUser = _context.Users.First();
+            var firstContact = _context.Contacts.First();
 
-            var sharedShared = new ContactUser
+            var firstShare = new ContactUser
             {
-                ContactId = "aaa8d67e-f562-41d8-8d4a-e6367a542dc1",
-                UserId = "020619ed-d5b0-4465-9aa3-b7b6651cfa69"
+                ContactId = firstContact.Id,
+                UserId = firstUser.Id
             };
 
-            //_context.ContactUsers.Add(laurasShared);
-            //_context.Users.Include(u => u.UnacceptedShares)
-            //    .FirstOrDefault(u => u.Id == "6b675e09-54a7-4c4a-9296-c1ff08f99c91")
-            //    .UnacceptedShares.Add(new UnacceptedShare
-            //{
-            //    Id = Guid.NewGuid().ToString(),
-            //    ContactId = "94702cc7-3c19-49d1-b396-60a17f04d9ab"
-            //});
-
-            _context.ContactUsers.Add(sharedShared);
+            _context.ContactUsers.Add(firstShare);
             _context.Users.Include(u => u.UnacceptedShares)
-                .FirstOrDefault(u => u.Id == "020619ed-d5b0-4465-9aa3-b7b6651cfa69")
+                .FirstOrDefault(u => u.Id == firstUser.Id)
                 .UnacceptedShares.Add(new UnacceptedShare
             {
                 Id = Guid.NewGuid().ToString(),
-                ContactId = "aaa8d67e-f562-41d8-8d4a-e6367a542dc1"
-            });
+                ContactId = firstContact.Id
+                });
 
             _context.SaveChanges();
 
@@ -141,7 +131,7 @@ namespace Api.Controllers
                 .Include(u => u.Contacts)
                 .Include(u => u.UnacceptedShares)
                 .Include(u => u.ContactUsers).ThenInclude(cu => cu.Contact)
-                .FirstOrDefault(u => u.Id == "020619ed-d5b0-4465-9aa3-b7b6651cfa69");
+                .FirstOrDefault(u => u.Id == userId);
 
             var contacts = lauras.Contacts;
             foreach (var c in contacts)
@@ -206,8 +196,8 @@ namespace Api.Controllers
         public IActionResult RemoveShared()
         {
             var contactUser = _context.ContactUsers
-                .FirstOrDefault(cu => cu.ContactId == "aaa8d67e-f562-41d8-8d4a-e6367a542dc1"
-                                      && cu.UserId == "020619ed-d5b0-4465-9aa3-b7b6651cfa69");
+                .FirstOrDefault(cu => cu.ContactId == contactId
+                                      && cu.UserId == userId);
 
             _context.ContactUsers.Remove(contactUser);
             AcceptOrDecline();
@@ -221,7 +211,7 @@ namespace Api.Controllers
         {
             var lauras = _context.Users
                 .Include(u => u.UnacceptedShares)
-                .FirstOrDefault(u => u.Id == "020619ed-d5b0-4465-9aa3-b7b6651cfa69");
+                .FirstOrDefault(u => u.Id == userId);
 
             var current = lauras.ShowMyContact;
             lauras.ShowMyContact = !current;
@@ -234,11 +224,11 @@ namespace Api.Controllers
         {
             var lauras = _context.Users
                 .Include(u => u.UnacceptedShares)
-                .FirstOrDefault(u => u.Id == "020619ed-d5b0-4465-9aa3-b7b6651cfa69");
+                .FirstOrDefault(u => u.Id == userId);
 
             if (lauras != null)
             {
-                var toBeAccepted = lauras.UnacceptedShares.FirstOrDefault(us => us.ContactId == "aaa8d67e-f562-41d8-8d4a-e6367a542dc1");
+                var toBeAccepted = lauras.UnacceptedShares.FirstOrDefault(us => us.ContactId == contactId);
                 lauras.UnacceptedShares.Remove(toBeAccepted);
                 _context.SaveChanges();
             }
