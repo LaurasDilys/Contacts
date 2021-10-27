@@ -85,11 +85,11 @@ namespace Api.Controllers
         [HttpPost("Contacts/{contactKey}/ShareWith/{userKey}", Name = nameof(Share))]
         public async Task<IActionResult> Share([FromRoute] string contactKey, [FromRoute] string userKey)
         {
-            if (!await _contactsService.ExistsAsync(contactKey))
-                return StatusCode(StatusCodes.Status404NotFound);
+            //if (!await _contactsService.ExistsAsync(contactKey))
+            //    return StatusCode(StatusCodes.Status404NotFound);
 
-            if (await _userManager.FindByIdAsync(userKey) == null)
-                return StatusCode(StatusCodes.Status404NotFound);
+            //if (await _userManager.FindByIdAsync(userKey) == null)
+            //    return StatusCode(StatusCodes.Status404NotFound);
 
             await _contactsService.ShareContact(contactKey, userKey);
 
@@ -108,7 +108,8 @@ namespace Api.Controllers
         [HttpDelete("Users/{userKey}/RemoveShare/{contactKey}", Name = nameof(RemoveShare))]
         public async Task<IActionResult> RemoveShare([FromRoute] string userKey, [FromRoute] string contactKey)
         {
-            await _contactsService.RemoveShare(contactKey, userKey);
+            if (!await _contactsService.RemoveShare(contactKey, userKey))
+                return StatusCode(StatusCodes.Status404NotFound);
 
             return Ok();
         }

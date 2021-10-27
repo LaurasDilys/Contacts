@@ -85,14 +85,18 @@ namespace Application.Services
             return true;
         }
 
-        public async Task RemoveShare(string contactId, string userId)
+        public async Task<bool> RemoveShare(string contactId, string userId)
         {
             var unacceptedShare = await _repository.GetUnacceptedShareAsync(contactId, userId);
             var contactUser = await _repository.GetContactUserAsync(contactId, userId);
 
+            if (unacceptedShare == null && contactUser == null) return false;
+
             if (unacceptedShare != null) _repository.RemoveUnacceptedShare(unacceptedShare);
             if (contactUser != null) _repository.RemoveContactUser(contactUser);
             await _repository.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task DeleteAsync(string id)
