@@ -1,6 +1,6 @@
 import Api from '../../domain/Api';
 import { history } from '../../components/AppRouter/AppRouter';
-import { loginAction, logoutAction } from './authenticationActions';
+import { loginAction, logoutAction } from './userActions';
 import { getContacts } from './contactsThunk';
 import { getOtherUsers } from './otherUsersThunk';
 // import { SetNotificationAction } from '../actions/notificationsActions';
