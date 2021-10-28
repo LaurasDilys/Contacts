@@ -20,7 +20,7 @@ namespace Data.Repositories
             return await _context.Users.Where(u => u.Id != id).ToListAsync();
         }
 
-        public async Task<User> GetUserWithDeepRelationsAsync(string userId)
+        public async Task<User> GetUserWithAllContactsAsync(string userId)
         {
             var user = await _context.Users
                 .Include(u => u.Contacts).ThenInclude(c => c.ContactUsers).ThenInclude(cu => cu.User)

@@ -59,7 +59,7 @@ namespace Api.Controllers
 
             HttpContext.Response.Cookies.Append("token", jwtToken, cookieOptions);
 
-            return Ok(_mapper.ResponseFrom(user));
+            return Ok(_mapper.UserResponseFrom(user));
         }
 
         [AllowAnonymous]
@@ -76,7 +76,7 @@ namespace Api.Controllers
 
             _jwtTokenService.RefreshCookieIfNecessary(token, userName, HttpContext);
 
-            return Ok(_mapper.ResponseFrom(user));
+            return Ok(_mapper.UserResponseFrom(user));
         }
 
         [HttpPost(nameof(NewCookie))]
