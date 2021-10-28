@@ -7,11 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -44,18 +40,18 @@ namespace Api.Controllers
             //
         }
 
-        [AllowAnonymous]
-        [HttpHead]
-        public IActionResult Test()
-        {
-            var user = _context.Users
-                .Include(u => u.Contacts).ThenInclude(c => c.ContactUsers).ThenInclude(cu => cu.User)
-                .Include(u => u.ContactUsers).ThenInclude(cu => cu.Contact).ThenInclude(c => c.Creator)
-                .Include(u => u.UnacceptedShares).ThenInclude(us => us.Contact).ThenInclude(c => c.Creator)
-                .FirstOrDefault();
+        //[AllowAnonymous]
+        //[HttpHead]
+        //public IActionResult Test()
+        //{
+        //    var user = _context.Users
+        //        .Include(u => u.Contacts).ThenInclude(c => c.ContactUsers).ThenInclude(cu => cu.User)
+        //        .Include(u => u.ContactUsers).ThenInclude(cu => cu.Contact).ThenInclude(c => c.Creator)
+        //        .Include(u => u.UnacceptedShares).ThenInclude(us => us.Contact).ThenInclude(c => c.Creator)
+        //        .FirstOrDefault();
 
-            return Ok(user.Contacts.First().ContactUsers);
-        }
+        //    return Ok(user.Contacts.First().ContactUsers);
+        //}
         //
         //
         //
@@ -69,7 +65,7 @@ namespace Api.Controllers
             if (await _userManager.FindByIdAsync(userKey) == null)
                 return StatusCode(StatusCodes.Status404NotFound);
 
-            var contacts = await _contactsService.GetAsync(userKey);
+            var contacts = await _contactsService.GetAllContactsAsync(userKey);
 
             return Ok(contacts);
         }
@@ -88,8 +84,12 @@ namespace Api.Controllers
         [HttpPut("Contacts/{key}", Name = nameof(Update))]
         public async Task<ActionResult<ContactResponse>> Update([FromRoute] string key, [FromBody] UpdateContactRequest request)
         {
-            if (!await _contactsService.ExistsAsync(key))
-                return StatusCode(StatusCodes.Status404NotFound);
+            var contact = await _contactsService.FindByIdAsync(key);
+
+            if (contact == null) return StatusCode(StatusCodes.Status404NotFound);
+
+            if (contact.Me) return StatusCode(StatusCodes.Status403Forbidden,
+                "Personal contact information must be accessed through user.");
 
             var updatedContact = await _contactsService.UpdateAsync(request);
 
@@ -99,8 +99,12 @@ namespace Api.Controllers
         [HttpDelete("Contacts/{key}", Name = nameof(Delete))]
         public async Task<IActionResult> Delete([FromRoute] string key)
         {
-            if (!await _contactsService.ExistsAsync(key))
-                return StatusCode(StatusCodes.Status404NotFound);
+            var contact = await _contactsService.FindByIdAsync(key);
+
+            if (contact == null) return StatusCode(StatusCodes.Status404NotFound);
+
+            if (contact.Me) return StatusCode(StatusCodes.Status403Forbidden,
+                "Personal contact information must be accessed through user.");
 
             await _contactsService.DeleteAsync(key);
 
@@ -110,7 +114,7 @@ namespace Api.Controllers
         [HttpPost("Contacts/{contactKey}/ShareWith/{userKey}", Name = nameof(Share))]
         public async Task<ActionResult<ContactResponse>> Share([FromRoute] string contactKey, [FromRoute] string userKey)
         {
-            //if (!await _contactsService.ExistsAsync(contactKey))
+            //if (await _contactsService.FindByIdAsync(contactKey) == null)
             //    return StatusCode(StatusCodes.Status404NotFound);
 
             //if (await _userManager.FindByIdAsync(userKey) == null)
@@ -119,22 +123,34 @@ namespace Api.Controllers
             return Ok(await _contactsService.ShareContact(contactKey, userKey));
         }
 
-        //[HttpPost("Users/{userKey}/AcceptShare/{contactKey}", Name = nameof(AcceptShare))]
-        //public async Task<ActionResult<ContactResponse>> AcceptShare([FromRoute] string userKey, [FromRoute] string contactKey)
-        //{
-        //    if (!await _contactsService.AcceptShare(contactKey, userKey))
-        //        return StatusCode(StatusCodes.Status404NotFound);
+        [HttpPost("Users/{userKey}/AcceptShare/{contactKey}", Name = nameof(AcceptShare))]
+        public async Task<IActionResult> AcceptShare([FromRoute] string userKey, [FromRoute] string contactKey)
+        {
+            var response = await _contactsService.AcceptSharedContact(contactKey, userKey);
 
-        //    return Ok();
-        //}
+            if (response == null) return StatusCode(StatusCodes.Status404NotFound);
 
-        //[HttpDelete("Users/{userKey}/DeclineShare/{contactKey}", Name = nameof(DeclineShare))]
-        //public async Task<ActionResult<ContactResponse>> DeclineShare([FromRoute] string userKey, [FromRoute] string contactKey)
-        //{
-        //    if (!await _contactsService.DeclineShare(contactKey, userKey))
-        //        return StatusCode(StatusCodes.Status404NotFound);
+            return Ok(response);
+        }
 
-        //    return Ok();
-        //}
+        [HttpDelete("Users/{userKey}/DeclineShare/{contactKey}", Name = nameof(DeclineShare))]
+        public async Task<IActionResult> DeclineShare([FromRoute] string userKey, [FromRoute] string contactKey)
+        {
+            var response = await _contactsService.StopSharingContact(contactKey, userKey);
+
+            if (response == null) return StatusCode(StatusCodes.Status404NotFound);
+
+            return Ok();
+        }
+
+        [HttpDelete("Contacts/{contactKey}/StopSharingWith/{userKey}", Name = nameof(StopSharing))]
+        public async Task<ActionResult<ContactResponse>> StopSharing([FromRoute] string contactKey, [FromRoute] string userKey)
+        {
+            var response = await _contactsService.StopSharingContact(contactKey, userKey);
+
+            if (response == null) return StatusCode(StatusCodes.Status404NotFound);
+
+            return Ok(response);
+        }
     }
 }

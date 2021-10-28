@@ -1,10 +1,13 @@
 ﻿using Application.Dto.Contact;
 using Application.Dto.User;
+using Application.Models;
 using Business.Interfaces;
 using Business.Models;
 using Business.Services;
 using Data.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Application.Services
 {
@@ -28,7 +31,7 @@ namespace Application.Services
             };
         }
 
-        public UserResponse ResponseFrom(User user)
+        public UserResponse UserResponseFrom(User user)
         {
             var response = new UserResponse
             {
@@ -62,19 +65,50 @@ namespace Application.Services
 
         public ContactResponse ContactResponseFrom(Contact contact)
         {
-            var response = new ContactResponse { Id = contact.Id };
+            var response = new ContactResponse
+            {
+                Id = contact.Id,
+                Me = contact.Me
+            };
 
             _mapper.ReplaceContactInformationWith(contact, response);
 
             return response;
         }
 
-        public ContactResponse ContactResponseFrom(User user)
+        public ContactResponse Received(Contact contact)
         {
-            var response = new ContactResponse { Id = user.Id };
+            return Received(contact, ContactTypes.Received);
+        }
 
-            _mapper.ReplaceContactInformationWith(user, response);
+        public ContactResponse Received(Contact contact, string type)
+        {
+            var response = ContactResponseFrom(contact);
+            response.Type = type;
 
+            response.ReceivedFrom = UserBasinInformationFrom(contact.Creator);
+            return response;
+        }
+
+        public ContactResponse SharedOrOther(Contact contact)
+        {
+            var response = ContactResponseFrom(contact);
+            if (contact.ContactUsers.Count == 0 &&
+                contact.UnacceptedShares.Count == 0)
+                response.Type = ContactTypes.Other;
+            else
+            {
+                response.Type = ContactTypes.Shared;
+                response.SharedWith = new List<UserBasic>();
+                foreach (var user in contact.ContactUsers.Select(cu => cu.User))
+                {
+                    response.SharedWith.Add(UserBasinInformationFrom(user));
+                }
+                foreach (var user in contact.UnacceptedShares.Select(cu => cu.User))
+                {
+                    response.SharedWith.Add(UserBasinInformationFrom(user));
+                }
+            }
             return response;
         }
     }

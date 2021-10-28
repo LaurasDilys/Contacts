@@ -14,16 +14,31 @@ namespace Data.Repositories
             _context = context;
         }
 
-        public async Task<bool> ExistsAsync(string id)
-        {
-            var contact = await _context.Contacts.FirstOrDefaultAsync(c => c.Id == id);
-            if (contact == null) return false;
-            return true;
-        }
+        //public async Task<bool> ExistsAsync(string id)
+        //{
+        //    var contact = await _context.Contacts.FirstOrDefaultAsync(c => c.Id == id);
+        //    if (contact == null) return false;
+        //    return true;
+        //}
 
         public async Task<Contact> FindByIdAsync(string id)
         {
             return await _context.Contacts.FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<Contact> GetReceivedContact(string id)
+        {
+            return await _context.Contacts
+                .Include(c => c.Creator)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<Contact> GetSharedOrOtherContact(string id)
+        {
+            return await _context.Contacts
+                .Include(c => c.ContactUsers).ThenInclude(cu => cu.User)
+                .Include(c => c.UnacceptedShares).ThenInclude(cu => cu.User)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
         
         public async Task CreateAsync(Contact contact)
