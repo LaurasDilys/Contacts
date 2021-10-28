@@ -5,7 +5,7 @@ export const getContacts = (id) => (dispatch) => {
   Api.get(`users/${id}/contacts`)
     .then(res => {
       dispatch(getContactsAction(res.data));
-    })
+    });
 }
 
 export const createContact = (id, request) => (dispatch) => {
