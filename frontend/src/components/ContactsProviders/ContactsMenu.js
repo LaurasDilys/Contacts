@@ -5,7 +5,7 @@ import { styled } from '@mui/system';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { contactsState } from '../../state/selectors';
-import { setSelectedContacts } from '../../state/actions/contactsActions';
+import { setSelectedContactsAction } from '../../state/actions/contactsActions';
 
 const ContactsMenu = () => {
   const { contacts: allContacts } = useSelector(contactsState);
@@ -17,7 +17,7 @@ const ContactsMenu = () => {
   };
 
   const select = contactType => {
-    dispatch(setSelectedContacts(contactType));
+    dispatch(setSelectedContactsAction(contactType));
     closeMenu();
   }
 
