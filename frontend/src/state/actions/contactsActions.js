@@ -20,7 +20,12 @@ export const deleteContactAction = id => ({
   payload: id
 });
 
-export const setSelectedContacts = props => ({
+export const setSelectedContactsAction = props => ({
   type: actionTypes.SET_SELECTED_CONTACTS,
   payload: props
-})
+});
+
+export const updateMyContactAction = props => ({
+  type: actionTypes.UPDATE_MY_CONTACT,
+  payload: props
+});

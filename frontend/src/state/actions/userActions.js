@@ -8,3 +8,8 @@ export const loginAction = props => ({
 export const logoutAction = () => ({
   type: actionTypes.LOGOUT,
 });
+
+export const updateUserInformationAction = props => ({
+  type: actionTypes.UPDATE_USER_INFORMATION,
+  payload: props
+});

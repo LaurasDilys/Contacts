@@ -1,9 +1,9 @@
 import * as actionTypes from '../actions/actionTypes';
-import * as contactTypes from '../../domain/contactTypes';
+import { ALL, ME } from '../../domain/contactTypes';
 import { UserBasicInformation } from './otherUsersReducer';
 
 type Contact = {
-  id: string | null,
+  id: string,
   type: string,
   receivedFrom: UserBasicInformation | null,
   sharedWith: UserBasicInformation[] | null,
@@ -25,13 +25,13 @@ export type ContactsState = {
 }
 
 const initialState: ContactsState = {
-  selectedContacts: contactTypes.ALL,
+  selectedContacts: ALL,
   contacts: []
 }
 
 type ContactsAction = {
   type: string,
-  payload: Contact[] | Contact | string
+  payload: Contact[] | Contact | string | null
 }
 
 const contactsReducer = (state: ContactsState = initialState, action: ContactsAction): ContactsState => {
@@ -64,6 +64,17 @@ const contactsReducer = (state: ContactsState = initialState, action: ContactsAc
       return {
         ...state,
         selectedContacts: action.payload as string
+      }
+    case actionTypes.UPDATE_MY_CONTACT:
+      let newState = state.contacts.filter(c => c.type !== ME)
+      if (action.payload !== null) {
+        let me = state.contacts.find(c => c.type === ME);
+        me = { ...action.payload as Contact };
+        newState.push(me);
+      }
+      return {
+        ...state,
+        contacts: [...newState]
       }
     default:
       return state;
