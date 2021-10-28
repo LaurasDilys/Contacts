@@ -48,12 +48,15 @@ const contactsReducer = (state: ContactsState = initialState, action: ContactsAc
         ...state,
         contacts: [...state.contacts, newContact]
       }
-    case actionTypes.EDIT_CONTACT:
-      const editedContact = action.payload as Contact;
-      editedContact.selected = true;
+    case actionTypes.UPDATE_CONTACT:
+      const newContactInformation = action.payload as Contact;
+      const newState = state.contacts.filter(c => c.id !== newContactInformation.id)
+      let updatedContact = state.contacts.find(c => c.id === newContactInformation.id);
+      updatedContact = { ...updatedContact, ...action.payload as Contact };
+      newState.push(updatedContact);
       return {
         ...state,
-        contacts: [...state.contacts.filter(c => c.id !== editedContact.id), editedContact]
+        contacts: [...newState]
       }
     case actionTypes.DELETE_CONTACT:
       return {
@@ -66,15 +69,15 @@ const contactsReducer = (state: ContactsState = initialState, action: ContactsAc
         selectedContacts: action.payload as string
       }
     case actionTypes.UPDATE_MY_CONTACT:
-      let newState = state.contacts.filter(c => c.type !== ME)
+      const newStateAfterUpdateMyContact = state.contacts.filter(c => c.type !== ME)
       if (action.payload !== null) {
         let me = state.contacts.find(c => c.type === ME);
-        me = { ...action.payload as Contact };
-        newState.push(me);
+        me = { ...me, ...action.payload as Contact };
+        newStateAfterUpdateMyContact.push(me);
       }
       return {
         ...state,
-        contacts: [...newState]
+        contacts: [...newStateAfterUpdateMyContact]
       }
     default:
       return state;

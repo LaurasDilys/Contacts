@@ -1,5 +1,6 @@
 ﻿using Application.Dto.Contact;
 using Application.Dto.User;
+using Business.Interfaces;
 using Business.Models;
 using Business.Services;
 using Data.Models;
@@ -29,17 +30,19 @@ namespace Application.Services
 
         public UserResponse ResponseFrom(User user)
         {
-            return new UserResponse
+            var response = new UserResponse
             {
                 Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
                 UserName = user.UserName,
                 ShowMyContact = user.ShowMyContact
             };
+
+            _mapper.ReplaceContactInformationWith(user, response);
+
+            return response;
         }
 
-        public Contact NewContactFrom(string userId, CreateContactRequest request)
+        public Contact NewContactFrom(string userId, IContactInformation request)
         {
             var newContact = new Contact
             {

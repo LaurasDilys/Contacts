@@ -106,15 +106,9 @@ namespace Api.Controllers
 
             return Ok();
         }
-        // After =>
-        // {
-        // var unacceptedShares = _context.UnacceptedShares.Where(us => us.ContactId == key);
-        // _context.UnacceptedShares.RemoveRange(unacceptedShares);
-        // _context.SaveChanges();
-        // }
 
         [HttpPost("Contacts/{contactKey}/ShareWith/{userKey}", Name = nameof(Share))]
-        public async Task<IActionResult> Share([FromRoute] string contactKey, [FromRoute] string userKey)
+        public async Task<ActionResult<ContactResponse>> Share([FromRoute] string contactKey, [FromRoute] string userKey)
         {
             //if (!await _contactsService.ExistsAsync(contactKey))
             //    return StatusCode(StatusCodes.Status404NotFound);
@@ -122,27 +116,25 @@ namespace Api.Controllers
             //if (await _userManager.FindByIdAsync(userKey) == null)
             //    return StatusCode(StatusCodes.Status404NotFound);
 
-            await _contactsService.ShareContact(contactKey, userKey);
-
-            return Ok();
+            return Ok(await _contactsService.ShareContact(contactKey, userKey));
         }
 
-        [HttpPost("Users/{userKey}/AcceptShare/{contactKey}", Name = nameof(AcceptShare))]
-        public async Task<IActionResult> AcceptShare([FromRoute] string userKey, [FromRoute] string contactKey)
-        {
-            if (!await _contactsService.AcceptShare(contactKey, userKey))
-                return StatusCode(StatusCodes.Status404NotFound);
+        //[HttpPost("Users/{userKey}/AcceptShare/{contactKey}", Name = nameof(AcceptShare))]
+        //public async Task<ActionResult<ContactResponse>> AcceptShare([FromRoute] string userKey, [FromRoute] string contactKey)
+        //{
+        //    if (!await _contactsService.AcceptShare(contactKey, userKey))
+        //        return StatusCode(StatusCodes.Status404NotFound);
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
-        [HttpDelete("Users/{userKey}/RemoveShare/{contactKey}", Name = nameof(RemoveShare))]
-        public async Task<IActionResult> RemoveShare([FromRoute] string userKey, [FromRoute] string contactKey)
-        {
-            if (!await _contactsService.RemoveShare(contactKey, userKey))
-                return StatusCode(StatusCodes.Status404NotFound);
+        //[HttpDelete("Users/{userKey}/DeclineShare/{contactKey}", Name = nameof(DeclineShare))]
+        //public async Task<ActionResult<ContactResponse>> DeclineShare([FromRoute] string userKey, [FromRoute] string contactKey)
+        //{
+        //    if (!await _contactsService.DeclineShare(contactKey, userKey))
+        //        return StatusCode(StatusCodes.Status404NotFound);
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
     }
 }

@@ -1,5 +1,5 @@
 import Api from '../../domain/Api';
-import { deleteContactAction, editContactAction, getContactsAction, createContactAction } from './contactsActions';
+import { deleteContactAction, updateContactAction, getContactsAction, createContactAction } from './contactsActions';
 
 export const getContacts = (id) => (dispatch) => {
   Api.get(`users/${id}/contacts`)
@@ -11,14 +11,14 @@ export const getContacts = (id) => (dispatch) => {
 export const createContact = (id, request) => (dispatch) => {
   Api.post(`users/${id}/contacts/create`, request)
     .then(res => {
-      dispatch(createContactAction({...res.data}));
+      dispatch(createContactAction({ ...res.data }));
     });
 }
 
-export const editContact = (request) => (dispatch) => {
+export const updateContact = (request) => (dispatch) => {
   Api.put(`contacts/${request.id}`, request)
     .then(res => {
-      dispatch(editContactAction({...res.data}));
+      dispatch(updateContactAction({ ...res.data }));
     });
 }
 
@@ -28,3 +28,24 @@ export const deleteContact = (id) => (dispatch) => {
       dispatch(deleteContactAction(id));
     });
 }
+
+export const shareContact = (contactId, userId) => (dispatch) => {
+  Api.post(`contacts/${contactId}/sharewith/${userId}`)
+    .then(res => {
+      dispatch(updateContactAction({ ...res.data }))
+    });
+}
+
+// export const acceptShare = (userId, contactId) => {
+//   Api.post(`users/${userId}/acceptshare/${contactId}`)
+//     .then(res => {
+//       dispatch(updateContactAction({ ...res.data }))
+//     });
+// }
+
+// export const removeShare = (userId, contactId) => {
+//   Api.post(`users/${userId}/declineshare/${contactId}`)
+//     .then(res => {
+//       dispatch(updateContactAction({ ...res.data }))
+//     });
+// }

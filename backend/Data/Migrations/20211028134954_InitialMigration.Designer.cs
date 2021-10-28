@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20211027124651_UnacceptedSharesAsJoinTable")]
-    partial class UnacceptedSharesAsJoinTable
+    [Migration("20211028134954_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -50,12 +50,16 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Me")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(50)
@@ -138,10 +142,12 @@ namespace Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 

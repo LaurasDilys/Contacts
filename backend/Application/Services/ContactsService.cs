@@ -3,7 +3,6 @@ using Application.Models;
 using Business.Models;
 using Data.Models;
 using Data.Repositories;
-using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,8 +34,6 @@ namespace Application.Services
             var user = await _usersRepository.GetUserWithDeepRelationsAsync(userId);
             var response = new List<ContactResponse>();
 
-            if (user.ShowMyContact) AddMeTo(response, user);
-
             foreach (var contact in user.ContactUsers.Select(cu => cu.Contact))
             {
                 AddReceivedTo(response, contact);
@@ -47,20 +44,27 @@ namespace Application.Services
                 AddReceivedTo(response, contact, ContactTypes.Unaccepted);
             }
 
-            foreach (var contact in user.Contacts)
+            foreach (var contact in user.Contacts/*.Where(c => !c.Me)*/)
             {
                 AddSharedOrOtherTo(response, contact);
             }
 
+            //if (user.ShowMyContact)
+            //    AddMeTo(response, user.Contacts.FirstOrDefault(c => c.Me));
+
             return response;
         }
 
-        private void AddMeTo(List<ContactResponse> response, User user)
-        {
-            var me = _mapper.ContactResponseFrom(user);
-            me.Type = ContactTypes.Me;
-            response.Add(me);
-        }
+        //private void AddMeTo(List<ContactResponse> response, Contact contact)
+        //{
+        //    if (contact != null) // this contact should be present,
+        //                         // but still it's worth checking
+        //    {
+        //        var me = _mapper.ContactResponseFrom(contact);
+        //        me.Type = ContactTypes.Me;
+        //        response.Add(me);
+        //    }
+        //}
 
         private void AddReceivedTo(List<ContactResponse> response, Contact contact)
         {
@@ -79,12 +83,18 @@ namespace Application.Services
         private void AddSharedOrOtherTo(List<ContactResponse> response, Contact contact)
         {
             var currentContact = _mapper.ContactResponseFrom(contact);
-            if (contact.ContactUsers.Count == 0) currentContact.Type = ContactTypes.Other;
+            if (contact.ContactUsers.Count == 0 &&
+                contact.UnacceptedShares.Count == 0)
+                currentContact.Type = ContactTypes.Other;
             else
             {
                 currentContact.Type = ContactTypes.Shared;
                 currentContact.SharedWith = new List<UserBasic>();
                 foreach (var user in contact.ContactUsers.Select(cu => cu.User))
+                {
+                    currentContact.SharedWith.Add(_mapper.UserBasinInformationFrom(user));
+                }
+                foreach (var user in contact.UnacceptedShares.Select(cu => cu.User))
                 {
                     currentContact.SharedWith.Add(_mapper.UserBasinInformationFrom(user));
                 }
@@ -112,50 +122,58 @@ namespace Application.Services
             return _mapper.ContactResponseFrom(contact);
         }
 
-        public async Task ShareContact(string contactId, string userId)
+        public async Task<ContactResponse> ShareContact(string contactId, string userId)
         {
-            var unacceptedShare = new UnacceptedShare
+            var unacceptedShare = new ContactUser
             {
                 ContactId = contactId,
                 UserId = userId
             };
 
-            await _contactsRepository.AddUnacceptedShareAsync(unacceptedShare);
-            await _contactsRepository.SaveChangesAsync();
-        }
-
-        public async Task<bool> AcceptShare(string contactId, string userId)
-        {
-            var unacceptedShare = await _contactsRepository.GetUnacceptedShareAsync(contactId, userId);
-
-            if (unacceptedShare == null) return false;
-
-            var contactUser = new ContactUser
-            {
-                ContactId = contactId,
-                UserId = userId
-            };
-
-            await _contactsRepository.AddContactUserAsync(contactUser);
-            _contactsRepository.RemoveUnacceptedShare(unacceptedShare);
+            await _contactsRepository.AddContactUserAsync(unacceptedShare);
             await _contactsRepository.SaveChangesAsync();
 
-            return true;
+            var result = _mapper.ContactResponseFrom(
+                await _contactsRepository.FindByIdAsync(contactId));
+
+            return result;
         }
 
-        public async Task<bool> RemoveShare(string contactId, string userId)
-        {
-            var unacceptedShare = await _contactsRepository.GetUnacceptedShareAsync(contactId, userId);
-            var contactUser = await _contactsRepository.GetContactUserAsync(contactId, userId);
+        //public async Task<ContactResponse> AcceptShare(string contactId, string userId)
+        //{
+        //    var unacceptedShare = await _contactsRepository.GetUnacceptedShareAsync(contactId, userId);
 
-            if (unacceptedShare == null && contactUser == null) return false;
+        //    if (unacceptedShare != null)
+        //    {
+        //        var contactUser = new ContactUser
+        //        {
+        //            ContactId = contactId,
+        //            UserId = userId
+        //        };
 
-            if (unacceptedShare != null) _contactsRepository.RemoveUnacceptedShare(unacceptedShare);
-            if (contactUser != null) _contactsRepository.RemoveContactUser(contactUser);
-            await _contactsRepository.SaveChangesAsync();
+        //        await _contactsRepository.AddContactUserAsync(contactUser);
+        //        _contactsRepository.RemoveUnacceptedShare(unacceptedShare);
+        //        await _contactsRepository.SaveChangesAsync();
+        //    }
 
-            return true;
-        }
+        //    // // //
+        //    return _mapper.ContactResponseFrom(
+        //        await _contactsRepository.FindByIdAsync(contactId));
+        //}
+
+        //public async Task<ContactResponse> DeclineShare(string contactId, string userId)
+        //{
+        //    var unacceptedShare = await _contactsRepository.GetUnacceptedShareAsync(contactId, userId);
+        //    var contactUser = await _contactsRepository.GetContactUserAsync(contactId, userId);
+
+        //    if (unacceptedShare != null) _contactsRepository.RemoveUnacceptedShare(unacceptedShare);
+        //    if (contactUser != null) _contactsRepository.RemoveContactUser(contactUser);
+        //    await _contactsRepository.SaveChangesAsync();
+
+        //    // // //
+        //    return _mapper.ContactResponseFrom(
+        //        await _contactsRepository.FindByIdAsync(contactId));
+        //}
 
         public async Task DeleteAsync(string id)
         {

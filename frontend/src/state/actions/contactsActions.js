@@ -10,8 +10,8 @@ export const createContactAction = props => ({
   payload: props
 });
 
-export const editContactAction = props => ({
-  type: actionTypes.EDIT_CONTACT,
+export const updateContactAction = props => ({
+  type: actionTypes.UPDATE_CONTACT,
   payload: props
 });
 
