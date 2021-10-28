@@ -9,6 +9,7 @@ namespace Data.Models
         [Key]
         public string Id { get; set; }
 
+        [Required]
         [MaxLength(50)]
         public string FirstName { get; set; }
 
@@ -35,6 +36,8 @@ namespace Data.Models
 
         [MaxLength(50)]
         public string Notes { get; set; }
+
+        public bool Me { get; set; }
 
         public string CreatorId { get; set; }
         public User Creator { get; set; }
