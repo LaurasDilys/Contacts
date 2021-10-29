@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { contactsState } from '../../state/selectors';
 import Contacts from '../Contacts/Contacts';
-import { ALL, SHARED, RECEIVED, UNACCEPTED } from '../../domain/contactTypes';
+import { ALL, UNACCEPTED } from '../../domain/contactTypes';
 
 const ContactsProvider = () => {
   const { contacts: allContacts, selectedContacts } = useSelector(contactsState);
@@ -10,7 +10,7 @@ const ContactsProvider = () => {
 
   const filterProvidedContacts = () => {
     if (selectedContacts === ALL) {
-      setFilteredContacts(allContacts);
+      setFilteredContacts(allContacts.filter(c => c.type !== UNACCEPTED));
     } else {
       setFilteredContacts(allContacts.filter(c => c.type === selectedContacts));
     }
