@@ -6,6 +6,7 @@ using Data.Repositories;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.Services
@@ -72,14 +73,6 @@ namespace Application.Services
             return result.Succeeded;
         }
 
-        private async Task CreateMyContact(User user)
-        {
-            var contact = _mapper.NewContactFrom(user.Id, user);
-
-            contact.Me = true;
-            await _contactsRepository.CreateAsync(contact);
-        }
-
         public async Task<User> FindByNameAsync(string userName)
         {
             return await _userManager.FindByNameAsync(userName);
@@ -101,11 +94,35 @@ namespace Application.Services
 
         public async Task<UpdateUserResponse> UpdateUser(UpdateUserRequest request)
         {
-            var user = await _usersRepository.GetUserWithOwnContactAsync(request.Id);
+            var user = await _usersRepository.GetUserWithOwnContactsAsync(request.Id);
 
+            _mapper.UpdateUser(user, request);
 
+            var contact = user.Contacts.FirstOrDefault(c => c.Me);
 
-            return new UpdateUserResponse();
+            if (contact == null)
+            {
+                await CreateMyContact(user);
+                contact = user.Contacts.FirstOrDefault(c => c.Me);
+            }
+
+            _mapper.UpdateContact(contact, request);
+
+            await _usersRepository.SaveChangesAsync();
+
+            return new UpdateUserResponse
+            {
+                User = _mapper.UserResponseFrom(user),
+                MyContact = user.ShowMyContact ? _mapper.SharedOrOther(contact) : null
+            };
+        }
+
+        private async Task CreateMyContact(User user)
+        {
+            var contact = _mapper.NewContactFrom(user.Id, user);
+
+            contact.Me = true;
+            await _contactsRepository.CreateAsync(contact);
         }
     }
 }
