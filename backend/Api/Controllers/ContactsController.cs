@@ -50,8 +50,8 @@ namespace Api.Controllers
         //
         //
 
-        [HttpGet("Users/{userKey}/Contacts", Name = nameof(Get))]
-        public async Task<ActionResult<ICollection<ContactResponse>>> Get([FromRoute] string userKey)
+        [HttpGet("Users/{userKey}/Contacts", Name = nameof(GetContacts))]
+        public async Task<ActionResult<ICollection<ContactResponse>>> GetContacts([FromRoute] string userKey)
         {
             if (await _usersService.FindByIdAsync(userKey) == null)
                 return StatusCode(StatusCodes.Status404NotFound);
@@ -61,8 +61,8 @@ namespace Api.Controllers
             return Ok(contacts);
         }
 
-        [HttpPost("Users/{userKey}/Contacts", Name = nameof(Create))]
-        public async Task<ActionResult<ContactResponse>> Create([FromRoute] string userKey, [FromBody] CreateContactRequest request)
+        [HttpPost("Users/{userKey}/Contacts", Name = nameof(CreateContact))]
+        public async Task<ActionResult<ContactResponse>> CreateContact([FromRoute] string userKey, [FromBody] CreateContactRequest request)
         {
             if (await _usersService.FindByIdAsync(userKey) == null)
                 return StatusCode(StatusCodes.Status404NotFound);
@@ -72,23 +72,23 @@ namespace Api.Controllers
             return StatusCode(StatusCodes.Status201Created, newContact);
         }
 
-        [HttpPut("Contacts/{key}", Name = nameof(Update))]
-        public async Task<ActionResult<ContactResponse>> Update([FromRoute] string key, [FromBody] UpdateContactRequest request)
+        [HttpPut("Contacts/{key}", Name = nameof(UpdateContact))]
+        public async Task<ActionResult<ContactResponse>> UpdateContact([FromRoute] string key, [FromBody] UpdateContactRequest request)
         {
             var contact = await _contactsService.FindByIdAsync(key);
 
             if (contact == null) return StatusCode(StatusCodes.Status404NotFound);
 
             if (contact.Me) return StatusCode(StatusCodes.Status403Forbidden,
-                "Personal contact information must be accessed through user.");
+                "Personal contact information can only be changed by updating user.");
 
             var updatedContact = await _contactsService.UpdateAsync(request);
 
             return Ok(updatedContact);
         }
 
-        [HttpDelete("Contacts/{key}", Name = nameof(Delete))]
-        public async Task<IActionResult> Delete([FromRoute] string key)
+        [HttpDelete("Contacts/{key}", Name = nameof(DeleteContact))]
+        public async Task<IActionResult> DeleteContact([FromRoute] string key)
         {
             var contact = await _contactsService.FindByIdAsync(key);
 
