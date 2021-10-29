@@ -6,22 +6,24 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { contactsState } from '../../state/selectors';
 import { setSelectedContactsAction } from '../../state/actions/contactsActions';
+import { history } from '../AppRouter/AppRouter';
 
 const ContactsMenu = () => {
   const { contacts: allContacts } = useSelector(contactsState);
   const [anchorElement, setAnchorElement] = useState(null);
   const dispatch = useDispatch();
 
-  const openMenu = (event) => {
+  const handleOpenMenu = (event) => {
     setAnchorElement(event.currentTarget);
   };
 
-  const select = contactType => {
+  const handleSelect = contactType => {
     dispatch(setSelectedContactsAction(contactType));
-    closeMenu();
+    history.push('/contacts');
+    handleCloseMenu();
   }
 
-  const closeMenu = () => {
+  const handleCloseMenu = () => {
     setAnchorElement(null);
   };
 
@@ -32,7 +34,7 @@ const ContactsMenu = () => {
         edge='start'
         color='inherit'
         style={{ width: 28, height: 28, marginTop: 10 }}
-        onClick={openMenu}
+        onClick={handleOpenMenu}
       >
         <StyledBadge badgeContent={
           allContacts.filter(c => c.type == UNACCEPTED).length
@@ -53,16 +55,16 @@ const ContactsMenu = () => {
           horizontal: 'right',
         }}
         open={Boolean(anchorElement)}
-        onClose={closeMenu}
+        onClose={handleCloseMenu}
       >
         <div>
-          <MenuItem onClick={() => select(ALL)}>All Contacts</MenuItem>
+          <MenuItem onClick={() => handleSelect(ALL)}>All Contacts</MenuItem>
           {allContacts.some(c => c.type == SHARED) &&
-          <MenuItem onClick={() => select(SHARED)}>Shared</MenuItem>}
+          <MenuItem onClick={() => handleSelect(SHARED)}>Shared</MenuItem>}
           {allContacts.some(c => c.type == RECEIVED) &&
-          <MenuItem onClick={() => select(RECEIVED)}>Received</MenuItem>}
+          <MenuItem onClick={() => handleSelect(RECEIVED)}>Received</MenuItem>}
           {allContacts.some(c => c.type == UNACCEPTED) &&
-          <MenuItem onClick={() => select(UNACCEPTED)}><b>Unaccepted</b></MenuItem>}
+          <MenuItem onClick={() => handleSelect(UNACCEPTED)}><b>Unaccepted</b></MenuItem>}
         </div>
       </Menu>
     </> :
