@@ -30,13 +30,13 @@ namespace Api.Controllers
             return Ok(await _usersService.GetOtherUsersAsync(key));
         }
 
-        [HttpPut("{key}", Name = nameof(Update))]
-        public async Task<ActionResult<UpdateUserResponse>> Update([FromRoute] string key, [FromBody] UpdateUserRequest request)
+        [HttpPut("{key}", Name = nameof(UpdateUser))]
+        public async Task<ActionResult<UpdateUserResponse>> UpdateUser([FromRoute] string key, [FromBody] UpdateUserRequest request)
         {
             if (await _usersService.FindByIdAsync(key) == null)
                 return StatusCode(StatusCodes.Status404NotFound);
 
-            var response = _usersService.UpdateUser(request);
+            var response = await _usersService.UpdateUser(request);
 
             return Ok(response);
         }
