@@ -15,9 +15,19 @@ namespace Data.Repositories
             _context = context;
         }
 
-        public async Task<ICollection<User>> GetOtherUsersAsync(string id)
+        public async Task<ICollection<User>> GetOtherUsersAsync(string userId)
         {
-            return await _context.Users.Where(u => u.Id != id).ToListAsync();
+            return await _context.Users.Where(u => u.Id != userId).ToListAsync();
+        }
+
+        public async Task<User> GetUserWithOwnContactAsync(string userId)
+        {
+            var user = await _context.Users
+                .Include(u => u.Contacts).ThenInclude(c => c.ContactUsers).ThenInclude(cu => cu.User)
+                .Include(u => u.Contacts).ThenInclude(c => c.UnacceptedShares).ThenInclude(cu => cu.User)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            return user;
         }
 
         public async Task<User> GetUserWithAllContactsAsync(string userId)

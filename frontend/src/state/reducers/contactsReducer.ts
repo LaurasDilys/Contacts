@@ -4,6 +4,7 @@ import { UserBasicInformation } from './otherUsersReducer';
 
 type Contact = {
   id: string,
+  me: boolean,
   type: string,
   receivedFrom: UserBasicInformation | null,
   sharedWith: UserBasicInformation[] | null,

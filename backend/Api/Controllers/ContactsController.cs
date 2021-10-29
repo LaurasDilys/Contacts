@@ -18,26 +18,17 @@ namespace Api.Controllers
     public class ContactsController : ControllerBase
     {
         private readonly ContactsService _contactsService;
-        private readonly UserManager<User> _userManager;
+        private readonly UsersService _usersService;
         //
         //
         //
         private readonly DataContext _context;
-        //
-        //
-        //
 
-        public ContactsController(ContactsService contactsService, UserManager<User> userManager, DataContext context)
+        public ContactsController(ContactsService contactsService, UsersService usersService, DataContext context)
         {
             _contactsService = contactsService;
-            _userManager = userManager;
-            //
-            //
-            //
+            _usersService = usersService;
             _context = context;
-            //
-            //
-            //
         }
 
         //[AllowAnonymous]
@@ -62,7 +53,7 @@ namespace Api.Controllers
         [HttpGet("Users/{userKey}/Contacts", Name = nameof(Get))]
         public async Task<ActionResult<ICollection<ContactResponse>>> Get([FromRoute] string userKey)
         {
-            if (await _userManager.FindByIdAsync(userKey) == null)
+            if (await _usersService.FindByIdAsync(userKey) == null)
                 return StatusCode(StatusCodes.Status404NotFound);
 
             var contacts = await _contactsService.GetAllContactsAsync(userKey);
@@ -73,7 +64,7 @@ namespace Api.Controllers
         [HttpPost("Users/{userKey}/Contacts", Name = nameof(Create))]
         public async Task<ActionResult<ContactResponse>> Create([FromRoute] string userKey, [FromBody] CreateContactRequest request)
         {
-            if (await _userManager.FindByIdAsync(userKey) == null)
+            if (await _usersService.FindByIdAsync(userKey) == null)
                 return StatusCode(StatusCodes.Status404NotFound);
 
             var newContact = await _contactsService.CreateAsync(userKey, request);

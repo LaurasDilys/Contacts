@@ -32,7 +32,7 @@ namespace Api.Controllers
         [HttpPost(nameof(Register))]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            if (await _usersService.ExistsAsync(request.UserName))
+            if (await _usersService.NameExistsAsync(request.UserName))
                 return StatusCode(StatusCodes.Status409Conflict,
                     "This user name is taken.");
 

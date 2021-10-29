@@ -1,4 +1,5 @@
-﻿using Application.Services;
+﻿using Application.Dto.User;
+using Application.Services;
 using Business.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -16,17 +17,28 @@ namespace Api.Controllers
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class UsersController : ControllerBase
     {
-        private readonly UsersService _service;
+        private readonly UsersService _usersService;
 
-        public UsersController(UsersService service)
+        public UsersController(UsersService usersService)
         {
-            _service = service;
+            _usersService = usersService;
         }
 
         [HttpGet("OtherThan/{key}", Name = nameof(OtherThan))]
         public async Task<ActionResult<ICollection<UserBasic>>> OtherThan(string key)
         {
-            return Ok(await _service.GetOtherUsersAsync(key));
+            return Ok(await _usersService.GetOtherUsersAsync(key));
+        }
+
+        [HttpPut("{key}", Name = nameof(Update))]
+        public async Task<ActionResult<UpdateUserResponse>> Update([FromRoute] string key, [FromBody] UpdateUserRequest request)
+        {
+            if (await _usersService.FindByIdAsync(key) == null)
+                return StatusCode(StatusCodes.Status404NotFound);
+
+            var response = _usersService.UpdateUser(request);
+
+            return Ok(response);
         }
     }
 }

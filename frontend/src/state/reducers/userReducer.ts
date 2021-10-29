@@ -5,7 +5,7 @@ type User = {
   firstName: string,
   lastName: string,
   userName: string,
-  showMyContact: Boolean,
+  showMyContact: boolean,
   phoneNumber: string | null,
   alternativePhoneNumber: string | null,
   email: string | null,

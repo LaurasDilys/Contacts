@@ -1,4 +1,5 @@
 ﻿using Application.Dto.Authentication;
+using Application.Dto.User;
 using Business.Models;
 using Data.Models;
 using Data.Repositories;
@@ -27,9 +28,9 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ICollection<UserBasic>> GetOtherUsersAsync(string id)
+        public async Task<ICollection<UserBasic>> GetOtherUsersAsync(string userId)
         {
-            var users = await _usersRepository.GetOtherUsersAsync(id);
+            var users = await _usersRepository.GetOtherUsersAsync(userId);
 
             var response = new List<UserBasic>();
             foreach (var user in users)
@@ -39,7 +40,7 @@ namespace Application.Services
             return response;
         }
 
-        public async Task<bool> ExistsAsync(string userName)
+        public async Task<bool> NameExistsAsync(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
             if (user == null) return false;
@@ -65,18 +66,28 @@ namespace Application.Services
             if (result.Succeeded) // Create contact using user's own contact information
             {
                 var createdUser = await _userManager.FindByIdAsync(userId);
-                var contact = _mapper.NewContactFrom(userId, createdUser);
-
-                contact.Me = true;
-                await _contactsRepository.CreateAsync(contact);
+                await CreateMyContact(createdUser);
             }
 
             return result.Succeeded;
         }
 
+        private async Task CreateMyContact(User user)
+        {
+            var contact = _mapper.NewContactFrom(user.Id, user);
+
+            contact.Me = true;
+            await _contactsRepository.CreateAsync(contact);
+        }
+
         public async Task<User> FindByNameAsync(string userName)
         {
             return await _userManager.FindByNameAsync(userName);
+        }
+
+        public async Task<User> FindByIdAsync(string userId)
+        {
+            return await _userManager.FindByIdAsync(userId);
         }
 
         public async Task<bool> UserNameAndPasswordAreValidAsync(LoginRequest request)
@@ -86,6 +97,15 @@ namespace Application.Services
                 return false;
 
             return true;
+        }
+
+        public async Task<UpdateUserResponse> UpdateUser(UpdateUserRequest request)
+        {
+            var user = await _usersRepository.GetUserWithOwnContactAsync(request.Id);
+
+
+
+            return new UpdateUserResponse();
         }
     }
 }

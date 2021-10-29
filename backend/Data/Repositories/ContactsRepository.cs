@@ -21,26 +21,26 @@ namespace Data.Repositories
         //    return true;
         //}
 
-        public async Task<Contact> FindByIdAsync(string id)
+        public async Task<Contact> FindByIdAsync(string contactId)
         {
-            return await _context.Contacts.FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.Contacts.FirstOrDefaultAsync(c => c.Id == contactId);
         }
 
-        public async Task<Contact> GetReceivedContact(string id)
+        public async Task<Contact> GetReceivedContact(string contactId)
         {
             return await _context.Contacts
                 .Include(c => c.Creator)
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .FirstOrDefaultAsync(c => c.Id == contactId);
         }
 
-        public async Task<Contact> GetSharedOrOtherContact(string id)
+        public async Task<Contact> GetSharedOrOtherContact(string contactId)
         {
             return await _context.Contacts
                 .Include(c => c.ContactUsers).ThenInclude(cu => cu.User)
                 .Include(c => c.UnacceptedShares).ThenInclude(cu => cu.User)
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .FirstOrDefaultAsync(c => c.Id == contactId);
         }
-        
+
         public async Task CreateAsync(Contact contact)
         {
             await _context.Contacts.AddAsync(contact);
@@ -79,9 +79,9 @@ namespace Data.Repositories
             _context.ContactUsers.Remove(contactUser);
         }
 
-        public async Task DeleteAsync(string id)
+        public async Task DeleteAsync(string contactId)
         {
-            var contact = await _context.Contacts.FirstOrDefaultAsync(c => c.Id == id);
+            var contact = await _context.Contacts.FirstOrDefaultAsync(c => c.Id == contactId);
             _context.Contacts.Remove(contact);
             await SaveChangesAsync();
         }
