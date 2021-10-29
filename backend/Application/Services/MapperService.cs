@@ -76,11 +76,7 @@ namespace Application.Services
 
         public ContactResponse ContactResponseFrom(Contact contact)
         {
-            var response = new ContactResponse
-            {
-                Id = contact.Id,
-                Me = contact.Me
-            };
+            var response = new ContactResponse { Id = contact.Id };
 
             _contactInformationMapper.
                 ReplaceContactInformationWith(contact, response);
@@ -105,6 +101,8 @@ namespace Application.Services
         public ContactResponse SharedOrOther(Contact contact)
         {
             var response = ContactResponseFrom(contact);
+            response.Me = contact.Me;
+
             if ((contact.ContactUsers == null ||
                 contact.ContactUsers.Count == 0) &&
                 (contact.UnacceptedShares == null ||
