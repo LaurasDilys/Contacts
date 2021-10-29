@@ -3,18 +3,20 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import './ConfirmAlert.css';
 
-export const onConfirm = (text, callbackFunction, variant) => {
+export const onConfirm = (message, callbackFunction, variant) => {
   confirmAlert({
     customUI: ({ onClose }) => {
 
       const okOrCancel = variant === 'Ok/Cancel' ? true : false;
 
-      const fullText = okOrCancel ? text: `Are you sure you want to ${text}?`
+      const text = `Are you sure you want to ${message}?`
 
       return (
         <div className='alert-box'>
           <h1>Confirm to continue</h1>
-          <p>{fullText}</p>
+          {okOrCancel ?
+          message :
+          <p>{text}</p>}
           <div className='alert-buttons'>
             <Button
               variant='outlined'
