@@ -3,11 +3,13 @@ import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import './ConfirmAlert.css';
 
-export const onConfirm = (text, callbackFunction) => {
+export const onConfirm = (text, callbackFunction, variant) => {
   confirmAlert({
     customUI: ({ onClose }) => {
 
-      const fullText = `Are you sure you want to ${text}?`
+      const okOrCancel = variant === 'Ok/Cancel' ? true : false;
+
+      const fullText = okOrCancel ? text: `Are you sure you want to ${text}?`
 
       return (
         <div className='alert-box'>
@@ -22,13 +24,13 @@ export const onConfirm = (text, callbackFunction) => {
                 callbackFunction();
               }}
             >
-              Yes
+              {okOrCancel ? 'Ok' : 'Yes'}
             </Button>
             <Button
               variant='outlined'
               onClick={onClose}
             >
-              No
+              {okOrCancel ? 'Cancel' : 'No'}
             </Button>
           </div>
         </div>
