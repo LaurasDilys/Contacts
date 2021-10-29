@@ -1,13 +1,16 @@
 import { Chip } from '@mui/material';
 import { styled } from '@mui/system';
+import { useDispatch } from 'react-redux';
+import { stopSharingContact } from '../../state/actions/contactsThunk';
 import { getFullName } from '../Contacts/Contacts';
 import { stringToColor } from '../Contacts/ContactView';
 
 const UserChip = ({ contactId, user, received }) => {
   const name = getFullName(user.firstName, user.lastName);
+  const dispatch = useDispatch();
 
-  const stopSharing = () => {
-
+  const handleStopSharing = () => {
+    dispatch(stopSharingContact(contactId, user.id));
   }
 
   return (
@@ -25,7 +28,7 @@ const UserChip = ({ contactId, user, received }) => {
     <StyledChip
       name={name}
       label={name}
-      onDelete={stopSharing}
+      onDelete={handleStopSharing}
     />
   );
 }
@@ -35,9 +38,6 @@ const StyledChip = styled(Chip)(({ name }) => ({
     backgroundColor: stringToColor(name),
     color: 'ghostwhite',
   },
-  // '& .MuiChip-deleteIcon': {
-  //   color: 'ghostwhite'
-  // },
   '& .MuiChip-deleteIcon:hover': {
     color: 'ghostwhite'
   },

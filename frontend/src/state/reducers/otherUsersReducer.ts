@@ -27,6 +27,8 @@ const otherUsersReducer = (state: OtherUsersState = initialState, action: OtherU
         ...state,
         otherUsers: action.payload
       }
+    case actionTypes.LOGOUT:
+      return initialState;
     default:
       return state;
   }

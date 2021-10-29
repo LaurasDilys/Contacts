@@ -32,20 +32,27 @@ export const deleteContact = (id) => (dispatch) => {
 export const shareContact = (contactId, userId) => (dispatch) => {
   Api.post(`contacts/${contactId}/sharewith/${userId}`)
     .then(res => {
-      dispatch(updateContactAction({ ...res.data }))
+      dispatch(updateContactAction({ ...res.data }));
     });
 }
 
-// export const acceptShare = (userId, contactId) => {
-//   Api.post(`users/${userId}/acceptshare/${contactId}`)
-//     .then(res => {
-//       dispatch(updateContactAction({ ...res.data }))
-//     });
-// }
+export const acceptSharedContact = (contactId, userId) => (dispatch) => {
+  Api.post(`users/${userId}/acceptshare/${contactId}`)
+    .then(res => {
+      dispatch(updateContactAction({ ...res.data }));
+    });
+}
 
-// export const removeShare = (userId, contactId) => {
-//   Api.post(`users/${userId}/declineshare/${contactId}`)
-//     .then(res => {
-//       dispatch(updateContactAction({ ...res.data }))
-//     });
-// }
+export const declineSharedContact = (contactId, userId) => (dispatch) => {
+  Api.delete(`users/${userId}/declineshare/${contactId}`)
+    .then(() => {
+      dispatch(deleteContact(contactId));
+    });
+}
+
+export const stopSharingContact = (contactId, userId) => (dispatch) => {
+  Api.delete(`contacts/${contactId}/stopsharingwith/${userId}`)
+    .then(res => {
+      dispatch(updateContactAction({ ...res.data }));
+    });
+}

@@ -80,6 +80,8 @@ const contactsReducer = (state: ContactsState = initialState, action: ContactsAc
         ...state,
         contacts: [...newStateAfterUpdateMyContact]
       }
+    case actionTypes.LOGOUT:
+      return initialState;
     default:
       return state;
   }
