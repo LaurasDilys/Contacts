@@ -16,14 +16,8 @@ const UserChip = ({ contactId, user, received }) => {
   return (
     received ?
     <StyledChip
-      style={{ height: 60 }}
       name={name}
-      label={
-        <>
-          <p>{name}</p>
-          <p>{user.userName}</p>
-        </>
-      }
+      label={name}
     /> :
     <StyledChip
       name={name}
