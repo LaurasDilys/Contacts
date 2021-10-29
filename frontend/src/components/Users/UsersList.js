@@ -1,13 +1,7 @@
-import { Divider, Input, InputAdornment, List, ListItem, ListItemText } from "@mui/material";
+import { Divider, Input, InputAdornment, List, ListItem, ListItemText } from '@mui/material';
 import PersonSearchIcon from '@mui/icons-material/PersonSearch';
-import { useEffect, useState } from "react";
-
-const getFullName = (firstName, lastName) => {
-  let fullName = '';
-  firstName?.length > 0 && (fullName += firstName);
-  lastName?.length > 0 && (fullName += ` ${lastName}`);
-  return fullName;
-}
+import { useEffect, useState } from 'react';
+import { getFullName } from '../Contacts/Contacts';
 
 const sorted = users => {
   users.sort((a, b) =>

@@ -1,8 +1,9 @@
 import Api from '../../domain/Api';
 import { history } from '../../components/AppRouter/AppRouter';
-import { loginAction, logoutAction } from './userActions';
+import { loginAction, logoutAction, updateUserInformationAction } from './userActions';
 import { getContacts } from './contactsThunk';
 import { getOtherUsers } from './otherUsersThunk';
+import { updateMyContactAction } from './contactsActions';
 // import { SetNotificationAction } from '../actions/notificationsActions';
 
 export const register = (request) => () => {
@@ -58,5 +59,13 @@ export const logout = () => (dispatch) => {
   Api.post('logout')
     .then(() => {
       dispatch(logoutAction());
+    });
+}
+
+export const updateUser = (request) => (dispatch) => {
+  Api.put(`contacts/${request.id}`, request)
+    .then(res => {
+      dispatch(updateMyContactAction({ ...res.data.myContact }));
+      dispatch(updateUserInformationAction({ ...res.data.user }));
     });
 }

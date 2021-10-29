@@ -80,7 +80,7 @@ const useSize = (target) => {
   return size;
 }
 
-const getFullName = (firstName, lastName) => {
+export const getFullName = (firstName, lastName) => {
   let fullName = '';
   firstName?.length > 0 && (fullName += firstName);
   lastName?.length > 0 && (fullName += ` ${lastName}`);
@@ -98,13 +98,6 @@ const generateNewContact = () => {
     dateOfBirth: null,
     notes: null,
   }
-}
-
-const sorted = contacts => {
-  contacts.sort((a, b) =>
-  a.firstName.localeCompare(b.firstName) || // first sorts by firstName
-  a.lastName.localeCompare(b.lastName)); // then by lastName
-  return contacts;
 }
 
 const searchFieldStyle = {
@@ -128,15 +121,10 @@ const Contacts = ({ providedContacts }) => {
   const contactAreaDivRef = useRef(null);
   const contactAreaSize = useSize(contactAreaDivRef);
 
-  useEffect(() => { // when contactsState is updated: initial render / create / update / delete
-    const updatedState = sorted(providedContacts);
-    if (updatedState.length > 0 && !updatedState.some(c => c.selected)) {
-      // if there are contacts and none are selected
-      // select first
-      updatedState[0].selected = true;
-    }
-    setContacts(updatedState);
-    setFilteredContacts(updatedState);
+  useEffect(() => { // when providedContacts are updated
+    setSearch('');
+    setContacts(providedContacts);
+    setFilteredContacts(providedContacts);
   }, [providedContacts])
 
   const handleResize = () => {

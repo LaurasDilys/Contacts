@@ -100,3 +100,8 @@
   width: calc(500px + var(--edit-entry-gap) * 2);
   margin: 0 var(--edit-entry-gap) var(--edit-entry-gap) 0;
 }
+
+.chip-span {
+  display: inline-block;
+  margin: 0 10px 10px 0
+}
