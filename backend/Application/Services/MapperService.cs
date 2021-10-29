@@ -13,11 +13,11 @@ namespace Application.Services
 {
     public class MapperService
     {
-        private readonly ContactInformationMapper _mapper;
+        private readonly ContactInformationMapper _contactInformationMapper;
 
-        public MapperService(ContactInformationMapper mapper)
+        public MapperService(ContactInformationMapper contactInformationMapper)
         {
-            _mapper = mapper;
+            _contactInformationMapper = contactInformationMapper;
         }
 
         public UserBasic UserBasinInformationFrom(User user)
@@ -31,6 +31,14 @@ namespace Application.Services
             };
         }
 
+        public void UpdateUser(User user, UpdateUserRequest request)
+        {
+            user.ShowMyContact = request.ShowMyContact;
+
+            _contactInformationMapper.
+                ReplaceContactInformationWith(request, user);
+        }
+
         public UserResponse UserResponseFrom(User user)
         {
             var response = new UserResponse
@@ -40,7 +48,8 @@ namespace Application.Services
                 ShowMyContact = user.ShowMyContact
             };
 
-            _mapper.ReplaceContactInformationWith(user, response);
+            _contactInformationMapper.
+                ReplaceContactInformationWith(user, response);
 
             return response;
         }
@@ -53,14 +62,16 @@ namespace Application.Services
                 CreatorId = userId
             };
 
-            _mapper.ReplaceContactInformationWith(request, newContact);
+            _contactInformationMapper.
+                ReplaceContactInformationWith(request, newContact);
 
             return newContact;
         }
 
-        public void UpdateContact(Contact contact, UpdateContactRequest request)
+        public void UpdateContact(Contact contact, IContactInformation request)
         {
-            _mapper.ReplaceContactInformationWith(request, contact);
+            _contactInformationMapper.
+                ReplaceContactInformationWith(request, contact);
         }
 
         public ContactResponse ContactResponseFrom(Contact contact)
@@ -71,7 +82,8 @@ namespace Application.Services
                 Me = contact.Me
             };
 
-            _mapper.ReplaceContactInformationWith(contact, response);
+            _contactInformationMapper.
+                ReplaceContactInformationWith(contact, response);
 
             return response;
         }
@@ -93,8 +105,10 @@ namespace Application.Services
         public ContactResponse SharedOrOther(Contact contact)
         {
             var response = ContactResponseFrom(contact);
-            if (contact.ContactUsers.Count == 0 &&
-                contact.UnacceptedShares.Count == 0)
+            if ((contact.ContactUsers == null ||
+                contact.ContactUsers.Count == 0) &&
+                (contact.UnacceptedShares == null ||
+                contact.UnacceptedShares.Count == 0))
                 response.Type = ContactTypes.Other;
             else
             {
