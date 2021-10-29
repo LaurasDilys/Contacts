@@ -20,7 +20,7 @@ namespace Data.Repositories
             return await _context.Users.Where(u => u.Id != userId).ToListAsync();
         }
 
-        public async Task<User> GetUserWithOwnContactAsync(string userId)
+        public async Task<User> GetUserWithOwnContactsAsync(string userId)
         {
             var user = await _context.Users
                 .Include(u => u.Contacts).ThenInclude(c => c.ContactUsers).ThenInclude(cu => cu.User)
@@ -40,6 +40,11 @@ namespace Data.Repositories
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
             return user;
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }
