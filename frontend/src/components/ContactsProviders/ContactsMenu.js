@@ -2,7 +2,7 @@ import { OTHER, SHARED, RECEIVED, UNACCEPTED, ALL } from '../../domain/contactTy
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Badge, IconButton, Menu, MenuItem } from '@mui/material';
 import { styled } from '@mui/system';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { contactsState } from '../../state/selectors';
 import { setSelectedContactsAction } from '../../state/actions/contactsActions';
