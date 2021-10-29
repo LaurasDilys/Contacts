@@ -5,5 +5,6 @@ namespace Application.Dto.User
     public class UpdateUserRequest : ContactInformation
     {
         public string Id { get; set; }
+        public bool ShowMyContact { get; set; }
     }
 }

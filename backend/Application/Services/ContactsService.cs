@@ -68,10 +68,10 @@ namespace Application.Services
 
         public async Task<ContactResponse> UpdateAsync(UpdateContactRequest request)
         {
-            var contact = await _contactsRepository.FindByIdAsync(request.Id);
+            var contact = await _contactsRepository.GetSharedOrOtherContact(request.Id);
             _mapper.UpdateContact(contact, request);
             await _contactsRepository.SaveChangesAsync();
-            return _mapper.ContactResponseFrom(contact);
+            return _mapper.SharedOrOther(contact);
         }
 
         public async Task<ContactResponse> ShareContact(string contactId, string userId)
