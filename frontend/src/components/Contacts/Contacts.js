@@ -100,13 +100,6 @@ const generateNewContact = () => {
   }
 }
 
-const sorted = contacts => {
-  contacts.sort((a, b) =>
-  a.firstName.localeCompare(b.firstName) || // first sorts by firstName
-  a.lastName.localeCompare(b.lastName)); // then by lastName
-  return contacts;
-}
-
 const searchFieldStyle = {
   width: 300,
   marginTop: 1,
@@ -128,15 +121,10 @@ const Contacts = ({ providedContacts }) => {
   const contactAreaDivRef = useRef(null);
   const contactAreaSize = useSize(contactAreaDivRef);
 
-  useEffect(() => { // when contactsState is updated: initial render / create / update / delete
-    const updatedState = sorted(providedContacts);
-    if (updatedState.length > 0 && !updatedState.some(c => c.selected)) {
-      // if there are contacts and none are selected
-      // select first
-      updatedState[0].selected = true;
-    }
-    setContacts(updatedState);
-    setFilteredContacts(updatedState);
+  useEffect(() => { // when providedContacts are updated
+    setSearch('');
+    setContacts(providedContacts);
+    setFilteredContacts(providedContacts);
   }, [providedContacts])
 
   const handleResize = () => {
