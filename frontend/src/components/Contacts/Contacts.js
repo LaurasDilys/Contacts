@@ -6,6 +6,7 @@ import ContactArea from './ContactArea';
 import { useSelector } from 'react-redux';
 import { contactsState } from '../../state/selectors';
 import useResizeObserver from '@react-hook/resize-observer'
+import { ME } from '../../domain/contactTypes';
 
 //
 //
@@ -157,10 +158,18 @@ const Contacts = ({ providedContacts }) => {
   };
 
   const searchResult = value => {
+    let newState;
     setSearch(value);
-    const newState = contacts.filter(c =>
-      c.firstName?.toLocaleLowerCase().includes(value) ||
-      c.lastName?.toLocaleLowerCase().includes(value));
+    if (value.toLocaleLowerCase() === 'me') {
+      newState = contacts.filter(c =>
+        c.firstName?.toLocaleLowerCase().includes(value) ||
+        c.lastName?.toLocaleLowerCase().includes(value) ||
+        c.me);
+    } else {
+      newState = contacts.filter(c =>
+        c.firstName?.toLocaleLowerCase().includes(value) ||
+        c.lastName?.toLocaleLowerCase().includes(value));
+    }
     if (!newState.some(c => c.selected)) {
       contacts.forEach(c => c.selected = false);
       if (newState.length > 0) newState[0].selected = true;
@@ -216,7 +225,11 @@ const Contacts = ({ providedContacts }) => {
           {filteredContacts.map(c =>
           <div key={c.id}>
             <ListItem selected={c.selected} onClick={() => handleSelect(c.id)}>
-              <ListItemText primary={getFullName(c.firstName, c.lastName)} />
+              <ListItemText primary={
+                c.me ?
+                `${getFullName(c.firstName, c.lastName)} ${ME}` :
+                getFullName(c.firstName, c.lastName)
+              }/>
             </ListItem>
             <Divider />
           </div>)}
