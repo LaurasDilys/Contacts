@@ -4,12 +4,13 @@ import AddIcon from '@mui/icons-material/Add';
 import PhoneInput from 'react-phone-input-2';
 import { useEffect, useRef, useState } from 'react';
 import Description from './Description';
-import UsersList from './UsersList';
+import UsersList from '../Users/UsersList';
 import { useDispatch, useSelector } from 'react-redux';
 import { otherUsersState } from '../../state/selectors';
 import { shareContact } from '../../state/actions/contactsThunk';
+import UserChip from '../Users/UserChip';
 
-const stringToColor = string => {
+export const stringToColor = string => {
   let hash = 0;
   let i;
 
@@ -254,13 +255,26 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
           {contact.receivedFrom &&
           <div className='flex-row'>
             <Description>Received From</Description>
-            {/* // */}
+            <div className='contact-entry'>
+              <UserChip
+                user={contact.receivedFrom}
+                received
+              />
+            </div>
           </div>}
 
           {contact.sharedWith?.length > 0 &&
           <div className='flex-row'>
             <Description>Shared With</Description>
-            {/* // */}
+            <div className='contact-entry'>
+              {contact.sharedWith.map(user =>
+              <span className='chip-span'>
+                <UserChip
+                  contactId={contact.id}
+                  user={user}
+                />
+              </span>)}
+            </div>
           </div>}
         </div>
       </div>
