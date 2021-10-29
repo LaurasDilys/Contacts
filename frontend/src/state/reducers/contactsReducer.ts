@@ -1,5 +1,5 @@
 import * as actionTypes from '../actions/actionTypes';
-import { ALL, ME } from '../../domain/contactTypes';
+import { ALL } from '../../domain/contactTypes';
 import { UserBasicInformation } from './otherUsersReducer';
 
 type Contact = {
@@ -70,9 +70,9 @@ const contactsReducer = (state: ContactsState = initialState, action: ContactsAc
         selectedContacts: action.payload as string
       }
     case actionTypes.UPDATE_MY_CONTACT:
-      const newStateAfterUpdateMyContact = state.contacts.filter(c => c.type !== ME)
+      const newStateAfterUpdateMyContact = state.contacts.filter(c => c.me)
       if (action.payload !== null) {
-        let me = state.contacts.find(c => c.type === ME);
+        let me = state.contacts.find(c => c.me);
         me = { ...me, ...action.payload as Contact };
         newStateAfterUpdateMyContact.push(me);
       }

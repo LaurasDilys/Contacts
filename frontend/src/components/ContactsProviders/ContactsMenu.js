@@ -1,4 +1,4 @@
-import { ME, OTHER, SHARED, RECEIVED, UNACCEPTED, ALL } from '../../domain/contactTypes';
+import { OTHER, SHARED, RECEIVED, UNACCEPTED, ALL } from '../../domain/contactTypes';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Badge, IconButton, Menu, MenuItem } from '@mui/material';
 import { styled } from '@mui/system';
@@ -26,7 +26,7 @@ const ContactsMenu = () => {
   };
 
   return (
-    allContacts.some(c => c.type != ME && c.type != OTHER) ?
+    allContacts.some(c => c.type != OTHER) ?
     <>
       <IconButton
         edge='start'
