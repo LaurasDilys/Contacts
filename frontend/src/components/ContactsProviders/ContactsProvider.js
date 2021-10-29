@@ -41,8 +41,8 @@ const ContactsProvider = () => {
       provideContacts();
     } else if (getContactsArray().length === 0 ||
       // there are no more contacts in the current selected section
-      previousContacts.length < allContacts.length) {
-      // or new contact has been created, so user must be redirected to "All Contacts" to view it
+      previousContacts.length < allContacts.length && selectedContacts !== ALL) {
+      // or new contact has been created and user must be redirected to "All Contacts" to view it
       dispatch(setSelectedContactsAction(ALL));
     } else {
       provideContacts();
