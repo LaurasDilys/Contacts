@@ -9,7 +9,7 @@ export const getContacts = (id) => (dispatch) => {
 }
 
 export const createContact = (id, request) => (dispatch) => {
-  Api.post(`users/${id}/contacts/create`, request)
+  Api.post(`users/${id}/contacts`, request)
     .then(res => {
       dispatch(createContactAction({ ...res.data }));
     });

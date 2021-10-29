@@ -70,7 +70,7 @@ namespace Api.Controllers
             return Ok(contacts);
         }
 
-        [HttpPost("Users/{userKey}/Contacts/Create", Name = nameof(Create))]
+        [HttpPost("Users/{userKey}/Contacts", Name = nameof(Create))]
         public async Task<ActionResult<ContactResponse>> Create([FromRoute] string userKey, [FromBody] CreateContactRequest request)
         {
             if (await _userManager.FindByIdAsync(userKey) == null)
