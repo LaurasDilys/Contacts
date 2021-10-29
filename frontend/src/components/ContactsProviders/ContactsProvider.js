@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { contactsState } from '../../state/selectors';
 import Contacts from '../Contacts/Contacts';
 import { ALL, UNACCEPTED } from '../../domain/contactTypes';
+import { setSelectedContactsAction } from '../../state/actions/contactsActions';
 
 const sorted = contacts => {
   contacts.sort((a, b) =>
@@ -14,37 +15,44 @@ const sorted = contacts => {
 
 const ContactsProvider = () => {
   const { contacts: allContacts, selectedContacts } = useSelector(contactsState);
-  const [PREVSTATE, setPREVSTATE] = useState(allContacts);
+  const [previousContacts, setPreviousContacts] = useState(allContacts);
   const [filteredContacts, setFilteredContacts] = useState([]);
   const dispatch = useDispatch();
 
-  const determine = () => {
-    let filter = [];
-    if (selectedContacts === ALL) {
-      filter = sorted(allContacts.filter(c => c.type !== UNACCEPTED));
-    } else {
-      filter = sorted(allContacts.filter(c => c.type === selectedContacts));
+  const getContactsArray = () => {
+    if (selectedContacts === ALL)
+      return sorted(allContacts.filter(c => c.type !== UNACCEPTED));
+      return sorted(allContacts.filter(c => c.type === selectedContacts));
+  }
+
+  const provideContacts = () => {
+    const arrayWithCorrectSelectedContact = getContactsArray();
+    if (arrayWithCorrectSelectedContact.length > 0 &&
+      !arrayWithCorrectSelectedContact.some(c => c.selected)) {
+      allContacts.forEach(c => c.selected = false);
+      arrayWithCorrectSelectedContact[0].selected = true;
     }
-    return filter;
+    setFilteredContacts(arrayWithCorrectSelectedContact);
   }
 
   useEffect(() => {
-    // compare with PREVSTATE
-    // possibly dispatch setSelectedContacts
+    if (previousContacts.length === 0) {
+      // contacts have just been retrieved from the backend
+      provideContacts();
+    } else if (getContactsArray().length === 0 ||
+      // there are no more contacts in the current selected section
+      previousContacts.length < allContacts.length) {
+      // or new contact has been created, so user must be redirected to "All Contacts" to view it
+      dispatch(setSelectedContactsAction(ALL));
+    } else {
+      provideContacts();
+    }
+    setPreviousContacts(allContacts);
   }, [allContacts])
 
   useEffect(() => {
-//
-    const filtered = determine();
-//
-    if (filtered.length > 0 && !filtered.some(c => c.selected)) {
-      allContacts.forEach(c => c.selected = false);
-      filtered[0].selected = true;
-    }
-//
-    setFilteredContacts(filtered);
-//
-  }, [selectedContacts, allContacts])
+    provideContacts();
+  }, [selectedContacts])
 
   return (
     <Contacts providedContacts={filteredContacts} />
