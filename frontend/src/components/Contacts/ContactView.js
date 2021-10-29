@@ -5,6 +5,9 @@ import PhoneInput from 'react-phone-input-2';
 import { useEffect, useRef, useState } from 'react';
 import Description from './Description';
 import UsersList from './UsersList';
+import { useDispatch, useSelector } from 'react-redux';
+import { otherUsersState } from '../../state/selectors';
+import { shareContact } from '../../state/actions/contactsThunk';
 
 const stringToColor = string => {
   let hash = 0;
@@ -89,7 +92,9 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
   const [sharing, setSharing] = useState(false);
   const phoneInputRef = useRef(null);
   const altPhoneInputRef = useRef(null);
+  const { otherUsers } = useSelector(otherUsersState);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -106,6 +111,18 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
     return () => clearTimeout(timeout);
   }
 
+  //
+  //
+  //
+
+  const handleShare = () => {
+    dispatch(shareContact(contact.id, selectedUserId));
+  }
+
+  //
+  //
+  //
+
   return (
     <div className='flex-row'>
       <div className='contact-area'>
@@ -120,7 +137,10 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
               {/* change to: handle cancel share */}
               <span className='button-span'>Cancel</span>
             </Button>
-            <Button disabled={selectedUserId === null}>
+            <Button
+              disabled={selectedUserId === null}
+              onClick={handleShare}
+            >
               <span className='button-span'>Share Contact {selectedUserId}</span>
             </Button>
           </div> :
@@ -207,6 +227,14 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
             </div>
           </div>}
 
+          {contact.address?.length > 0 &&
+          <div className='flex-row'>
+            <Description>Address</Description>
+            <div className='contact-entry'>
+              <span>{contact.address}</span>
+            </div>
+          </div>}
+
           {contact.dateOfBirth?.length > 0 &&
           <div className='flex-row'>
             <Description>Date of Birth</Description>
@@ -222,13 +250,25 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
               <span>{contact.notes}</span>
             </div>
           </div>}
+
+          {contact.receivedFrom &&
+          <div className='flex-row'>
+            <Description>Received From</Description>
+            {/* // */}
+          </div>}
+
+          {contact.sharedWith?.length > 0 &&
+          <div className='flex-row'>
+            <Description>Shared With</Description>
+            {/* // */}
+          </div>}
         </div>
       </div>
       
       {sharing &&
       <div className='users-area'>
         <UsersList
-          users={mockUsers}
+          users={otherUsers}
           setSelectedUserId={setSelectedUserId}
           scrollAreaHeight={scrollAreaHeight}
           scrollBarWidth={scrollBarWidth}

@@ -1,55 +1,138 @@
 ﻿using Application.Dto.Contact;
+using Application.Models;
+using Business.Models;
+using Data.Models;
 using Data.Repositories;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.Services
 {
     public class ContactsService
     {
-        private readonly ContactsRepository _repository;
+        private readonly ContactsRepository _contactsRepository;
+        private readonly UsersRepository _usersRepository;
         private readonly MapperService _mapper;
 
-        public ContactsService(ContactsRepository repository, MapperService mapper)
+        public ContactsService(ContactsRepository repository,
+            UsersRepository usersRepository,
+            MapperService mapper)
         {
-            _repository = repository;
+            _contactsRepository = repository;
+            _usersRepository = usersRepository;
             _mapper = mapper;
         }
 
-        public async Task<bool> Exists(string id)
+        //public async Task<bool> ExistsAsync(string id)
+        //{
+        //    return await _contactsRepository.ExistsAsync(id);
+        //}
+
+        public async Task<Contact> FindByIdAsync(string id)
         {
-            return await _repository.ExistsAsync(id);
+            return await _contactsRepository.FindByIdAsync(id);
         }
 
-        public async Task<ICollection<ContactResponse>> Get(string userId)
+        public async Task<ICollection<ContactResponse>> GetAllContactsAsync(string userId)
         {
-            var contacts = await _repository.GetAsync(userId);
+            var user = await _usersRepository.GetUserWithAllContactsAsync(userId);
             var response = new List<ContactResponse>();
-            foreach (var contact in contacts)
+
+            foreach (var contact in user.ContactUsers.Select(cu => cu.Contact))
             {
-                response.Add(_mapper.ContactResponseFrom(contact));
+                response.Add(_mapper.Received(contact));
             }
+
+            foreach (var contact in user.UnacceptedShares.Select(us => us.Contact))
+            {
+                response.Add(_mapper.Received(contact, ContactTypes.Unaccepted));
+            }
+
+            foreach (var contact in user.Contacts)
+            {
+                response.Add(_mapper.SharedOrOther(contact));
+            }
+
+            if (!user.ShowMyContact) response = response.Where(cu => !cu.Me).ToList();
+
             return response;
         }
 
-        public async Task<ContactResponse> Create(string userId, CreateContactRequest request)
+        public async Task<ContactResponse> CreateAsync(string userId, CreateContactRequest request)
         {
             var contact = _mapper.NewContactFrom(userId, request);
-            await _repository.CreateAsync(contact);
+            await _contactsRepository.CreateAsync(contact);
             return _mapper.ContactResponseFrom(contact);
         }
 
-        public async Task<ContactResponse> Update(UpdateContactRequest request)
+        public async Task<ContactResponse> UpdateAsync(UpdateContactRequest request)
         {
-            var contact = await _repository.GetOneAsync(request.Id);
+            var contact = await _contactsRepository.GetSharedOrOtherContact(request.Id);
             _mapper.UpdateContact(contact, request);
-            await _repository.SaveChangesAsync();
-            return _mapper.ContactResponseFrom(contact);
+            await _contactsRepository.SaveChangesAsync();
+            return _mapper.SharedOrOther(contact);
         }
 
-        public async Task Delete(string id)
+        public async Task<ContactResponse> ShareContact(string contactId, string userId)
         {
-            await _repository.DeleteAsync(id);
+            var unacceptedShare = new UnacceptedShare
+            {
+                ContactId = contactId,
+                UserId = userId
+            };
+
+            await _contactsRepository.AddUnacceptedShareAsync(unacceptedShare);
+            await _contactsRepository.SaveChangesAsync();
+
+            var response = _mapper.SharedOrOther(
+                await _contactsRepository.GetSharedOrOtherContact(contactId));
+
+            return response;
+        }
+
+        public async Task<ContactResponse> AcceptSharedContact(string contactId, string userId)
+        {
+            var unacceptedShare = await _contactsRepository.GetUnacceptedShareAsync(contactId, userId);
+
+            if (unacceptedShare == null) return null;
+            else
+            {
+                var contactUser = new ContactUser
+                {
+                    ContactId = contactId,
+                    UserId = userId
+                };
+
+                await _contactsRepository.AddContactUserAsync(contactUser);
+                _contactsRepository.RemoveUnacceptedShare(unacceptedShare);
+                await _contactsRepository.SaveChangesAsync();
+            }
+
+            return _mapper.Received(
+                await _contactsRepository.GetReceivedContact(contactId));
+        }
+
+        public async Task<ContactResponse> StopSharingContact(string contactId, string userId)
+        {
+            var unacceptedShare = await _contactsRepository.GetUnacceptedShareAsync(contactId, userId);
+            var contactUser = await _contactsRepository.GetContactUserAsync(contactId, userId);
+
+            if (unacceptedShare == null && contactUser == null) return null;
+
+            if (unacceptedShare != null) _contactsRepository.RemoveUnacceptedShare(unacceptedShare);
+            if (contactUser != null) _contactsRepository.RemoveContactUser(contactUser);
+            await _contactsRepository.SaveChangesAsync();
+
+            var response = _mapper.SharedOrOther(
+                await _contactsRepository.GetSharedOrOtherContact(contactId));
+
+            return response;
+        }
+
+        public async Task DeleteAsync(string id)
+        {
+            await _contactsRepository.DeleteAsync(id);
         }
     }
 }

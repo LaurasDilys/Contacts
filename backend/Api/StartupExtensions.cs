@@ -1,5 +1,6 @@
 ﻿using Application.Models;
 using Application.Services;
+using Business.Services;
 using Data;
 using Data.Models;
 using Data.Repositories;
@@ -19,11 +20,14 @@ namespace Api
         public static void ConfigureDependencyInjection(this IServiceCollection services)
         {
             services.AddScoped<JwtTokenService>();
-            services.AddScoped<UserService>();
             services.AddScoped<ContactsService>();
+            services.AddScoped<UsersService>();
+
             services.AddTransient<MapperService>();
+            services.AddTransient<ContactInformationMapper>();
 
             services.AddScoped<ContactsRepository>();
+            services.AddScoped<UsersRepository>();
         }
 
         public static void ConfigureAuthentication(this IServiceCollection services, string securityKey)

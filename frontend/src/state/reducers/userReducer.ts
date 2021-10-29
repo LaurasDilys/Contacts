@@ -1,33 +1,46 @@
 import * as actionTypes from '../actions/actionTypes';
 
+type User = {
+  id: string,
+  firstName: string,
+  lastName: string,
+  userName: string,
+  showMyContact: boolean,
+  phoneNumber: string | null,
+  alternativePhoneNumber: string | null,
+  email: string | null,
+  alternativeEmail: string | null,
+  address: string | null,
+  dateOfBirth: string | null,
+  notes: string | null
+}
+
 export type UserState = {
-  loggedIn: boolean;
-  user: {
-    id: string;
-    userName: string;
-    firstName: string;
-    lastName: string;
-  };
+  loggedIn: boolean,
+  user: User
 }
 
 const initialState: UserState = {
   loggedIn: false,
   user: {
     id: '',
-    userName: '',
     firstName: '',
     lastName: '',
+    userName: '',
+    showMyContact: false,
+    phoneNumber: '',
+    alternativePhoneNumber: '',
+    email: '',
+    alternativeEmail: '',
+    address: '',
+    dateOfBirth: '',
+    notes: ''
   },
 };
 
 type UserAction = {
-  type: string;
-  payload: {
-    id: string;
-    userName: string;
-    firstName: string;
-    lastName: string;
-  };
+  type: string,
+  payload: User
 };
 
 const userReducer = (state: UserState = initialState, action: UserAction): UserState => {
@@ -36,15 +49,15 @@ const userReducer = (state: UserState = initialState, action: UserAction): UserS
       return {
         ...state,
         loggedIn: true,
-        user: {
-          id: action.payload.id,
-          userName: action.payload.userName,
-          firstName: action.payload.firstName,
-          lastName: action.payload.lastName
-        }
+        user: { ...action.payload }
       };
     case actionTypes.LOGOUT:
       return initialState;
+    case actionTypes.UPDATE_USER_INFORMATION:
+      return {
+        ...state,
+        user: { ...action.payload }
+      };
     default:
       return state;
   }

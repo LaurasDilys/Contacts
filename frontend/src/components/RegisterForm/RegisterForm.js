@@ -5,7 +5,7 @@ import { makeStyles } from '@mui/styles';
 import { useDispatch } from 'react-redux';
 
 import ValidatedTextField from '../ValidatedTextField/ValidatedTextField';
-import { register } from '../../state/actions/authenticationThunk';
+import { register } from '../../state/actions/userThunk';
 
 const useStyles = makeStyles({
   paper: {

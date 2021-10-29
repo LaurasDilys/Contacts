@@ -3,7 +3,7 @@ import { Checkbox, Button, Box, FormControlLabel, Typography } from '@mui/materi
 import { makeStyles } from '@mui/styles';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { login } from '../../state/actions/authenticationThunk';
+import { login } from '../../state/actions/userThunk';
 import './LoginForm.css';
 import ValidatedTextField from '../ValidatedTextField/ValidatedTextField';
 

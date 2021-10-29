@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/material.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { editContact, deleteContact, createContact } from '../../state/actions/contactsThunk';
+import { updateContact, deleteContact, createContact } from '../../state/actions/contactsThunk';
 import { userState } from '../../state/selectors';
 import { onConfirm } from '../ConfirmAlert/ConfirmAlert';
 
@@ -61,7 +61,7 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
 
     creating ?
     dispatch(createContact(user.id, contact)) :
-    dispatch(editContact(contact));
+    dispatch(updateContact(contact));
     
     creating ?
     handleSaveNew() :

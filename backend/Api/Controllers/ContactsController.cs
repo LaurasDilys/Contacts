@@ -7,11 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -22,223 +18,130 @@ namespace Api.Controllers
     public class ContactsController : ControllerBase
     {
         private readonly ContactsService _contactsService;
-        private readonly UserManager<User> _userManager;
+        private readonly UsersService _usersService;
+        //
+        //
+        //
         private readonly DataContext _context;
 
-        public ContactsController(ContactsService contactsService, UserManager<User> userManager, DataContext context)
+        public ContactsController(ContactsService contactsService, UsersService usersService, DataContext context)
         {
             _contactsService = contactsService;
-            _userManager = userManager;
+            _usersService = usersService;
             _context = context;
         }
 
-        [HttpGet("User/{userKey}/Contacts", Name = nameof(Get))]
-        public async Task<ActionResult<ICollection<ContactResponse>>> Get([FromRoute] string userKey)
+        //[AllowAnonymous]
+        //[HttpHead]
+        //public IActionResult Test()
+        //{
+        //    var user = _context.Users
+        //        .Include(u => u.Contacts).ThenInclude(c => c.ContactUsers).ThenInclude(cu => cu.User)
+        //        .Include(u => u.ContactUsers).ThenInclude(cu => cu.Contact).ThenInclude(c => c.Creator)
+        //        .Include(u => u.UnacceptedShares).ThenInclude(us => us.Contact).ThenInclude(c => c.Creator)
+        //        .FirstOrDefault();
+
+        //    return Ok(user.Contacts.First().ContactUsers);
+        //}
+        //
+        //
+        //
+        //
+        //
+        //
+
+        [HttpGet("Users/{userKey}/Contacts", Name = nameof(GetContacts))]
+        public async Task<ActionResult<ICollection<ContactResponse>>> GetContacts([FromRoute] string userKey)
         {
-            if (await _userManager.FindByIdAsync(userKey) == null)
+            if (await _usersService.FindByIdAsync(userKey) == null)
                 return StatusCode(StatusCodes.Status404NotFound);
 
-            var contacts = await _contactsService.Get(userKey);
+            var contacts = await _contactsService.GetAllContactsAsync(userKey);
 
             return Ok(contacts);
         }
 
-        [HttpPost("User/{userKey}/Contacts/Create", Name = nameof(Create))]
-        public async Task<ActionResult<ContactResponse>> Create([FromRoute] string userKey, [FromBody] CreateContactRequest request)
+        [HttpPost("Users/{userKey}/Contacts", Name = nameof(CreateContact))]
+        public async Task<ActionResult<ContactResponse>> CreateContact([FromRoute] string userKey, [FromBody] CreateContactRequest request)
         {
-            if (await _userManager.FindByIdAsync(userKey) == null)
+            if (await _usersService.FindByIdAsync(userKey) == null)
                 return StatusCode(StatusCodes.Status404NotFound);
 
-            var newContact = await _contactsService.Create(userKey, request);
+            var newContact = await _contactsService.CreateAsync(userKey, request);
 
             return StatusCode(StatusCodes.Status201Created, newContact);
         }
 
-        [HttpPut("Contacts/{key}", Name = nameof(Update))]
-        public async Task<ActionResult<ContactResponse>> Update([FromRoute] string key, [FromBody] UpdateContactRequest request)
+        [HttpPut("Contacts/{key}", Name = nameof(UpdateContact))]
+        public async Task<ActionResult<ContactResponse>> UpdateContact([FromRoute] string key, [FromBody] UpdateContactRequest request)
         {
-            if (!await _contactsService.Exists(key))
-                return StatusCode(StatusCodes.Status404NotFound);
+            var contact = await _contactsService.FindByIdAsync(key);
 
-            var updatedContact = await _contactsService.Update(request);
+            if (contact == null) return StatusCode(StatusCodes.Status404NotFound);
+
+            if (contact.Me) return StatusCode(StatusCodes.Status403Forbidden,
+                "Personal contact information can only be changed by updating user.");
+
+            var updatedContact = await _contactsService.UpdateAsync(request);
 
             return Ok(updatedContact);
         }
 
-        [HttpDelete("Contacts/{key}", Name = nameof(Delete))]
-        public async Task<IActionResult> Delete([FromRoute] string key)
+        [HttpDelete("Contacts/{key}", Name = nameof(DeleteContact))]
+        public async Task<IActionResult> DeleteContact([FromRoute] string key)
         {
-            if (!await _contactsService.Exists(key))
-                return StatusCode(StatusCodes.Status404NotFound);
+            var contact = await _contactsService.FindByIdAsync(key);
 
-            await _contactsService.Delete(key);
+            if (contact == null) return StatusCode(StatusCodes.Status404NotFound);
 
-            return Ok();
-        }
-        // After =>
-        // {
-        // var unacceptedShares = _context.UnacceptedShares.Where(us => us.ContactId == key);
-        // _context.UnacceptedShares.RemoveRange(unacceptedShares);
-        // _context.SaveChanges();
-        // }
+            if (contact.Me) return StatusCode(StatusCodes.Status403Forbidden,
+                "Personal contact information must be accessed through user.");
 
-        private readonly string userId = "b4a5fe29-e471-4f81-bf41-65d353d824a8";
-        private readonly string contactId = "545cbdde-4b76-428d-97c1-dc72a443b6bb";
-
-        [AllowAnonymous]
-        [HttpPatch(nameof(Share))]
-        public IActionResult Share()
-        {
-            var firstUser = _context.Users.First();
-            var firstContact = _context.Contacts.First();
-
-            var firstShare = new ContactUser
-            {
-                ContactId = firstContact.Id,
-                UserId = firstUser.Id
-            };
-
-            _context.ContactUsers.Add(firstShare);
-            _context.Users.Include(u => u.UnacceptedShares)
-                .FirstOrDefault(u => u.Id == firstUser.Id)
-                .UnacceptedShares.Add(new UnacceptedShare
-            {
-                Id = Guid.NewGuid().ToString(),
-                ContactId = firstContact.Id
-                });
-
-            _context.SaveChanges();
+            await _contactsService.DeleteAsync(key);
 
             return Ok();
         }
 
-        [AllowAnonymous]
-        [HttpPatch(nameof(Accept))]
-        public IActionResult Accept()
+        [HttpPost("Contacts/{contactKey}/ShareWith/{userKey}", Name = nameof(Share))]
+        public async Task<ActionResult<ContactResponse>> Share([FromRoute] string contactKey, [FromRoute] string userKey)
         {
-            AcceptOrDecline();
+            //if (await _contactsService.FindByIdAsync(contactKey) == null)
+            //    return StatusCode(StatusCodes.Status404NotFound);
+
+            //if (await _userManager.FindByIdAsync(userKey) == null)
+            //    return StatusCode(StatusCodes.Status404NotFound);
+
+            return Ok(await _contactsService.ShareContact(contactKey, userKey));
+        }
+
+        [HttpPost("Users/{userKey}/AcceptShare/{contactKey}", Name = nameof(AcceptShare))]
+        public async Task<IActionResult> AcceptShare([FromRoute] string userKey, [FromRoute] string contactKey)
+        {
+            var response = await _contactsService.AcceptSharedContact(contactKey, userKey);
+
+            if (response == null) return StatusCode(StatusCodes.Status404NotFound);
+
+            return Ok(response);
+        }
+
+        [HttpDelete("Users/{userKey}/DeclineShare/{contactKey}", Name = nameof(DeclineShare))]
+        public async Task<IActionResult> DeclineShare([FromRoute] string userKey, [FromRoute] string contactKey)
+        {
+            var response = await _contactsService.StopSharingContact(contactKey, userKey);
+
+            if (response == null) return StatusCode(StatusCodes.Status404NotFound);
 
             return Ok();
         }
 
-        [AllowAnonymous]
-        [HttpPatch(nameof(GetAll))]
-        public IActionResult GetAll()
+        [HttpDelete("Contacts/{contactKey}/StopSharingWith/{userKey}", Name = nameof(StopSharing))]
+        public async Task<ActionResult<ContactResponse>> StopSharing([FromRoute] string contactKey, [FromRoute] string userKey)
         {
-            var allContacts = new List<C>();
+            var response = await _contactsService.StopSharingContact(contactKey, userKey);
 
-            var lauras = _context.Users
-                .Include(u => u.Contacts)
-                .Include(u => u.UnacceptedShares)
-                .Include(u => u.ContactUsers).ThenInclude(cu => cu.Contact)
-                .FirstOrDefault(u => u.Id == userId);
+            if (response == null) return StatusCode(StatusCodes.Status404NotFound);
 
-            var contacts = lauras.Contacts;
-            foreach (var c in contacts)
-            {
-                allContacts.Add(new C
-                {
-                    FirstName = c.FirstName,
-                    LastName = c.LastName
-                });
-            }
-
-            if (lauras.ShowMyContact)
-            {
-                allContacts.Add(new C
-                {
-                    FirstName = lauras.FirstName,
-                    LastName = "(me)"
-                });
-            }
-
-            var received = lauras.ContactUsers.Select(cu => cu.Contact);
-            var unaccepted = lauras.UnacceptedShares.Select(us => us.ContactId);
-            if (unaccepted.Count() > 0)
-            {
-                foreach (var c in received)
-                {
-                    if (unaccepted.Any(id => id == c.Id))
-                    {
-                        allContacts.Add(new C
-                        {
-                            FirstName = c.FirstName,
-                            LastName = "(unaccepted)"
-                        });
-                    }
-                    else
-                    {
-                        allContacts.Add(new C
-                        {
-                            FirstName = c.FirstName,
-                            LastName = c.LastName
-                        });
-                    }
-                }
-            }
-            else
-            {
-                foreach (var c in received)
-                {
-                    allContacts.Add(new C
-                    {
-                        FirstName = c.FirstName,
-                        LastName = c.LastName
-                    });
-                }
-            }
-
-            return Ok(allContacts);
-        }
-
-        [AllowAnonymous]
-        [HttpPatch(nameof(RemoveShared))]
-        public IActionResult RemoveShared()
-        {
-            var contactUser = _context.ContactUsers
-                .FirstOrDefault(cu => cu.ContactId == contactId
-                                      && cu.UserId == userId);
-
-            _context.ContactUsers.Remove(contactUser);
-            AcceptOrDecline();
-
-            return Ok();
-        }
-
-        [AllowAnonymous]
-        [HttpPatch(nameof(ToggleMyContact))]
-        public IActionResult ToggleMyContact()
-        {
-            var lauras = _context.Users
-                .Include(u => u.UnacceptedShares)
-                .FirstOrDefault(u => u.Id == userId);
-
-            var current = lauras.ShowMyContact;
-            lauras.ShowMyContact = !current;
-            _context.SaveChanges();
-
-            return Ok();
-        }
-
-        private void AcceptOrDecline()
-        {
-            var lauras = _context.Users
-                .Include(u => u.UnacceptedShares)
-                .FirstOrDefault(u => u.Id == userId);
-
-            if (lauras != null)
-            {
-                var toBeAccepted = lauras.UnacceptedShares.FirstOrDefault(us => us.ContactId == contactId);
-                lauras.UnacceptedShares.Remove(toBeAccepted);
-                _context.SaveChanges();
-            }
+            return Ok(response);
         }
     }
-
-    public class C
-    {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-    }
-
 }

@@ -46,11 +46,19 @@ namespace Data
                         .HasForeignKey(cu => cu.UserId)
                         .OnDelete(DeleteBehavior.ClientSetNull);
 
-            modelBuilder.Entity<User>()
-                        .HasMany<UnacceptedShare>(u => u.UnacceptedShares)
-                        .WithOne(us => us.User)
-                        .HasForeignKey(us => us.UserId)
-                        .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<UnacceptedShare>()
+                        .HasKey(cu => new { cu.ContactId, cu.UserId });
+
+            modelBuilder.Entity<UnacceptedShare>()
+                        .HasOne<Contact>(cu => cu.Contact)
+                        .WithMany(c => c.UnacceptedShares)
+                        .HasForeignKey(cu => cu.ContactId);
+
+            modelBuilder.Entity<UnacceptedShare>()
+                        .HasOne<User>(cu => cu.User)
+                        .WithMany(u => u.UnacceptedShares)
+                        .HasForeignKey(cu => cu.UserId)
+                        .OnDelete(DeleteBehavior.ClientSetNull);
         }
     }
 }

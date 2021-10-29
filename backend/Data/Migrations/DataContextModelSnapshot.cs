@@ -48,12 +48,16 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Me")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(50)
@@ -87,16 +91,13 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Models.UnacceptedShare", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("ContactId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.HasKey("ContactId", "UserId");
 
                     b.HasIndex("UserId");
 
@@ -139,10 +140,12 @@ namespace Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -360,10 +363,18 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Models.UnacceptedShare", b =>
                 {
+                    b.HasOne("Data.Models.Contact", "Contact")
+                        .WithMany("UnacceptedShares")
+                        .HasForeignKey("ContactId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Data.Models.User", "User")
                         .WithMany("UnacceptedShares")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .IsRequired();
+
+                    b.Navigation("Contact");
 
                     b.Navigation("User");
                 });
@@ -422,6 +433,8 @@ namespace Data.Migrations
             modelBuilder.Entity("Data.Models.Contact", b =>
                 {
                     b.Navigation("ContactUsers");
+
+                    b.Navigation("UnacceptedShares");
                 });
 
             modelBuilder.Entity("Data.Models.User", b =>

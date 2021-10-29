@@ -16,33 +16,27 @@ namespace Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly JwtTokenService _jwtTokenService;
-        private readonly UserService _userService;
+        private readonly UsersService _usersService;
         private readonly MapperService _mapper;
 
         public AuthController(JwtTokenService jwtTokenService,
-            UserService userService,
+            UsersService usersService,
             MapperService mapper)
         {
             _jwtTokenService = jwtTokenService;
-            _userService = userService;
+            _usersService = usersService;
             _mapper = mapper;
-        }
-
-        [HttpPost(nameof(Test))]
-        public IActionResult Test()
-        {
-            return Ok(_jwtTokenService.NewCookieIsNecessary(Request.Cookies["token"]));
         }
 
         [AllowAnonymous]
         [HttpPost(nameof(Register))]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            if (await _userService.ExistsAsync(request.UserName))
+            if (await _usersService.NameExistsAsync(request.UserName))
                 return StatusCode(StatusCodes.Status409Conflict,
                     "This user name is taken.");
 
-            if (!await _userService.CreateAsync(request))
+            if (!await _usersService.CreateAsync(request))
                 return StatusCode(StatusCodes.Status403Forbidden,
                     "Your password does not meet the requirements.");
 
@@ -54,18 +48,18 @@ namespace Api.Controllers
         [HttpPost(nameof(Login))]
         public async Task<ActionResult<UserResponse>> Login([FromBody] LoginRequest request)
         {
-            if (!await _userService.UserNameAndPasswordAreValidAsync(request))
+            if (!await _usersService.UserNameAndPasswordAreValidAsync(request))
                 return StatusCode(StatusCodes.Status403Forbidden,
                     "Check your details and try again.");
 
-            var user = await _userService.FindByNameAsync(request.UserName);
+            var user = await _usersService.FindByNameAsync(request.UserName);
 
             var jwtToken = _jwtTokenService.GenerateJwtToken(request.UserName, request.Remember);
             var cookieOptions = _jwtTokenService.GenerateCookieOptions(request.Remember);
 
             HttpContext.Response.Cookies.Append("token", jwtToken, cookieOptions);
 
-            return Ok(_mapper.ResponseFrom(user));
+            return Ok(_mapper.UserResponseFrom(user));
         }
 
         [AllowAnonymous]
@@ -78,11 +72,11 @@ namespace Api.Controllers
 
             var userName = _jwtTokenService.UserNameFromToken(token);
 
-            var user = await _userService.FindByNameAsync(userName);
+            var user = await _usersService.FindByNameAsync(userName);
 
             _jwtTokenService.RefreshCookieIfNecessary(token, userName, HttpContext);
 
-            return Ok(_mapper.ResponseFrom(user));
+            return Ok(_mapper.UserResponseFrom(user));
         }
 
         [HttpPost(nameof(NewCookie))]

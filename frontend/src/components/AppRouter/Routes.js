@@ -1,4 +1,4 @@
-import Contacts from "../Contacts/Contacts";
+import ContactsProvider from "../ContactsProviders/ContactsProvider";
 import LoginForm from "../LoginForm/LoginForm"
 import Logout from "../Logout/Logout";
 import RegisterForm from "../RegisterForm/RegisterForm";
@@ -18,7 +18,7 @@ const Routes = [
     position: 'left',
     visibleLoggedIn: true,
     visibleLoggedOut: false,
-    component: Contacts
+    component: ContactsProvider
   },
   {
     title: "Register",
