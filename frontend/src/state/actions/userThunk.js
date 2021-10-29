@@ -63,9 +63,9 @@ export const logout = () => (dispatch) => {
 }
 
 export const updateUser = (request) => (dispatch) => {
-  Api.put(`contacts/${request.id}`, request)
+  Api.put(`users/${request.id}`, request)
     .then(res => {
-      dispatch(updateMyContactAction({ ...res.data.myContact }));
-      dispatch(updateUserInformationAction({ ...res.data.user }));
+      dispatch(updateMyContactAction( res.data.myContact ));
+      dispatch(updateUserInformationAction( res.data.user ));
     });
 }
