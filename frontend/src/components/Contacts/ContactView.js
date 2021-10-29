@@ -112,17 +112,9 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
     return () => clearTimeout(timeout);
   }
 
-  //
-  //
-  //
-
   const handleShare = () => {
     dispatch(shareContact(contact.id, selectedUserId));
   }
-
-  //
-  //
-  //
 
   return (
     <div className='flex-row'>
@@ -135,7 +127,6 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
               scrollX({ left: -1000 });
               setSharing(false);
             }}>
-              {/* change to: handle cancel share */}
               <span className='button-span'>Cancel</span>
             </Button>
             <Button
