@@ -80,7 +80,7 @@ const useSize = (target) => {
   return size;
 }
 
-const getFullName = (firstName, lastName) => {
+export const getFullName = (firstName, lastName) => {
   let fullName = '';
   firstName?.length > 0 && (fullName += firstName);
   lastName?.length > 0 && (fullName += ` ${lastName}`);
