@@ -1,5 +1,5 @@
 import './Contacts.css'
-import { Avatar, Button, Divider, Input, InputAdornment, List, ListItem, ListItemText, TextField } from "@mui/material";
+import { Avatar, Button, Divider } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import PhoneInput from 'react-phone-input-2';
 import { useEffect, useRef, useState } from 'react';
@@ -114,6 +114,7 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
 
   const handleShare = () => {
     dispatch(shareContact(contact.id, selectedUserId));
+    setSharing(false);
   }
 
   return (
