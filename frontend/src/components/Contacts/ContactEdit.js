@@ -134,7 +134,7 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
               <p>You can change the visibility of your contact
               <br/>in your profile under <i>My Contact</i>.</p>
               <p>Are you sure you want to hide your contact?</p>
-            </>, handleRemoveMyContact, 'Ok/Cancel')}
+            </>, handleRemoveMyContact, 'fullText')}
         >
           <span className='button-span'>Hide</span>
         </Button> :

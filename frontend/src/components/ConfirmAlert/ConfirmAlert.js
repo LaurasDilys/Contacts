@@ -7,16 +7,14 @@ export const onConfirm = (message, callbackFunction, variant) => {
   confirmAlert({
     customUI: ({ onClose }) => {
 
-      const okOrCancel = variant === 'Ok/Cancel' ? true : false;
-
       const text = `Are you sure you want to ${message}?`
 
       return (
         <div className='alert-box'>
           <h1>Confirm to continue</h1>
-          {okOrCancel ?
+          {variant === 'fullText' ?
           message :
-          <p>{text}</p>}
+          <p>Are you sure you want to {message}?</p>}
           <div className='alert-buttons'>
             <Button
               variant='outlined'
@@ -26,13 +24,13 @@ export const onConfirm = (message, callbackFunction, variant) => {
                 callbackFunction();
               }}
             >
-              {okOrCancel ? 'Ok' : 'Yes'}
+              Yes
             </Button>
             <Button
               variant='outlined'
               onClick={onClose}
             >
-              {okOrCancel ? 'Cancel' : 'No'}
+              No
             </Button>
           </div>
         </div>
