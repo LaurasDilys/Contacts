@@ -3,7 +3,7 @@ import LoginForm from "../LoginForm/LoginForm"
 import Logout from "../Logout/Logout";
 import RegisterForm from "../RegisterForm/RegisterForm";
 
-const Routes = [
+export const TopNavRoutes = [
   {
     title: "Home",
     path: "/home",
@@ -37,14 +37,37 @@ const Routes = [
     component: LoginForm
   },
   {
+    title: "My Profile",
+    path: "/profile",
+    position: 'right',
+    visibleLoggedIn: true,
+    visibleLoggedOut: false
+  }
+];
+
+export const ProfileRoutes = [
+  {
+    title: "My Contact",
+    path: "/mycontact",
+    position: 'right',
+    visibleLoggedIn: true,
+    visibleLoggedOut: false,
+    component: () => {return <h1>My Contact</h1>}
+  },
+  {
+    title: "Change Password",
+    path: "/changepassword",
+    position: 'right',
+    visibleLoggedIn: true,
+    visibleLoggedOut: false,
+    component: () => {return <h1>Change Password</h1>}
+  },
+  {
     title: "Log Out",
     path: "/logout",
     position: 'right',
     visibleLoggedIn: true,
     visibleLoggedOut: false,
     component: Logout
-  },
-  
-]
-
-export default Routes;
+  }
+];
