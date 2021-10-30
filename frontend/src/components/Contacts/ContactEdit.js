@@ -129,12 +129,14 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
           color='error'
           onClick={() => onConfirm(
             <>
-              <p>This contact will be removed, but not deleted.</p>
-              <p>You can change the visibility of <i>My Contact</i>
-              <br/>in your profile settings.</p>
+              <p>Your personal contact cannot be deleted.
+              <br/>It will be hidden.</p>
+              <p>You can change the visibility of your contact
+              <br/>in your profile under <i>My Contact</i>.</p>
+              <p>Are you sure you want to hide your contact?</p>
             </>, handleRemoveMyContact, 'Ok/Cancel')}
         >
-          <span className='button-span'>Remove</span>
+          <span className='button-span'>Hide</span>
         </Button> :
         <Button
           color='error'
