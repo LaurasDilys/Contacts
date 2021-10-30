@@ -23,6 +23,7 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
   const [altPhoneNumber, setAltPhoneNumber] = useState(contact.alternativePhoneNumber);
   const [email, setEmail] = useState(contact.email);
   const [altEmail, setAltEmail] = useState(contact.alternativeEmail);
+  const [address, setAddress] = useState(contact.address);
   const [dateOfBirth, setDateOfBirth] = useState(contact.dateOfBirth === null ? null : new Date(contact.dateOfBirth));
   const [dateAsString, setDateAsString] = useState();
   const [notes, setNotes] = useState(contact.notes);
@@ -38,9 +39,7 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
       alternativePhoneNumber: nullIfEmpty(altPhoneNumber),
       email: nullIfEmpty(email),
       alternativeEmail: nullIfEmpty(altEmail),
-      // address: nullIfEmpty(address),
-      address: null,
-      //
+      address: nullIfEmpty(address),
       dateOfBirth: dateAsString,
       notes: nullIfEmpty(notes)
     };
@@ -56,9 +55,7 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
       alternativePhoneNumber: nullIfEmpty(altPhoneNumber),
       email: nullIfEmpty(email),
       alternativeEmail: nullIfEmpty(altEmail),
-      // address: nullIfEmpty(address),
-      address: null,
-      //
+      address: nullIfEmpty(address),
       dateOfBirth: dateAsString,
       notes: nullIfEmpty(notes)
     };
@@ -206,6 +203,12 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
         </div>
 
         <div className='contact-edit-row'>
+          <TextField
+            className='contact-edit-field'
+            label='Address'
+            value={address}
+            onChange={e => setAddress(e.target.value)}
+          />
           <div className='date-div date-div'>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker
