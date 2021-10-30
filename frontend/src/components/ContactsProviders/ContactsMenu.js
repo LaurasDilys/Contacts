@@ -28,7 +28,7 @@ const ContactsMenu = () => {
   };
 
   return (
-    allContacts.some(c => c.type != OTHER) ?
+    allContacts.some(c => c.type != OTHER && c.type != null) ?
     <>
       <IconButton
         edge='start'

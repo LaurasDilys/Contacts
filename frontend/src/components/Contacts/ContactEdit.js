@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateContact, deleteContact, createContact } from '../../state/actions/contactsThunk';
 import { userState } from '../../state/selectors';
 import { onConfirm } from '../ConfirmAlert/ConfirmAlert';
+import { updateUser } from '../../state/actions/userThunk';
 
 const nullIfEmpty = string => {
   return string === '' || string === undefined ?
@@ -22,6 +23,7 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
   const [altPhoneNumber, setAltPhoneNumber] = useState(contact.alternativePhoneNumber);
   const [email, setEmail] = useState(contact.email);
   const [altEmail, setAltEmail] = useState(contact.alternativeEmail);
+  const [address, setAddress] = useState(contact.address);
   const [dateOfBirth, setDateOfBirth] = useState(contact.dateOfBirth === null ? null : new Date(contact.dateOfBirth));
   const [dateAsString, setDateAsString] = useState();
   const [notes, setNotes] = useState(contact.notes);
@@ -37,6 +39,23 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
       alternativePhoneNumber: nullIfEmpty(altPhoneNumber),
       email: nullIfEmpty(email),
       alternativeEmail: nullIfEmpty(altEmail),
+      address: nullIfEmpty(address),
+      dateOfBirth: dateAsString,
+      notes: nullIfEmpty(notes)
+    };
+  }
+
+  const generateAndMakeMyContactVisible = (showMyContact) => {
+    return {
+      id: user.id,
+      showMyContact: showMyContact,
+      firstName: nullIfEmpty(firstName),
+      lastName: nullIfEmpty(lastName),
+      phoneNumber: nullIfEmpty(phoneNumber),
+      alternativePhoneNumber: nullIfEmpty(altPhoneNumber),
+      email: nullIfEmpty(email),
+      alternativeEmail: nullIfEmpty(altEmail),
+      address: nullIfEmpty(address),
       dateOfBirth: dateAsString,
       notes: nullIfEmpty(notes)
     };
@@ -57,26 +76,41 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
   }
 
   const handleSave = () => {
-    const contact = generateContact();
-
-    creating ?
-    dispatch(createContact(user.id, contact)) :
-    dispatch(updateContact(contact));
+    let newContactInformation;
+    
+    if (creating) {
+      newContactInformation = generateContact();
+      dispatch(createContact(user.id, newContactInformation));
+    } else {
+      if (contact.me) {
+        newContactInformation = generateAndMakeMyContactVisible(true);
+        dispatch(updateUser(newContactInformation));
+      } else {
+        newContactInformation = generateContact();
+        dispatch(updateContact(newContactInformation));
+      }
+    }
     
     creating ?
     handleSaveNew() :
-    setEditing(false)
+    setEditing(false);
   }
 
   const handleCancel = () => {
     creating ?
     handleCancelNew() :
-    setEditing(false)
+    setEditing(false);
   }
 
   const handleDelete = () => {
-    dispatch(deleteContact(contact.id))
-    setEditing(false)
+    dispatch(deleteContact(contact.id));
+    setEditing(false);
+  }
+
+  const handleRemoveMyContact = () => {
+    const userInformation = generateAndMakeMyContactVisible(false);
+    dispatch(updateUser(userInformation));
+    setEditing(false);
   }
 
   return (
@@ -90,12 +124,24 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
         </Button>
         <Button onClick={handleCancel}>Cancel</Button>
         {!creating &&
+        (contact.me ?
+        <Button
+          color='error'
+          onClick={() => onConfirm(
+            <>
+              <p>This contact will be removed, but not deleted.</p>
+              <p>You can change the visibility of <i>My Contact</i>
+              <br/>in your profile settings.</p>
+            </>, handleRemoveMyContact, 'Ok/Cancel')}
+        >
+          <span className='button-span'>Remove</span>
+        </Button> :
         <Button
           color='error'
           onClick={() => onConfirm('delete this contact', handleDelete)}
         >
           <span className='button-span'>Delete</span>
-        </Button>}
+        </Button>)}
         <Divider />
       </div>
 
@@ -157,6 +203,12 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
         </div>
 
         <div className='contact-edit-row'>
+          <TextField
+            className='contact-edit-field'
+            label='Address'
+            value={address}
+            onChange={e => setAddress(e.target.value)}
+          />
           <div className='date-div date-div'>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker

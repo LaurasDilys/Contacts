@@ -46,7 +46,7 @@ export const acceptSharedContact = (contactId, userId) => (dispatch) => {
 export const declineSharedContact = (contactId, userId) => (dispatch) => {
   Api.delete(`users/${userId}/declineshare/${contactId}`)
     .then(() => {
-      dispatch(deleteContact(contactId));
+      dispatch(deleteContactAction(contactId));
     });
 }
 

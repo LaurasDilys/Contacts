@@ -6,9 +6,11 @@ import { useEffect, useRef, useState } from 'react';
 import Description from './Description';
 import UsersList from '../Users/UsersList';
 import { useDispatch, useSelector } from 'react-redux';
-import { otherUsersState } from '../../state/selectors';
-import { shareContact } from '../../state/actions/contactsThunk';
+import { otherUsersState, userState } from '../../state/selectors';
+import { acceptSharedContact, declineSharedContact, shareContact } from '../../state/actions/contactsThunk';
 import UserChip from '../Users/UserChip';
+import { RECEIVED, UNACCEPTED } from '../../domain/contactTypes';
+import { onConfirm } from '../ConfirmAlert/ConfirmAlert';
 
 export const stringToColor = string => {
   let hash = 0;
@@ -93,9 +95,28 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
   const [sharing, setSharing] = useState(false);
   const phoneInputRef = useRef(null);
   const altPhoneInputRef = useRef(null);
+  const { user } = useSelector(userState);
   const { otherUsers } = useSelector(otherUsersState);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setSharing(false); // cancel sharing, when a different user is selected
+    otherUsers.forEach(user => user.selected = false);
+    if (contact.type !== RECEIVED && contact.type !== UNACCEPTED) {
+      // can't share received contacts (neither accepted, nor unaccepted)
+      if (contact.sharedWith === null) {
+        setFilteredUsers(otherUsers);
+      } else {
+        // can't share with who's already being shared with
+        const sharedIds = contact.sharedWith.map(user => user.id);
+        setFilteredUsers(otherUsers.filter(user => !sharedIds.includes(user.id)));
+      }
+    } else {
+      setFilteredUsers([]);
+    }
+  }, [contact, otherUsers])
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -117,6 +138,14 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
     setSharing(false);
   }
 
+  const handleAcceptShare = () => {
+    dispatch(acceptSharedContact(contact.id, user.id));
+  }
+
+  const handleDeclineShare = () => {
+    dispatch(declineSharedContact(contact.id, user.id));
+  }
+
   return (
     <div className='flex-row'>
       <div className='contact-area'>
@@ -134,7 +163,7 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
               disabled={selectedUserId === null}
               onClick={handleShare}
             >
-              <span className='button-span'>Share Contact {selectedUserId}</span>
+              <span className='button-span'>Share Contact</span>
             </Button>
           </div> :
           <div>
@@ -142,16 +171,42 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
               <AddIcon sx={{ marginBottom: '2px' }} />
               <span className='button-span'>New</span>
             </Button>
-            <Button onClick={() => setEditing(true)}>
-              <span className='button-span'>Edit</span>
-            </Button>
-            <Button onClick={() => {
-              // if x axis overflows
-              scrollX({ left: 1000, behavior: 'smooth' });
-              setSharing(true);
-            }}>
-              <span className='button-span'>Share</span>
-            </Button>
+            {(contact.type !== RECEIVED &&
+            contact.type !== UNACCEPTED) &&
+            <>
+              <Button onClick={() => setEditing(true)}>
+                <span className='button-span'>Edit</span>
+              </Button>
+              <Button onClick={() => {
+                // if x axis overflows
+                scrollX({ left: 1000, behavior: 'smooth' });
+                setSharing(true);
+              }}>
+                <span className='button-span'>Share</span>
+              </Button>
+            </>}
+            {contact.type === UNACCEPTED &&
+            <>
+              <Button
+                color='success'
+                onClick={handleAcceptShare}
+              >
+                <span className='button-span'>Accept</span>
+              </Button>
+              <Button
+                color='error'
+                onClick={() => onConfirm('decline', handleDeclineShare)}
+              >
+                <span className='button-span'>Decline</span>
+              </Button>
+            </>}
+            {contact.type === RECEIVED &&
+            <Button
+              color='error'
+              onClick={() => onConfirm('remove this contact', handleDeclineShare)}
+            >
+              <span className='button-span'>Remove</span>
+            </Button>}
           </div>}
           <Divider />
         </div>
@@ -274,7 +329,7 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
       {sharing &&
       <div className='users-area'>
         <UsersList
-          users={otherUsers}
+          users={filteredUsers}
           setSelectedUserId={setSelectedUserId}
           scrollAreaHeight={scrollAreaHeight}
           scrollBarWidth={scrollBarWidth}
