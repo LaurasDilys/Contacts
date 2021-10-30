@@ -28,7 +28,6 @@ const ContactsMenu = () => {
   };
 
   return (
-    allContacts.some(c => c.type != OTHER && c.type != null) ?
     <>
       <IconButton
         edge='start'
@@ -59,16 +58,30 @@ const ContactsMenu = () => {
       >
         <div>
           <MenuItem onClick={() => handleSelect(ALL)}>All Contacts</MenuItem>
-          {allContacts.some(c => c.type == SHARED) &&
-          <MenuItem onClick={() => handleSelect(SHARED)}>Shared</MenuItem>}
-          {allContacts.some(c => c.type == RECEIVED) &&
-          <MenuItem onClick={() => handleSelect(RECEIVED)}>Received</MenuItem>}
-          {allContacts.some(c => c.type == UNACCEPTED) &&
-          <MenuItem onClick={() => handleSelect(UNACCEPTED)}><b>Unaccepted</b></MenuItem>}
+          <MenuItem
+            disabled={!allContacts.some(c => c.type === SHARED)}
+            onClick={() => handleSelect(SHARED)}
+          >
+            Shared
+          </MenuItem>
+          <MenuItem
+            disabled={!allContacts.some(c => c.type === RECEIVED)}
+            onClick={() => handleSelect(RECEIVED)}
+          >
+            Received
+          </MenuItem>
+
+          <MenuItem
+            disabled={!allContacts.some(c => c.type == UNACCEPTED)}
+            onClick={() => handleSelect(UNACCEPTED)}
+          >
+            {!allContacts.some(c => c.type == UNACCEPTED) ?
+            'Unaccepted' :
+            <b>Unaccepted</b>}
+          </MenuItem>
         </div>
       </Menu>
-    </> :
-    null
+    </>
   );
 }
 
