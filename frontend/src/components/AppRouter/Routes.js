@@ -1,6 +1,7 @@
 import ContactsProvider from "../ContactsProviders/ContactsProvider";
 import LoginForm from "../LoginForm/LoginForm"
 import Logout from "../Logout/Logout";
+import MyContact from "../Profile/MyContact";
 import RegisterForm from "../RegisterForm/RegisterForm";
 
 export const TopNavRoutes = [
@@ -52,7 +53,7 @@ export const ProfileRoutes = [
     position: 'right',
     visibleLoggedIn: true,
     visibleLoggedOut: false,
-    component: () => {return <h1>My Contact</h1>}
+    component: MyContact
   },
   {
     title: "Change Password",
