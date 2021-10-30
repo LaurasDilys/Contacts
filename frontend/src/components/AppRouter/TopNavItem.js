@@ -11,8 +11,7 @@ const TopNavItem = ({ title, path }) => {
 
   const getTitle = () => {
     let result;
-    if (path !== '/contacts' ||
-    !allContacts.some(c => c.type != OTHER && c.type != null)) {
+    if (path !== '/contacts') {
       result = title;
     } else {
       result = selectedContacts[0];
