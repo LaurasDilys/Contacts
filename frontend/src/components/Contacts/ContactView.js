@@ -97,8 +97,26 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
   const altPhoneInputRef = useRef(null);
   const { user } = useSelector(userState);
   const { otherUsers } = useSelector(otherUsersState);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setSharing(false); // cancel sharing, when a different user is selected
+    otherUsers.forEach(user => user.selected = false);
+    if (contact.type !== RECEIVED && contact.type !== UNACCEPTED) {
+      // can't share received contacts (neither accepted, nor unaccepted)
+      if (contact.sharedWith === null) {
+        setFilteredUsers(otherUsers);
+      } else {
+        // can't share with who's already being shared with
+        const sharedIds = contact.sharedWith.map(user => user.id);
+        setFilteredUsers(otherUsers.filter(user => !sharedIds.includes(user.id)));
+      }
+    } else {
+      setFilteredUsers([]);
+    }
+  }, [contact, otherUsers])
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -145,7 +163,7 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
               disabled={selectedUserId === null}
               onClick={handleShare}
             >
-              <span className='button-span'>Share Contact {selectedUserId}</span>
+              <span className='button-span'>Share Contact</span>
             </Button>
           </div> :
           <div>
@@ -311,7 +329,7 @@ const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollB
       {sharing &&
       <div className='users-area'>
         <UsersList
-          users={otherUsers}
+          users={filteredUsers}
           setSelectedUserId={setSelectedUserId}
           scrollAreaHeight={scrollAreaHeight}
           scrollBarWidth={scrollBarWidth}
