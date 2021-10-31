@@ -34,7 +34,7 @@ namespace Data.Models
         [MaxLength(50)]
         public string DateOfBirth { get; set; }
 
-        [MaxLength(50)]
+        [MaxLength(1000)]
         public string Notes { get; set; }
 
         public bool Me { get; set; }
