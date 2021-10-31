@@ -30,6 +30,8 @@
   /* background-color: aquamarine; */
   margin: auto 0;
   white-space: nowrap;
+  padding-right: 85px;
+  max-width: 800px;
 }
 
 .contact-entry-description {
@@ -49,8 +51,9 @@
 .contact-entry {
   /* background-color: coral; */
   margin: 0 0 var(--contact-entry-margin-bottom) 0;
-  min-width: 400px;
+  padding-right: 85px;
   max-width: 800px;
+  min-width: 300px;
 }
 
 .contact-entry a {
