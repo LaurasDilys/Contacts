@@ -1,0 +1,13 @@
+.user-notes-div {
+  width: calc(500px + var(--edit-entry-gap) * 2);
+  margin: 0 var(--edit-entry-gap) 0 0;
+}
+
+.switch-div {
+  margin: 25px 0 0 35px;
+}
+
+.switch-label {
+  padding: 0 0 35px 10px;
+}
+
