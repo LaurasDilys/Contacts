@@ -24,6 +24,7 @@ const ProfileMenu = () => {
 
   const handleOpenMenu = (event) => {
     setAnchorElement(event.currentTarget);
+    event.currentTarget.blur();
   };
 
   const handleSelect = path => {

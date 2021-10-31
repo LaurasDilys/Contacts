@@ -15,6 +15,7 @@ const ContactsMenu = () => {
 
   const handleOpenMenu = (event) => {
     setAnchorElement(event.currentTarget);
+    event.currentTarget.blur();
   };
 
   const handleSelect = contactType => {
