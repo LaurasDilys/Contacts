@@ -11,7 +11,7 @@ import { userState } from '../../state/selectors';
 import { onConfirm } from '../ConfirmAlert/ConfirmAlert';
 import { updateUser } from '../../state/actions/userThunk';
 
-const nullIfEmpty = string => {
+export const nullIfEmpty = string => {
   return string === '' || string === undefined ?
   null : string;
 }
@@ -75,6 +75,11 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
     return false;
   }
 
+  const noLastName = () => {
+    if (lastName === null || lastName === '') return true;
+    return false;
+  }
+
   const handleSave = () => {
     let newContactInformation;
     
@@ -118,7 +123,11 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
       <div className='contact-area-top'>
         <Button
           onClick={handleSave}
-          disabled={noFirstName()}
+          disabled={
+            contact.me ?
+            noFirstName() || noLastName() :
+            noFirstName()
+          }
         >
           <span className='button-span'>Save</span>
         </Button>
@@ -157,19 +166,26 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
               onChange={e => setFirstName(e.target.value)}
             />
           </Tooltip>
+          {contact.me ?
+          <Tooltip title={noLastName() ? "Last name is required" : ""}>
+            <TextField
+              error={noLastName()}
+              label='Last Name'
+            value={lastName}
+            onChange={e => setLastName(e.target.value)}
+            />
+          </Tooltip> :
           <TextField
             label='Last Name'
             value={lastName}
             onChange={e => setLastName(e.target.value)}
-          />
+          />}
         </div>
 
         <div className='contact-edit-row'>
           <div>
             <PhoneInput
-              inputStyle={{
-                width:'250px'
-              }}
+              inputStyle={{width:'250px'}}
               specialLabel='Phone Number'
               country='lt'
               value={phoneNumber}
@@ -232,6 +248,7 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
             multiline
             rows={6}
             value={notes}
+            inputProps={{ maxLength: 1000 }}
             onChange={e => setNotes(e.target.value)}
           />
         </div>
