@@ -10,3 +10,7 @@
 .flex-grow-1 {
   flex-grow: 1;
 }
+
+.center {
+  justify-content: center;
+}

@@ -1,8 +1,8 @@
-import { Button, Divider, TextField, Tooltip } from '@mui/material';
+import { Button, Divider, FormControlLabel, TextField, Tooltip } from '@mui/material';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/material.css';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,45 +10,29 @@ import { updateContact, deleteContact, createContact } from '../../state/actions
 import { userState } from '../../state/selectors';
 import { onConfirm } from '../ConfirmAlert/ConfirmAlert';
 import { updateUser } from '../../state/actions/userThunk';
+import { nullIfEmpty } from '../Contacts/ContactEdit';
+import { MyContactSwitch } from './MyContact';
+import './Profile.css';
 
-export const nullIfEmpty = string => {
-  return string === '' || string === undefined ?
-  null : string;
-}
-
-const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCancelNew, scrollAreaHeight }) => {
-  const [firstName, setFirstName] = useState(contact.firstName);
-  const [lastName, setLastName] = useState(contact.lastName);
-  const [phoneNumber, setPhoneNumber] = useState(contact.phoneNumber);
-  const [altPhoneNumber, setAltPhoneNumber] = useState(contact.alternativePhoneNumber);
-  const [email, setEmail] = useState(contact.email);
-  const [altEmail, setAltEmail] = useState(contact.alternativeEmail);
-  const [address, setAddress] = useState(contact.address);
-  const [dateOfBirth, setDateOfBirth] = useState(contact.dateOfBirth === null ? null : new Date(contact.dateOfBirth));
-  const [dateAsString, setDateAsString] = useState();
-  const [notes, setNotes] = useState(contact.notes);
-  const dispatch = useDispatch();
+const MyContactEdit = ({ setEditing, creating, handleSaveNew, handleCancelNew, scrollAreaHeight }) => {
   const { user } = useSelector(userState);
+  const [firstName, setFirstName] = useState(user.firstName);
+  const [lastName, setLastName] = useState(user.lastName);
+  const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber);
+  const [altPhoneNumber, setAltPhoneNumber] = useState(user.alternativePhoneNumber);
+  const [email, setEmail] = useState(user.email);
+  const [altEmail, setAltEmail] = useState(user.alternativeEmail);
+  const [address, setAddress] = useState(user.address);
+  const [dateOfBirth, setDateOfBirth] = useState(user.dateOfBirth === null ? null : new Date(user.dateOfBirth));
+  const [dateAsString, setDateAsString] = useState();
+  const [notes, setNotes] = useState(user.notes);
+  const [showMyContact, setShowContact] = useState(user.showMyContact);
+  const detailsDivRef = useRef(null);
+  const dispatch = useDispatch();
 
-  const generateContact = () => {
-    return {
-      id: contact.id,
-      firstName: nullIfEmpty(firstName),
-      lastName: nullIfEmpty(lastName),
-      phoneNumber: nullIfEmpty(phoneNumber),
-      alternativePhoneNumber: nullIfEmpty(altPhoneNumber),
-      email: nullIfEmpty(email),
-      alternativeEmail: nullIfEmpty(altEmail),
-      address: nullIfEmpty(address),
-      dateOfBirth: dateAsString,
-      notes: nullIfEmpty(notes)
-    };
-  }
-
-  const generateAndMakeMyContactVisible = (showMyContact) => {
+  const generateUser = () => {
     return {
       id: user.id,
-      showMyContact: showMyContact,
       firstName: nullIfEmpty(firstName),
       lastName: nullIfEmpty(lastName),
       phoneNumber: nullIfEmpty(phoneNumber),
@@ -57,7 +41,8 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
       alternativeEmail: nullIfEmpty(altEmail),
       address: nullIfEmpty(address),
       dateOfBirth: dateAsString,
-      notes: nullIfEmpty(notes)
+      notes: nullIfEmpty(notes),
+      showMyContact: showMyContact
     };
   }
   
@@ -81,40 +66,8 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
   }
 
   const handleSave = () => {
-    let newContactInformation;
-    
-    if (creating) {
-      newContactInformation = generateContact();
-      dispatch(createContact(user.id, newContactInformation));
-    } else {
-      if (contact.me) {
-        newContactInformation = generateAndMakeMyContactVisible(true);
-        dispatch(updateUser(newContactInformation));
-      } else {
-        newContactInformation = generateContact();
-        dispatch(updateContact(newContactInformation));
-      }
-    }
-    
-    creating ?
-    handleSaveNew() :
-    setEditing(false);
-  }
-
-  const handleCancel = () => {
-    creating ?
-    handleCancelNew() :
-    setEditing(false);
-  }
-
-  const handleDelete = () => {
-    dispatch(deleteContact(contact.id));
-    setEditing(false);
-  }
-
-  const handleRemoveMyContact = () => {
-    const userInformation = generateAndMakeMyContactVisible(false);
-    dispatch(updateUser(userInformation));
+    const newInformation = generateUser(true);
+    dispatch(updateUser(newInformation));
     setEditing(false);
   }
 
@@ -123,40 +76,23 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
       <div className='contact-area-top'>
         <Button
           onClick={handleSave}
-          disabled={
-            contact.me ?
-            noFirstName() || noLastName() :
-            noFirstName()
-          }
+          disabled={noFirstName() || noLastName()}
         >
           <span className='button-span'>Save</span>
         </Button>
-        <Button onClick={handleCancel}>Cancel</Button>
-        {!creating &&
-        (contact.me ?
-        <Button
-          color='error'
-          onClick={() => onConfirm(
-            <>
-              <p>Your personal contact cannot be deleted.
-              <br/>It will be hidden.</p>
-              <p>You can change the visibility of your contact
-              <br/>in your profile under <i>My Contact</i>.</p>
-              <p>Are you sure you want to hide your contact?</p>
-            </>, handleRemoveMyContact, 'fullText')}
-        >
-          <span className='button-span'>Hide</span>
-        </Button> :
-        <Button
-          color='error'
-          onClick={() => onConfirm('delete this contact', handleDelete)}
-        >
-          <span className='button-span'>Delete</span>
-        </Button>)}
+        <Button onClick={() => setEditing(false)}>
+          <span className='button-span'>Cancel</span>
+        </Button>
         <Divider />
       </div>
 
-      <div style={{height: scrollAreaHeight, overflowY: 'auto'}}>
+      <div
+        ref={detailsDivRef}
+        style={{
+          height: scrollAreaHeight - detailsDivRef.current?.offsetTop,
+          overflowY: 'auto'
+        }}
+      >
         <div className='contact-edit-row'>
           <Tooltip title={noFirstName() ? "First name is required" : ""}>
             <TextField
@@ -166,7 +102,6 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
               onChange={e => setFirstName(e.target.value)}
             />
           </Tooltip>
-          {contact.me ?
           <Tooltip title={noLastName() ? "Last name is required" : ""}>
             <TextField
               error={noLastName()}
@@ -174,12 +109,7 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
             value={lastName}
             onChange={e => setLastName(e.target.value)}
             />
-          </Tooltip> :
-          <TextField
-            label='Last Name'
-            value={lastName}
-            onChange={e => setLastName(e.target.value)}
-          />}
+          </Tooltip>
         </div>
 
         <div className='contact-edit-row'>
@@ -241,7 +171,7 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
           </div>
         </div>
         
-        <div className='contact-edit-row notes-div'>
+        <div className='contact-edit-row user-notes-div'>
           <TextField
             fullWidth
             label="Notes"
@@ -252,9 +182,23 @@ const ContactEdit = ({ contact, setEditing, creating, handleSaveNew, handleCance
             onChange={e => setNotes(e.target.value)}
           />
         </div>
+
+        <div className='switch-div'>
+          <FormControlLabel
+            control={
+              <MyContactSwitch
+                checked={showMyContact}
+                onChange={e => setShowContact(e.target.checked)}
+              />
+            }
+            label={
+              <span className='switch-label'>Include in All Contacts</span>
+            }
+          />
+        </div>
       </div>
     </div>
   );
 };
 
-export default ContactEdit;
+export default MyContactEdit;

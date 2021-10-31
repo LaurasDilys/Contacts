@@ -1,18 +1,16 @@
 import { ListItem, ListItemText } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { onConfirm } from '../ConfirmAlert/ConfirmAlert';
 import ContactsMenu from '../ContactsProviders/ContactsMenu';
-import { history } from './AppRouter';
 import { contactsState } from '../../state/selectors';
-import { OTHER } from '../../domain/contactTypes';
+import ProfileMenu from '../Profile/ProfileMenu';
+import { Link } from 'react-router-dom';
 
 const TopNavItem = ({ title, path }) => {
   const { contacts: allContacts, selectedContacts } = useSelector(contactsState);
 
   const getTitle = () => {
     let result;
-    if (path !== '/contacts' ||
-    !allContacts.some(c => c.type != OTHER && c.type != null)) {
+    if (path !== '/contacts') {
       result = title;
     } else {
       result = selectedContacts[0];
@@ -22,21 +20,14 @@ const TopNavItem = ({ title, path }) => {
     return result;
   }
 
-  const navigateToPath = () => history.push(path)
-  
-  const handleNavigation = () => {
-    if (path !== '/logout') {
-      navigateToPath();
-    } else {
-      onConfirm('log out', navigateToPath);
-    }
-  }
-
   return (
+    path === '/profile' ?
+    <ProfileMenu /> :
     <>
       <ListItem
         button
-        onClick={handleNavigation}
+        component={Link}
+        to={path}
         style={{ width: 'fit-content' }}
       >
         <ListItemText primary={getTitle()} />
