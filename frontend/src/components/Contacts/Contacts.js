@@ -3,74 +3,10 @@ import { Divider, Input, InputAdornment, List, ListItem, ListItemText, TextField
 import SearchIcon from '@mui/icons-material/Search';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import ContactArea from './ContactArea';
-import { useSelector } from 'react-redux';
-import { contactsState } from '../../state/selectors';
 import useResizeObserver from '@react-hook/resize-observer'
 import { ME } from '../../domain/contactTypes';
 
-//
-//
-//
-// const mockContacts = [
-//   {
-//     id: 1,
-//     firstName: 'Arnas',
-//     lastName: 'B.',
-//     phoneNumber: '37000000000',
-//     email: null,
-//     notes: null,
-//     selected: false // first contact MUST BE selected
-//     // if there are no created contacts, then
-//     // the first and only contact will be "ME"
-//   },
-//   {
-//     id: 2,
-//     firstName: 'Benas',
-//     lastName: 'C.',
-//     phoneNumber: null,
-//     email: null,
-//     notes: null,
-//     selected: false
-//   },
-//   {
-//     id: 3,
-//     firstName: 'Denas',
-//     lastName: 'F.',
-//     phoneNumber: null,
-//     email: null,
-//     notes: null,
-//     selected: false
-//   }
-// ]
-
-// let currentId = 3;
-// for (let i = 0; i < 3; i++) {
-//   const more = [];
-//   mockContacts.forEach(c => {
-//     more.push({...c});
-//   });
-//   more.forEach(c => c.id = ++currentId);
-//   mockContacts.push(...more);
-// }
-
-// mockContacts.unshift({
-//   id: 0,
-//   firstName: 'Lauras',
-//   lastName: 'Dilys',
-//   phoneNumber: '37061417706',
-//   alternativePhoneNumber: '37061536904',
-//   email: 'lauras.dilys@gmail.com',
-//   alternativeEmail: 'spotas@gmail.com',
-//   dateOfBirth: '1988-10-17',
-//   notes: 'This is my contact',
-//   // ". Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-//   selected: false
-// })
-//
-//
-//
-
-const useSize = (target) => {
+export const useSize = target => {
   const [size, setSize] = useState()
 
   useLayoutEffect(() => {
@@ -183,11 +119,6 @@ const Contacts = ({ providedContacts }) => {
     searchResult(value);
   };
 
-  // useEffect(() => {
-  //   (search === undefined && contacts.length > 0) &&
-  //   (contacts[0].selected = true);
-  // }, [search])
-
   const handleNew = () => {
     searchResult('');
     contacts.forEach(c => c.selected = false);
@@ -205,7 +136,6 @@ const Contacts = ({ providedContacts }) => {
 
   return (
     <div className='flex-row'>
-      
       <div>
         <Input
           sx={searchFieldStyle}
@@ -237,19 +167,6 @@ const Contacts = ({ providedContacts }) => {
       </div>
 
       <div className='flex-grow-1' ref={contactAreaDivRef}>
-
-        {/* received.any()
-              && snackbar: 'You have received a new contact, theat needs to be confirmed.'
-                           'You have received new contacts, theat need to be confirmed.'
-        
-        {received ?
-        //BTN: Remove this contact || Confirm All - Confirm this contact - Reject this contact
-        <ReceivedContact              unconfirmed={unconfirmed} /> :
-        //
-        //
-        //<ContactArea ...props />
-        */}
-
         <ContactArea
           handleNew={handleNew}
           handleSaveNew={handleSaveNew}
@@ -259,7 +176,6 @@ const Contacts = ({ providedContacts }) => {
           scrollBarWidth={scrollBarWidth}
         />
       </div>
-
     </div>
   );
 };
