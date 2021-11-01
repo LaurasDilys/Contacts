@@ -8,21 +8,21 @@ import { Button, Container, CssBaseline, Grid, MenuItem, TextField, Typography }
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    // marginTop: theme.spacing(8),
+    marginTop: 64,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
   },
   avatar: {
-    // margin: theme.spacing(1),
-    // backgroundColor: theme.palette.secondary.main,
+    margin: 8,
   },
   form: {
     width: '100%',
-    // marginTop: theme.spacing(3),
+    marginTop: 24,
   },
   submit: {
-    // margin: theme.spacing(3, 0, 2),
+    marginTop: 24,
+    marginBottom: 16,
   },
 }));
 
@@ -72,7 +72,7 @@ const Test = () => {
       <CssBaseline />
       <div className={classes.paper}>
         <Typography component="h1" variant="h5">
-          Change user preferences
+          Change password
         </Typography>
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
