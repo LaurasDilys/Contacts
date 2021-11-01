@@ -30,6 +30,9 @@ namespace Api.Controllers
         }
 
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [HttpPost(nameof(Register))]
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
@@ -46,6 +49,8 @@ namespace Api.Controllers
         }
 
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponse))]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [HttpPost(nameof(Login))]
         public async Task<ActionResult<UserResponse>> Login([FromBody] LoginRequest request)
         {
@@ -64,6 +69,7 @@ namespace Api.Controllers
         }
 
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponse))]
         [HttpPost(nameof(LoginStatus))]
         public async Task<ActionResult<UserResponse>> LoginStatus()
         {
@@ -81,6 +87,8 @@ namespace Api.Controllers
         }
 
         [HttpPost(nameof(NewCookie))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public IActionResult NewCookie()
         {
             var token = Request.Cookies["token"];
@@ -95,6 +103,7 @@ namespace Api.Controllers
         }
 
         [HttpPost(nameof(Logout))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Logout()
         {
             HttpContext.Response.Cookies.Append("token", "",

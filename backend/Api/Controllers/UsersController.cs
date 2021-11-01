@@ -25,12 +25,15 @@ namespace Api.Controllers
         }
 
         [HttpGet("OtherThan/{key}", Name = nameof(OtherThan))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<UserBasic>))]
         public async Task<ActionResult<ICollection<UserBasic>>> OtherThan(string key)
         {
             return Ok(await _usersService.GetOtherUsersAsync(key));
         }
 
         [HttpPut("{key}", Name = nameof(UpdateUser))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateUserResponse))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<UpdateUserResponse>> UpdateUser([FromRoute] string key, [FromBody] UpdateUserRequest request)
         {
             if (await _usersService.FindByIdAsync(key) == null)
@@ -42,6 +45,8 @@ namespace Api.Controllers
         }
 
         [HttpPost("{key}/ChangePassword", Name = nameof(ChangePassword))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> ChangePassword([FromRoute] string key, [FromBody] ChangePasswordRequest request)
         {
             var token = Request.Cookies["token"];
