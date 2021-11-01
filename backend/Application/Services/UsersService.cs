@@ -1,8 +1,9 @@
 ﻿using Application.Dto.Authentication;
 using Application.Dto.User;
+using Application.Interfaces;
 using Business.Models;
+using Data.Interfaces;
 using Data.Models;
-using Data.Repositories;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -14,14 +15,14 @@ namespace Application.Services
     public class UsersService
     {
         private readonly UserManager<User> _userManager;
-        private readonly UsersRepository _usersRepository;
-        private readonly ContactsRepository _contactsRepository;
-        private readonly MapperService _mapper;
+        private readonly IUsersRepository _usersRepository;
+        private readonly IContactsRepository _contactsRepository;
+        private readonly IMapperService _mapper;
 
         public UsersService(UserManager<User> userManager,
-            UsersRepository usersRepository,
-            ContactsRepository contactsRepository,
-            MapperService mapper)
+            IUsersRepository usersRepository,
+            IContactsRepository contactsRepository,
+            IMapperService mapper)
         {
             _userManager = userManager;
             _usersRepository = usersRepository;
