@@ -1,6 +1,7 @@
+using Application.Interfaces;
 using Application.Services;
+using Data.Interfaces;
 using Data.Models;
-using Data.Repositories;
 using Moq;
 using System;
 using System.Threading.Tasks;
@@ -25,10 +26,10 @@ namespace UnitTests
         {
             // Arrange
             var contactId = Guid.NewGuid().ToString();
-            var returnedContact = new Contact { Id = contactId };
+            var requestedContact = new Contact { Id = contactId };
 
             _contactsRepository.Setup(x => x.FindByIdAsync(contactId))
-                .ReturnsAsync(() => returnedContact);
+                .ReturnsAsync(() => requestedContact);
 
             // Act
             var contact = await _sut.FindByIdAsync(contactId);
