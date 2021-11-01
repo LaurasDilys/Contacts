@@ -69,3 +69,13 @@ export const updateUser = (request) => (dispatch) => {
       dispatch(updateUserInformationAction( res.data.user ));
     });
 }
+
+export const changePassword = (id, request) => (dispatch) => {
+  Api.post(`users/${id}/changepassword`, request)
+    .then(res => console.log(res.data))
+    .catch(err => {
+      err.response ?
+      console.log(err.response.data) :
+      console.log(err.message)
+    });
+}

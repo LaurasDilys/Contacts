@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { makeStyles } from '@mui/styles';
-import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
 import ValidatedTextField from '../ValidatedTextField/ValidatedTextField';
-import { Button, Container, CssBaseline, Grid, MenuItem, TextField, Typography } from '@mui/material';
+import { Button, Container, CssBaseline, Grid, Typography } from '@mui/material';
+import { changePassword } from '../../state/actions/userThunk';
+import { userState } from '../../state/selectors';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   paper: {
     marginTop: 64,
     display: 'flex',
@@ -28,9 +28,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const InitialFormData = {
-  oldPassword: '',
+  currentPassword: '',
   newPassword: '',
-  newRepeatPassword: ''
+  confirmNewPassword: ''
 };
 
 export const doPasswordsMatch = (otherPassword, setIsOtherValid) => {
@@ -43,25 +43,27 @@ export const doPasswordsMatch = (otherPassword, setIsOtherValid) => {
 
 const ChangePassword = () => {
   const classes = useStyles();
-  const dispatch = useDispatch();
   const [formData, setFormData] = useState({ ...InitialFormData });
-  const [isOldPasswordValid, setIsOldPasswordValid] = useState(false);
+  const [isCurrentPasswordValid, setIsCurrentPasswordValid] = useState(false);
   const [isNewPasswordValid, setIsNewPasswordValid] = useState(false);
-  const [isNewRepeatPasswordValid, setIsNewRepeatPasswordValid] = useState(false);
+  const [isConfirmNewPasswordValid, setIsConfirmNewPasswordValid] = useState(false);
+  const { user } = useSelector(userState);
+  const dispatch = useDispatch();
 
-  const history = useHistory();
+  const isFormValid =
+    isCurrentPasswordValid &&
+    isNewPasswordValid &&
+    isConfirmNewPasswordValid
 
   const onSubmitClick = (e) => {
     e.preventDefault();
-    // dispatch(SetNotificationAction({ isOpen: true, message: 'Information updated successfully.', type: 'success' }));
-    history.push('/calendar');
+    setFormData({ ...InitialFormData });
+    const { currentPassword, newPassword } = formData;
+    dispatch(changePassword(user.id, {
+      currentPassword: currentPassword,
+      newPassword: newPassword
+    }))
   };
-
-  // const saveButtonEnabled =
-  //   (_.isEmpty(formData.oldPassword) &&
-  //     _.isEmpty(formData.newRepeatPassword) &&
-  //     _.isEmpty(formData.newPassword) ||
-  //   (isOldPasswordValid && isNewPasswordValid && isNewRepeatPasswordValid);
 
   const onFieldChange = (e, field) => {
     formData[field.toString()] = e.target.value;
@@ -81,16 +83,16 @@ const ChangePassword = () => {
               <ValidatedTextField
                 autoComplete="new-password"
                 fullWidth
-                id="oldPassword"
-                label="Old password"
-                name="oldPassword"
-                onChange={(e) => onFieldChange(e, 'oldPassword')}
+                id="currentPassword"
+                label="Current Password"
+                name="currentPassword"
+                onChange={(e) => onFieldChange(e, 'currentPassword')}
                 type="password"
                 validationProps={{
-                  isValid: isOldPasswordValid,
-                  setIsValid: setIsOldPasswordValid,
+                  isValid: isCurrentPasswordValid,
+                  setIsValid: setIsCurrentPasswordValid,
                 }}
-                value={formData.oldPassword}
+                value={formData.currentPassword}
                 variant="outlined"
               />
             </Grid>
@@ -98,9 +100,9 @@ const ChangePassword = () => {
               <ValidatedTextField
                 autoComplete="new-password"
                 fullWidth
-                // helperText={validationMessages.passwordRule}
+                helperText="Password must contain six symbols of which there must be at least one uppercase letter and at least one number."
                 id="newPassword"
-                label="New password"
+                label="New Password"
                 name="newPassword"
                 onChange={(e) => onFieldChange(e, 'newPassword')}
                 type="password"
@@ -108,7 +110,7 @@ const ChangePassword = () => {
                   isValid: isNewPasswordValid,
                   setIsValid: setIsNewPasswordValid,
                   additionalCheck: (input) => {
-                    setIsNewRepeatPasswordValid(input === formData.newRepeatPassword);
+                    setIsConfirmNewPasswordValid(input === formData.confirmNewPassword);
                     return true;
                   },
                   regexString: '^(.{0,5}|[^0-9]*|[^A-Z]*)$',
@@ -122,22 +124,22 @@ const ChangePassword = () => {
               <ValidatedTextField
                 autoComplete="new-password"
                 fullWidth
-                // helperText={validationMessages.passwordMatchRule}
+                helperText="Passwords must match"
                 id="repeatPassword"
-                label="Repeat new password"
+                label="Confirm New Password"
                 name="repeatPassword"
-                onChange={(e) => onFieldChange(e, 'newRepeatPassword')}
+                onChange={(e) => onFieldChange(e, 'confirmNewPassword')}
                 type="password"
                 validationProps={{
-                  isValid: isNewRepeatPasswordValid,
-                  setIsValid: setIsNewRepeatPasswordValid,
+                  isValid: isConfirmNewPasswordValid,
+                  setIsValid: setIsConfirmNewPasswordValid,
                   additionalCheck: (input) => {
                     return input === formData.newPassword;
                   },
                   regexString: '^(.{0,5}|[^0-9]*|[^A-Z]*)$',
                   regexRuleReverse: true,
                 }}
-                value={formData.newRepeatPassword}
+                value={formData.confirmNewPassword}
                 variant="outlined"
               />
             </Grid>
@@ -145,7 +147,7 @@ const ChangePassword = () => {
           <Button
             className={classes.submit}
             color="primary"
-            // disabled={!saveButtonEnabled}
+            disabled={!isFormValid}
             fullWidth
             onClick={onSubmitClick}
             type="submit"
