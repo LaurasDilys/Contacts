@@ -1,11 +1,12 @@
-﻿using Data.Models;
+﻿using Data.Interfaces;
+using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Data.Repositories
 {
-    public class ContactsRepository
+    public class ContactsRepository : IContactsRepository
     {
         private readonly DataContext _context;
 

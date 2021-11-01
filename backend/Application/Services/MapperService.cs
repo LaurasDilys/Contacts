@@ -1,5 +1,6 @@
 ﻿using Application.Dto.Contact;
 using Application.Dto.User;
+using Application.Interfaces;
 using Application.Models;
 using Business.Interfaces;
 using Business.Models;
@@ -11,7 +12,7 @@ using System.Linq;
 
 namespace Application.Services
 {
-    public class MapperService
+    public class MapperService : IMapperService
     {
         private readonly ContactInformationMapper _contactInformationMapper;
 

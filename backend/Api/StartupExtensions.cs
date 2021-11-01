@@ -1,7 +1,9 @@
-﻿using Application.Models;
+﻿using Application.Interfaces;
+using Application.Models;
 using Application.Services;
 using Business.Services;
 using Data;
+using Data.Interfaces;
 using Data.Models;
 using Data.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -23,11 +25,11 @@ namespace Api
             services.AddScoped<ContactsService>();
             services.AddScoped<UsersService>();
 
-            services.AddTransient<MapperService>();
+            services.AddTransient<IMapperService, MapperService>();
             services.AddTransient<ContactInformationMapper>();
 
-            services.AddScoped<ContactsRepository>();
-            services.AddScoped<UsersRepository>();
+            services.AddScoped<IContactsRepository, ContactsRepository>();
+            services.AddScoped<IUsersRepository, UsersRepository>();
         }
 
         public static void ConfigureAuthentication(this IServiceCollection services, string securityKey)

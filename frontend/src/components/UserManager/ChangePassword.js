@@ -3,7 +3,7 @@ import { makeStyles } from '@mui/styles';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import ValidatedTextField from './ValidatedTextField/ValidatedTextField';
+import ValidatedTextField from '../ValidatedTextField/ValidatedTextField';
 import { Button, Container, CssBaseline, Grid, MenuItem, TextField, Typography } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
@@ -11,18 +11,19 @@ const useStyles = makeStyles((theme) => ({
     marginTop: 64,
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   avatar: {
-    margin: 8,
+    margin: 8
   },
   form: {
     width: '100%',
-    marginTop: 24,
+    maxWidth: '330px',
+    marginTop: 24
   },
   submit: {
     marginTop: 24,
-    marginBottom: 16,
+    marginBottom: 16
   },
 }));
 
@@ -40,7 +41,7 @@ export const doPasswordsMatch = (otherPassword, setIsOtherValid) => {
   };
 };
 
-const Test = () => {
+const ChangePassword = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({ ...InitialFormData });
@@ -158,4 +159,4 @@ const Test = () => {
   );
 }
 
-export default Test;
+export default ChangePassword;

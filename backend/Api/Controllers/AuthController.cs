@@ -1,5 +1,6 @@
 ﻿using Application.Dto.Authentication;
 using Application.Dto.User;
+using Application.Interfaces;
 using Application.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -17,11 +18,11 @@ namespace Api.Controllers
     {
         private readonly JwtTokenService _jwtTokenService;
         private readonly UsersService _usersService;
-        private readonly MapperService _mapper;
+        private readonly IMapperService _mapper;
 
         public AuthController(JwtTokenService jwtTokenService,
             UsersService usersService,
-            MapperService mapper)
+            IMapperService mapper)
         {
             _jwtTokenService = jwtTokenService;
             _usersService = usersService;

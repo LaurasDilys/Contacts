@@ -1,8 +1,9 @@
 ﻿using Application.Dto.Contact;
+using Application.Interfaces;
 using Application.Models;
 using Business.Models;
+using Data.Interfaces;
 using Data.Models;
-using Data.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,13 +12,13 @@ namespace Application.Services
 {
     public class ContactsService
     {
-        private readonly ContactsRepository _contactsRepository;
-        private readonly UsersRepository _usersRepository;
-        private readonly MapperService _mapper;
+        private readonly IContactsRepository _contactsRepository;
+        private readonly IUsersRepository _usersRepository;
+        private readonly IMapperService _mapper;
 
-        public ContactsService(ContactsRepository repository,
-            UsersRepository usersRepository,
-            MapperService mapper)
+        public ContactsService(IContactsRepository repository,
+            IUsersRepository usersRepository,
+            IMapperService mapper)
         {
             _contactsRepository = repository;
             _usersRepository = usersRepository;
@@ -29,9 +30,9 @@ namespace Application.Services
         //    return await _contactsRepository.ExistsAsync(id);
         //}
 
-        public async Task<Contact> FindByIdAsync(string id)
+        public async Task<Contact> FindByIdAsync(string contactId)
         {
-            return await _contactsRepository.FindByIdAsync(id);
+            return await _contactsRepository.FindByIdAsync(contactId);
         }
 
         public async Task<ICollection<ContactResponse>> GetAllContactsAsync(string userId)
@@ -130,9 +131,9 @@ namespace Application.Services
             return response;
         }
 
-        public async Task DeleteAsync(string id)
+        public async Task DeleteAsync(string contactId)
         {
-            await _contactsRepository.DeleteAsync(id);
+            await _contactsRepository.DeleteAsync(contactId);
         }
     }
 }

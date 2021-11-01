@@ -1,8 +1,9 @@
-import ContactsProvider from "../ContactsProviders/ContactsProvider";
-import LoginForm from "../LoginForm/LoginForm"
-import Logout from "../Logout/Logout";
-import MyContact from "../Profile/MyContact";
-import RegisterForm from "../RegisterForm/RegisterForm";
+import ContactsProvider from '../ContactsProviders/ContactsProvider';
+import RegisterForm from '../UserManager/RegisterForm';
+import LoginForm from '../UserManager/LoginForm';
+import MyContact from '../Profile/MyContact';
+import ChangePassword from '../UserManager/ChangePassword';
+import Logout from '../UserManager/Logout';
 
 export const TopNavRoutes = [
   {
@@ -61,7 +62,7 @@ export const ProfileRoutes = [
     position: 'right',
     visibleLoggedIn: true,
     visibleLoggedOut: false,
-    component: () => {return <h1>Change Password</h1>}
+    component: ChangePassword
   },
   {
     title: "Log Out",
