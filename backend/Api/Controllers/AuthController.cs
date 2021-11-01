@@ -49,7 +49,7 @@ namespace Api.Controllers
         [HttpPost(nameof(Login))]
         public async Task<ActionResult<UserResponse>> Login([FromBody] LoginRequest request)
         {
-            if (!await _usersService.UserNameAndPasswordAreValidAsync(request))
+            if (!await _usersService.UserNameAndPasswordAreValidAsync(request.UserName, request.Password))
                 return StatusCode(StatusCodes.Status403Forbidden,
                     "Check your details and try again.");
 

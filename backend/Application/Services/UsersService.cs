@@ -84,13 +84,27 @@ namespace Application.Services
             return await _userManager.FindByIdAsync(userId);
         }
 
-        public async Task<bool> UserNameAndPasswordAreValidAsync(LoginRequest request)
+        public async Task<bool> UserNameAndPasswordAreValidAsync(string username, string password)
         {
-            var user = await _userManager.FindByNameAsync(request.UserName);
-            if (user == null || !await _userManager.CheckPasswordAsync(user, request.Password))
+            var user = await _userManager.FindByNameAsync(username);
+            return await UserNameAndPasswordAreValidAsync(user, password);
+        }
+
+        public async Task<bool> UserNameAndPasswordAreValidAsync(User user, string password)
+        {
+            if (user == null || !await _userManager.CheckPasswordAsync(user, password))
                 return false;
 
             return true;
+        }
+
+        public async Task<bool> ChangeUserPassword(User user, string newPassword)
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+            return result.Succeeded;
         }
 
         public async Task<UpdateUserResponse> UpdateUser(UpdateUserRequest request)

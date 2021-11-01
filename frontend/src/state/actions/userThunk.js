@@ -4,16 +4,16 @@ import { loginAction, logoutAction, updateUserInformationAction } from './userAc
 import { getContacts } from './contactsThunk';
 import { getOtherUsers } from './otherUsersThunk';
 import { updateMyContactAction } from './contactsActions';
-// import { SetNotificationAction } from '../actions/notificationsActions';
+import { actionFrom, setNotification } from '../actions/notificationActions';
 
-export const register = (request) => () => {
+export const register = (request) => (dispatch) => {
   Api.post('register', request)
-    .then(() => {
+    .then(res => {
       history.push('/login');
-      // dispatch(SetNotificationAction({ isOpen: true, message: response.data, type: 'success' }));
+      dispatch(setNotification(actionFrom('success', res)));
     })
-    .catch((error) => {
-      // dispatch(SetNotificationAction({ isOpen: true, message: error.response.data, type: 'error' }));
+    .catch(err => {
+      dispatch(setNotification(actionFrom('error', err)));
     });
 }
 
@@ -24,8 +24,8 @@ export const login = (request) => (dispatch) => {
       dispatch(getContacts(res.data.id));
       dispatch(getOtherUsers(res.data.id));
     })
-    .catch((error) => {
-      // dispatch(SetNotificationAction({ isOpen: true, message: error.response.data, type: 'error' }));
+    .catch(err => {
+      dispatch(setNotification(actionFrom('error', err)));
     });
 }
 
@@ -43,16 +43,20 @@ const setRefreshCookieInterval = () => {
 }
 
 export const checkLoginStatus = () => (dispatch) => {
-  loginStatus().then(data => {
-    if (data !== 'NotLoggedIn') {
-      dispatch(loginAction({ ...data }));
-      dispatch(getContacts(data.id));
-      dispatch(getOtherUsers(data.id));
-    } else {
-      dispatch(logoutAction());
-    }
-    setRefreshCookieInterval();
-  });
+  loginStatus()
+    .then(data => {
+      if (data !== 'NotLoggedIn') {
+        dispatch(loginAction({ ...data }));
+        dispatch(getContacts(data.id));
+        dispatch(getOtherUsers(data.id));
+      } else {
+        dispatch(logoutAction());
+      }
+      setRefreshCookieInterval();
+    })
+    .catch(err => {
+      dispatch(setNotification(actionFrom('error', err)));
+    });
 }
 
 export const logout = () => (dispatch) => {
@@ -67,5 +71,15 @@ export const updateUser = (request) => (dispatch) => {
     .then(res => {
       dispatch(updateMyContactAction( res.data.myContact ));
       dispatch(updateUserInformationAction( res.data.user ));
+    });
+}
+
+export const changePassword = (id, request) => (dispatch) => {
+  Api.post(`users/${id}/changepassword`, request)
+    .then(res => {
+      dispatch(setNotification(actionFrom('success', res)));
+    })
+    .catch(err => {
+      dispatch(setNotification(actionFrom('error', err)));
     });
 }

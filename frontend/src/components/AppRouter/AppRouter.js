@@ -6,7 +6,7 @@ import RouteSwitch from './RouteSwitch';
 import { useSelector } from 'react-redux';
 import { userState } from '../../state/selectors';
 import { ProfileRoutes, TopNavRoutes } from './Routes';
-import { Toolbar } from '@mui/material';
+import Notification from '../Notification/Notification';
 
 export const history = createBrowserHistory();
 
@@ -41,7 +41,7 @@ const AppRouter = () => {
         height={appBarHeight} // making sure that nav and div above have the same height
         routes={availableTopNavRoutes}
       />
-      {/* <Notification /> */}
+      <Notification />
       <RouteSwitch routes={availableRoutes} loggedIn={loggedIn} />
     </Router>
   );
