@@ -3,7 +3,6 @@ import { Button, CssBaseline, Container, Grid, Typography } from '@mui/material'
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@mui/styles';
 import { useDispatch } from 'react-redux';
-
 import ValidatedTextField from '../ValidatedTextField/ValidatedTextField';
 import { register } from '../../state/actions/userThunk';
 
@@ -37,7 +36,6 @@ const InitialFormData = {
 
 const RegisterForm = () => {
   const classes = useStyles();
-
   const [formData, setFormData] = useState(InitialFormData);
   const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [isFirstNameValid, setIsFirstNameValid] = useState(false);
