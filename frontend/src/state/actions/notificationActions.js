@@ -11,6 +11,7 @@ export const clearNotification = () => ({
 
 export const actionFrom = (type, responseOrError) => {
   let message;
+  
   if (type === 'success') {
     message = responseOrError.data;
   } else if (type === 'error') {
@@ -18,6 +19,10 @@ export const actionFrom = (type, responseOrError) => {
       responseOrError.response.data :
       responseOrError.message;
   }
+
+  if (message.replace(/[0-9]/g, '') === 'timeout of ms exceeded')
+    message = 'Unable to communicate with server.';
+
   return {
     isOpen: true,
     message: message,
