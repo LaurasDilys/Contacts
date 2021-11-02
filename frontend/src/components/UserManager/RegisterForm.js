@@ -24,6 +24,16 @@ const useStyles = makeStyles({
     marginTop: 24,
     marginBottom: 16,
   },
+  link: {
+    textDecoration: 'none',
+    color: '#1565c0',
+    '&:hover': {
+      color: '#1e88e5'
+    },
+   '&:active': {
+      color: '#1565c0'
+    }
+  }
 });
 
 const InitialFormData = {
@@ -184,12 +194,10 @@ const RegisterForm = () => {
           >
             Register
           </Button>
-          <Grid container justify="flex-end">
-            <Grid item>
-              <Link to="/login">
-                Already have an account? Login!
-              </Link>
-            </Grid>
+          <Grid container justifyContent="flex-end">
+            <Link to="/login" className={classes.link}>
+              Already have an account? Login!
+            </Link>
           </Grid>
         </form>
       </div>
