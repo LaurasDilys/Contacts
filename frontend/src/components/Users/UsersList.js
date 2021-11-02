@@ -102,13 +102,16 @@ const UsersList = ({ users, setSelectedUserId, scrollAreaHeight, scrollBarWidth 
     </> :
     <>
       <Divider style={{marginTop: 39}} />
-      <h1 style={{
-        color: '#bdbdbd',
-        margin: '79px 50px',
-        whiteSpace: 'nowrap'
-      }}>
-        No users currently available
-      </h1>
+      <div style={{ height: scrollAreaHeight + 2, overflowY: 'auto' }}>
+        <h1 style={{
+          color: '#bdbdbd',
+          margin: '79px 50px',
+          whiteSpace: 'nowrap'
+        }}>
+          No users currently available
+          <br/>for sharing
+        </h1>
+      </div>
     </>
   );
 }
