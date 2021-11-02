@@ -86,8 +86,6 @@ const LoginForm = () => {
           validationProps={{
             isValid: isUsernameValid,
             setIsValid: setIsUsernameValid,
-            regexString: '[._]{2,}',
-            regexRuleReverse: true,
           }}
           value={formData.username}
           variant="outlined"
