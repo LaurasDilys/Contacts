@@ -6,9 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/material.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateContact, deleteContact, createContact } from '../../state/actions/contactsThunk';
 import { userState } from '../../state/selectors';
-import { onConfirm } from '../ConfirmAlert/ConfirmAlert';
 import { updateUser } from '../../state/actions/userThunk';
 import { nullIfEmpty } from '../Contacts/ContactEdit';
 import { MyContactSwitch } from './MyContact';
@@ -192,7 +190,7 @@ const MyContactEdit = ({ setEditing, creating, handleSaveNew, handleCancelNew, s
               />
             }
             label={
-              <span className='switch-label'>Include in All Contacts</span>
+              <span className='switch-label'>Include my contact in All Contacts</span>
             }
           />
         </div>

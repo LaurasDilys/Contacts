@@ -59,6 +59,20 @@ namespace Data
                         .WithMany(u => u.UnacceptedShares)
                         .HasForeignKey(cu => cu.UserId)
                         .OnDelete(DeleteBehavior.ClientSetNull);
+
+
+            modelBuilder.Entity<User>().HasData(DataInitializer.Users());
+            modelBuilder.Entity<Contact>().HasData(DataInitializer.Contacts());
+            modelBuilder.Entity<ContactUser>().HasData(DataInitializer.ContactUsers());
+            modelBuilder.Entity<UnacceptedShare>().HasData(DataInitializer.UnacceptedShares());
+
+            // The above lines add initial data for testing – for sharing and receiving contacts
+
+            // The main test user is: UserName "user", Password "password"
+
+            // Other users have the following usernames: user01, user02, user03...
+
+            // Each of their password is "password"
         }
     }
 }

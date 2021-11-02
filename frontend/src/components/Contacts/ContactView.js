@@ -30,49 +30,6 @@ export const stringToColor = string => {
   return color;
 }
 
-//
-//
-//
-const mockUsers = [
-  {
-    id: 'c',
-    userName: 'TheRealCicinas',
-    firstName: 'Cicinas',
-    lastName: null,
-    selected: false
-  },
-  {
-    id: 'a',
-    userName: '420bleizit',
-    firstName: 'Arnas',
-    lastName: 'B.',
-    selected: false
-  },
-  {
-    id: 'b',
-    userName: 'asBenasLOL',
-    firstName: 'Benas',
-    lastName: 'C.',
-    selected: false
-  },
-  {
-    id: 'd',
-    userName: 'den_den',
-    firstName: 'Denas',
-    lastName: 'F.',
-    selected: false
-  }
-]
-//
-//
-//
-// const noneAreSelected = array => {
-//   return array.some(item => item.selected) ? false : true;
-// }
-//
-//
-//
-
 const ContactView = ({ contact, setEditing, handleNew, scrollAreaHeight, scrollBarWidth }) => {
   const [sharing, setSharing] = useState(false);
   const { user } = useSelector(userState);

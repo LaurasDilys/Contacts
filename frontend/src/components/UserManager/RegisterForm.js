@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, CssBaseline, Container, Grid, Typography } from '@mui/material';
+import { Button, CssBaseline, Container, Grid, Typography, Tooltip } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@mui/styles';
 import { useDispatch } from 'react-redux';
@@ -24,6 +24,16 @@ const useStyles = makeStyles({
     marginTop: 24,
     marginBottom: 16,
   },
+  link: {
+    textDecoration: 'none',
+    color: '#1565c0',
+    '&:hover': {
+      color: '#1e88e5'
+    },
+   '&:active': {
+      color: '#1565c0'
+    }
+  }
 });
 
 const InitialFormData = {
@@ -76,7 +86,6 @@ const RegisterForm = () => {
                 autoComplete="username"
                 autoFocus
                 fullWidth
-                helperText="Username must not contain more than one '.' or '_' symbol in a row."
                 id="username"
                 label="Username"
                 name="username"
@@ -84,9 +93,6 @@ const RegisterForm = () => {
                 validationProps={{
                   isValid: isUsernameValid,
                   setIsValid: setIsUsernameValid,
-                  regexRuleReverse: true,
-                  regexString: '[._]{2,}',
-                  strictRegex: true,
                 }}
                 value={formData.username}
                 variant="outlined"
@@ -125,51 +131,57 @@ const RegisterForm = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <ValidatedTextField
-                autoComplete="new-password"
-                fullWidth
-                helperText="Password must contain six symbols of which there must be at least one uppercase letter and at least one number."
-                id="password"
-                label="Password"
-                name="password"
-                onChange={(e) => onFieldChange(e, 'password')}
-                type="password"
-                validationProps={{
-                  isValid: isPasswordValid,
-                  setIsValid: setIsPasswordValid,
-                  regexString: '^(.{0,5}|[^0-9]*|[^A-Z]*)$',
-                  regexRuleReverse: true,
-                  additionalCheck: (input) => {
-                    setIsConfirmPasswordValid(input === formData.confirmPassword);
-                    return true;
-                  },
-                }}
-                value={formData.password}
-                variant="outlined"
-              />
+              <Tooltip title={isPasswordValid  || formData.password === "" ?
+                "" : "Password must contain at least six symbols, of which there must be at least one uppercase letter and at least one number"}
+              >
+                <ValidatedTextField
+                  autoComplete="new-password"
+                  fullWidth
+                  id="password"
+                  label="Password"
+                  name="password"
+                  onChange={(e) => onFieldChange(e, 'password')}
+                  type="password"
+                  validationProps={{
+                    isValid: isPasswordValid,
+                    setIsValid: setIsPasswordValid,
+                    regexString: '^(.{0,5}|[^0-9]*|[^A-Z]*)$',
+                    regexRuleReverse: true,
+                    additionalCheck: (input) => {
+                      setIsConfirmPasswordValid(input === formData.confirmPassword);
+                      return true;
+                    },
+                  }}
+                  value={formData.password}
+                  variant="outlined"
+                />
+              </Tooltip>
             </Grid>
             <Grid item xs={12}>
-              <ValidatedTextField
-                autoComplete="new-password"
-                fullWidth
-                helperText="Passwords must match"
-                id="confirmPassword"
-                label="Confirm password"
-                name="confirmPassword"
-                onChange={(e) => onFieldChange(e, 'confirmPassword')}
-                type="password"
-                validationProps={{
-                  isValid: isConfirmPasswordValid,
-                  setIsValid: setIsConfirmPasswordValid,
-                  regexString: '^(.{0,5}|[^0-9]*|[^A-Z]*)$',
-                  regexRuleReverse: true,
-                  additionalCheck: (input) => {
-                    return input === formData.password;
-                  },
-                }}
-                value={formData.confirmPassword}
-                variant="outlined"
-              />
+              <Tooltip title={isConfirmPasswordValid || formData.confirmPassword === "" ?
+                "" : "Passwords must match"}
+              >
+                <ValidatedTextField
+                  autoComplete="new-password"
+                  fullWidth
+                  id="confirmPassword"
+                  label="Confirm password"
+                  name="confirmPassword"
+                  onChange={(e) => onFieldChange(e, 'confirmPassword')}
+                  type="password"
+                  validationProps={{
+                    isValid: isConfirmPasswordValid,
+                    setIsValid: setIsConfirmPasswordValid,
+                    regexString: '^(.{0,5}|[^0-9]*|[^A-Z]*)$',
+                    regexRuleReverse: true,
+                    additionalCheck: (input) => {
+                      return input === formData.password;
+                    },
+                  }}
+                  value={formData.confirmPassword}
+                  variant="outlined"
+                />
+              </Tooltip>
             </Grid>
           </Grid>
           <Button
@@ -182,12 +194,10 @@ const RegisterForm = () => {
           >
             Register
           </Button>
-          <Grid container justify="flex-end">
-            <Grid item>
-              <Link to="/login">
-                Already have an account? Login!
-              </Link>
-            </Grid>
+          <Grid container justifyContent="flex-end">
+            <Link to="/login" className={classes.link}>
+              Already have an account? Login!
+            </Link>
           </Grid>
         </form>
       </div>

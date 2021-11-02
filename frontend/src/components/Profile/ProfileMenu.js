@@ -1,11 +1,5 @@
-import { OTHER, SHARED, RECEIVED, UNACCEPTED, ALL } from '../../domain/contactTypes';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { Badge, IconButton, ListItem, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
-import { styled } from '@mui/system';
+import { ListItem, ListItemText, Menu, MenuItem } from '@mui/material';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { contactsState } from '../../state/selectors';
-import { setSelectedContactsAction } from '../../state/actions/contactsActions';
 import { history } from '../AppRouter/AppRouter';
 import { AccountCircle } from '@mui/icons-material';
 import { ProfileRoutes } from '../AppRouter/Routes';

@@ -15,7 +15,7 @@ namespace Application.Interfaces
         ContactResponse SharedOrOther(Contact contact);
         void UpdateContact(Contact contact, IContactInformation request);
         void UpdateUser(User user, UpdateUserRequest request);
-        UserBasic UserBasinInformationFrom(User user);
+        UserBasicInformation UserBasinInformationFrom(User user);
         UserResponse UserResponseFrom(User user);
     }
 }

@@ -21,9 +21,9 @@ namespace Application.Services
             _contactInformationMapper = contactInformationMapper;
         }
 
-        public UserBasic UserBasinInformationFrom(User user)
+        public UserBasicInformation UserBasinInformationFrom(User user)
         {
-            return new UserBasic
+            return new UserBasicInformation
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
@@ -112,7 +112,7 @@ namespace Application.Services
             else
             {
                 response.Type = ContactTypes.Shared;
-                response.SharedWith = new List<UserBasic>();
+                response.SharedWith = new List<UserBasicInformation>();
                 foreach (var user in contact.ContactUsers.Select(cu => cu.User))
                 {
                     response.SharedWith.Add(UserBasinInformationFrom(user));

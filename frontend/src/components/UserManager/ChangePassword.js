@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { makeStyles } from '@mui/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import ValidatedTextField from '../ValidatedTextField/ValidatedTextField';
-import { Button, Container, CssBaseline, Grid, Typography } from '@mui/material';
+import { Button, Container, CssBaseline, Grid, Tooltip, Typography } from '@mui/material';
 import { changePassword } from '../../state/actions/userThunk';
 import { userState } from '../../state/selectors';
 
@@ -57,7 +57,12 @@ const ChangePassword = () => {
 
   const onSubmitClick = (e) => {
     e.preventDefault();
+    
+    setIsCurrentPasswordValid(false);
+    setIsNewPasswordValid(false);
+    setIsConfirmNewPasswordValid(false);
     setFormData({ ...InitialFormData });
+
     const { currentPassword, newPassword } = formData;
     dispatch(changePassword(user.id, {
       currentPassword: currentPassword,
@@ -97,51 +102,57 @@ const ChangePassword = () => {
               />
             </Grid>
             <Grid item xs={12}>
-              <ValidatedTextField
-                autoComplete="new-password"
-                fullWidth
-                helperText="Password must contain six symbols of which there must be at least one uppercase letter and at least one number."
-                id="newPassword"
-                label="New Password"
-                name="newPassword"
-                onChange={(e) => onFieldChange(e, 'newPassword')}
-                type="password"
-                validationProps={{
-                  isValid: isNewPasswordValid,
-                  setIsValid: setIsNewPasswordValid,
-                  additionalCheck: (input) => {
-                    setIsConfirmNewPasswordValid(input === formData.confirmNewPassword);
-                    return true;
-                  },
-                  regexString: '^(.{0,5}|[^0-9]*|[^A-Z]*)$',
-                  regexRuleReverse: true,
-                }}
-                value={formData.newPassword}
-                variant="outlined"
-              />
+              <Tooltip title={isNewPasswordValid  || formData.newPassword === "" ?
+                "" : "Password must contain at least six symbols, of which there must be at least one uppercase letter and at least one number"}
+              >
+                <ValidatedTextField
+                  autoComplete="new-password"
+                  fullWidth
+                  id="newPassword"
+                  label="New Password"
+                  name="newPassword"
+                  onChange={(e) => onFieldChange(e, 'newPassword')}
+                  type="password"
+                  validationProps={{
+                    isValid: isNewPasswordValid,
+                    setIsValid: setIsNewPasswordValid,
+                    additionalCheck: (input) => {
+                      setIsConfirmNewPasswordValid(input === formData.confirmNewPassword);
+                      return true;
+                    },
+                    regexString: '^(.{0,5}|[^0-9]*|[^A-Z]*)$',
+                    regexRuleReverse: true,
+                  }}
+                  value={formData.newPassword}
+                  variant="outlined"
+                />
+              </Tooltip>
             </Grid>
             <Grid item xs={12}>
-              <ValidatedTextField
-                autoComplete="new-password"
-                fullWidth
-                helperText="Passwords must match"
-                id="repeatPassword"
-                label="Confirm New Password"
-                name="repeatPassword"
-                onChange={(e) => onFieldChange(e, 'confirmNewPassword')}
-                type="password"
-                validationProps={{
-                  isValid: isConfirmNewPasswordValid,
-                  setIsValid: setIsConfirmNewPasswordValid,
-                  additionalCheck: (input) => {
-                    return input === formData.newPassword;
-                  },
-                  regexString: '^(.{0,5}|[^0-9]*|[^A-Z]*)$',
-                  regexRuleReverse: true,
-                }}
-                value={formData.confirmNewPassword}
-                variant="outlined"
-              />
+              <Tooltip title={isConfirmNewPasswordValid || formData.confirmNewPassword === "" ?
+                "" : "Passwords must match"}
+              >
+                <ValidatedTextField
+                  autoComplete="new-password"
+                  fullWidth
+                  id="repeatPassword"
+                  label="Confirm New Password"
+                  name="repeatPassword"
+                  onChange={(e) => onFieldChange(e, 'confirmNewPassword')}
+                  type="password"
+                  validationProps={{
+                    isValid: isConfirmNewPasswordValid,
+                    setIsValid: setIsConfirmNewPasswordValid,
+                    additionalCheck: (input) => {
+                      return input === formData.newPassword;
+                    },
+                    regexString: '^(.{0,5}|[^0-9]*|[^A-Z]*)$',
+                    regexRuleReverse: true,
+                  }}
+                  value={formData.confirmNewPassword}
+                  variant="outlined"
+                />
+              </Tooltip>
             </Grid>
           </Grid>
           <Button

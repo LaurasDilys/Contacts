@@ -21,15 +21,15 @@ namespace Api
     {
         public static void ConfigureDependencyInjection(this IServiceCollection services)
         {
-            services.AddScoped<JwtTokenService>();
-            services.AddScoped<ContactsService>();
-            services.AddScoped<UsersService>();
-
-            services.AddTransient<IMapperService, MapperService>();
-            services.AddTransient<ContactInformationMapper>();
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IContactsService, ContactsService>();
+            services.AddScoped<IUsersService, UsersService>();
 
             services.AddScoped<IContactsRepository, ContactsRepository>();
             services.AddScoped<IUsersRepository, UsersRepository>();
+
+            services.AddTransient<IMapperService, MapperService>();
+            services.AddTransient<ContactInformationMapper>();
         }
 
         public static void ConfigureAuthentication(this IServiceCollection services, string securityKey)
@@ -74,9 +74,9 @@ namespace Api
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequiredLength = 6;
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
                 options.Password.RequireNonAlphanumeric = false;
             });
         }

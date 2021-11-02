@@ -1,5 +1,3 @@
-import { ChangeEvent } from 'react';
-
 const _checkLength = (inputText, maxLength) => {
   return maxLength !== undefined ? inputText.length <= maxLength : true;
 };

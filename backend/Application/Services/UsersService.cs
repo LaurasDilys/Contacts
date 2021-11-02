@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    public class UsersService
+    public class UsersService : IUsersService
     {
         private readonly UserManager<User> _userManager;
         private readonly IUsersRepository _usersRepository;
@@ -30,11 +30,11 @@ namespace Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ICollection<UserBasic>> GetOtherUsersAsync(string userId)
+        public async Task<ICollection<UserBasicInformation>> GetOtherUsersAsync(string userId)
         {
             var users = await _usersRepository.GetOtherUsersAsync(userId);
 
-            var response = new List<UserBasic>();
+            var response = new List<UserBasicInformation>();
             foreach (var user in users)
             {
                 response.Add(_mapper.UserBasinInformationFrom(user));
