@@ -22,9 +22,6 @@ const usersListStyle = {
 }
 
 const UsersList = ({ users, setSelectedUserId, scrollAreaHeight, scrollBarWidth }) => {
-  //
-  // const users = usersFromProps;
-  //
   const [allUsers, setAllUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [search, setSearch] = useState();
