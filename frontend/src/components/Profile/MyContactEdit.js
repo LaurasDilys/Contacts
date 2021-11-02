@@ -190,7 +190,7 @@ const MyContactEdit = ({ setEditing, creating, handleSaveNew, handleCancelNew, s
               />
             }
             label={
-              <span className='switch-label'>Include in All Contacts</span>
+              <span className='switch-label'>Include my contact in All Contacts</span>
             }
           />
         </div>
