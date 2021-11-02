@@ -1,10 +1,24 @@
 import Api from '../../domain/Api';
+import { UNACCEPTED } from '../../domain/contactTypes';
 import { deleteContactAction, updateContactAction, getContactsAction, createContactAction } from './contactsActions';
+import { setNotification } from './notificationActions';
 
 export const getContacts = (id) => (dispatch) => {
   Api.get(`users/${id}/contacts`)
     .then(res => {
       dispatch(getContactsAction(res.data));
+      const unaccepted = res.data.filter(contact => contact.type === UNACCEPTED);
+      if (unaccepted.length > 0) {
+        console.log(unaccepted);
+        const message = unaccepted.length > 1 ?
+        "You have received new contacts, that haven't been accepted." :
+        "You have received a new contact, that hasn't been accepted."
+        dispatch(setNotification({
+          isOpen: true,
+          message: message,
+          type: 'info'
+        }));
+      }
     });
 }
 
