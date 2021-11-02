@@ -61,11 +61,16 @@ namespace Data
                         .OnDelete(DeleteBehavior.ClientSetNull);
 
 
-            modelBuilder.Entity<User>().HasData(DataInitializer.MockUsers());
+            modelBuilder.Entity<User>().HasData(DataInitializer.Users());
+            modelBuilder.Entity<Contact>().HasData(DataInitializer.Contacts());
+            modelBuilder.Entity<ContactUser>().HasData(DataInitializer.ContactUsers());
+            modelBuilder.Entity<UnacceptedShare>().HasData(DataInitializer.UnacceptedShares());
 
-            // The above line adds mock users to the database – for sharing and receiving contacts
+            // The above lines add initial data for testing – for sharing and receiving contacts
 
-            // Their UserNames are: user01, user02, user03...
+            // The main test user is: UserName "user", Password "password"
+
+            // Other users have the following usernames: user01, user02, user03...
 
             // Each of their password is "password"
         }
