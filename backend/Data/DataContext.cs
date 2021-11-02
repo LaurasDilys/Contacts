@@ -59,6 +59,15 @@ namespace Data
                         .WithMany(u => u.UnacceptedShares)
                         .HasForeignKey(cu => cu.UserId)
                         .OnDelete(DeleteBehavior.ClientSetNull);
+
+
+            modelBuilder.Entity<User>().HasData(DataInitializer.MockUsers());
+
+            // The above line adds mock users to the database – for sharing and receiving contacts
+
+            // Their UserNames are: user01, user02, user03...
+
+            // Each of their password is "password"
         }
     }
 }
