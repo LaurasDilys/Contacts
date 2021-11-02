@@ -39,7 +39,7 @@ const newCookie = () => {
 }
 
 const setRefreshCookieInterval = () => {
-  setInterval(newCookie, 48000);
+  setInterval(newCookie, 880000);
 }
 
 export const checkLoginStatus = () => (dispatch) => {
