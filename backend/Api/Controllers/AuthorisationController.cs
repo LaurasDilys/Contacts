@@ -14,14 +14,14 @@ namespace Api.Controllers
     [ApiController]
     [Route("api/")]
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
-    public class AuthController : ControllerBase
+    public class AuthorisationController : ControllerBase
     {
-        private readonly JwtTokenService _jwtTokenService;
-        private readonly UsersService _usersService;
+        private readonly IJwtTokenService _jwtTokenService;
+        private readonly IUsersService _usersService;
         private readonly IMapperService _mapper;
 
-        public AuthController(JwtTokenService jwtTokenService,
-            UsersService usersService,
+        public AuthorisationController(IJwtTokenService jwtTokenService,
+            IUsersService usersService,
             IMapperService mapper)
         {
             _jwtTokenService = jwtTokenService;
