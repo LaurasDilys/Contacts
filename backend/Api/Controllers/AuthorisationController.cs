@@ -32,6 +32,17 @@ namespace Api.Controllers
         /// <summary>
         /// Creates new user
         /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     {
+        ///        "firstName": "Vardas",
+        ///        "lastName": "Pavardenis",
+        ///        "userName": "vardas",
+        ///        "password": "Vardas1"
+        ///     }
+        ///
+        /// </remarks>
         /// <param name="request">Register user request</param>
         /// <response code="201">Returns confirmation "User created successfully."</response>
         /// <response code="409">If user name is taken</response>
@@ -58,6 +69,16 @@ namespace Api.Controllers
         /// <summary>
         /// Returns user information after login and adds a JWT token in the response cookie
         /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     {
+        ///        "userName": "user",
+        ///        "password": "password",
+        ///        "remember": true
+        ///     }
+        ///
+        /// </remarks>
         /// <returns>Information of logged in user</returns>
         /// <param name="request">Login request</param>
         /// <response code="200">Returns user, who's logged in</response>
