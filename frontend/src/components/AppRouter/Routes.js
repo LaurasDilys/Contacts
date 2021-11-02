@@ -1,3 +1,4 @@
+import About from '../About/About';
 import ContactsProvider from '../ContactsProviders/ContactsProvider';
 import RegisterForm from '../UserManager/RegisterForm';
 import LoginForm from '../UserManager/LoginForm';
@@ -7,12 +8,12 @@ import Logout from '../UserManager/Logout';
 
 export const TopNavRoutes = [
   {
-    title: "Home",
-    path: "/home",
+    title: "About",
+    path: "/about",
     position: 'left',
     visibleLoggedIn: true,
     visibleLoggedOut: true,
-    component: () => {return <h1>Home</h1>}
+    component: About
   },
   {
     title: "Contacts",
