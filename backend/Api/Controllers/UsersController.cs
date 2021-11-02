@@ -1,4 +1,5 @@
 ﻿using Application.Dto.User;
+using Application.Interfaces;
 using Application.Services;
 using Business.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -15,10 +16,10 @@ namespace Api.Controllers
     [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
     public class UsersController : ControllerBase
     {
-        private readonly JwtTokenService _jwtTokenService;
-        private readonly UsersService _usersService;
+        private readonly IJwtTokenService _jwtTokenService;
+        private readonly IUsersService _usersService;
 
-        public UsersController(JwtTokenService jwtTokenService, UsersService usersService)
+        public UsersController(IJwtTokenService jwtTokenService, IUsersService usersService)
         {
             _jwtTokenService = jwtTokenService;
             _usersService = usersService;
@@ -31,8 +32,8 @@ namespace Api.Controllers
         /// <param name="userKey">User key</param>
         /// <response code="200">Returns all users</response>
         [HttpGet("OtherThan/{userKey}", Name = nameof(OtherThan))]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<UserBasic>))]
-        public async Task<ActionResult<ICollection<UserBasic>>> OtherThan(string userKey)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<UserBasicInformation>))]
+        public async Task<ActionResult<ICollection<UserBasicInformation>>> OtherThan(string userKey)
         {
             return Ok(await _usersService.GetOtherUsersAsync(userKey));
         }

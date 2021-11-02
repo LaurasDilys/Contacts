@@ -21,15 +21,15 @@ namespace Api
     {
         public static void ConfigureDependencyInjection(this IServiceCollection services)
         {
-            services.AddScoped<JwtTokenService>();
-            services.AddScoped<ContactsService>();
-            services.AddScoped<UsersService>();
-
-            services.AddTransient<IMapperService, MapperService>();
-            services.AddTransient<ContactInformationMapper>();
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IContactsService, ContactsService>();
+            services.AddScoped<IUsersService, UsersService>();
 
             services.AddScoped<IContactsRepository, ContactsRepository>();
             services.AddScoped<IUsersRepository, UsersRepository>();
+
+            services.AddTransient<IMapperService, MapperService>();
+            services.AddTransient<ContactInformationMapper>();
         }
 
         public static void ConfigureAuthentication(this IServiceCollection services, string securityKey)

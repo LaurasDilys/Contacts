@@ -1,7 +1,6 @@
 ﻿using Application.Dto.Contact;
 using Application.Interfaces;
 using Application.Models;
-using Business.Models;
 using Data.Interfaces;
 using Data.Models;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    public class ContactsService
+    public class ContactsService : IContactsService
     {
         private readonly IContactsRepository _contactsRepository;
         private readonly IUsersRepository _usersRepository;
@@ -24,11 +23,6 @@ namespace Application.Services
             _usersRepository = usersRepository;
             _mapper = mapper;
         }
-
-        //public async Task<bool> ExistsAsync(string id)
-        //{
-        //    return await _contactsRepository.ExistsAsync(id);
-        //}
 
         public async Task<Contact> FindByIdAsync(string contactId)
         {
